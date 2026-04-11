@@ -3,7 +3,8 @@
   "package": "net.superkat.booyah.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "ExampleMixin"
+    "ExampleMixin",
+    "comm.PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -12,6 +13,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "comm.AvatarRendererMixin",
     "comm.LocalPlayerMixin"
   ]
 }

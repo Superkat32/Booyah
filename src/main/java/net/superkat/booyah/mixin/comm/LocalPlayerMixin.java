@@ -14,7 +14,7 @@ public class LocalPlayerMixin implements LocalBooyahablePlayer {
     @Unique
     public int booyah$ticksSinceSneak = 0;
     @Unique
-    public int booyah$sneaksUntilBooyah = 0;
+    public int booyah$sneaksUntilBooyah = BooyahClientManager.SNEAKS_UNTIL_BOOYAH;
     @Unique
     public boolean booyah$wasSneaking = false;
 

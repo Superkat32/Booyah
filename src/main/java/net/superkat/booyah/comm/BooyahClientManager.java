@@ -4,12 +4,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.superkat.booyah.duck.BooyahablePlayer;
 import net.superkat.booyah.duck.LocalBooyahablePlayer;
 import net.superkat.booyah.network.packets.CommonBooyahPacket;
 
@@ -44,14 +44,19 @@ public class BooyahClientManager {
     }
 
     public static void onPlayerBooyah(Player player) {
+        BooyahablePlayer booyahablePlayer = (BooyahablePlayer) player;
+        if (booyahablePlayer.booyah$booyahTicks() <= 0) {
+            booyahablePlayer.booyah$setTickCountOfBooyah(player.tickCount);
+        }
+        booyahablePlayer.booyah$setBooyahTicks(60);
+
         Level level = player.level();
         if (player.isLocalPlayer()) {
-            player.sendOverlayMessage(Component.literal("Booyah!!!"));
+            player.sendOverlayMessage(Component.literal("Booyah!"));
         }
         level.playPlayerSound(SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f);
         level.playPlayerSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f);
         level.playPlayerSound(SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f);
-        level.addParticle(ParticleTypes.EXPLOSION, player.getX(), player.getY(), player.getZ(), 0, 0, 0);
     }
 
 }

@@ -1,5 +1,7 @@
 package net.superkat.booyah.render.data;
 
-public record BooyahRenderData(int x, int y) {
+import net.minecraft.world.phys.Vec3;
+
+public record BooyahRenderData(Vec3 booyahTagAttachment, int yOffset, int tickCountOfBooyah, int booyahTicks) {
 
 }
