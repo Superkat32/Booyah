@@ -2,21 +2,24 @@
 	"schemaVersion": 1,
 	"id": "booyah",
 	"version": "${version}",
-	"name": "Booyah",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Booyah!",
+	"description": "Booyah!",
 	"authors": [
-		"Me!"
+		"Superkat32"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/booyah/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			"net.superkat.booyah.Booyah"
+		],
+		"client": [
+			"net.superkat.booyah.BooyahClient"
 		],
 		"fabric-datagen": [
 			"net.superkat.booyah.BooyahDataGenerator"

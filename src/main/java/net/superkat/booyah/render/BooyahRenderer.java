@@ -1,0 +1,60 @@
+package net.superkat.booyah.render;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.phys.Vec3;
+import net.superkat.booyah.render.data.BooyahRenderData;
+import org.joml.Matrix4f;
+
+public class BooyahRenderer {
+
+    public static final RenderStateDataKey<BooyahRenderData> BOOYAH_RENDER_DATA = RenderStateDataKey.create(() -> "Booyah \"Booyah!\" render data");
+
+    public static void init() {
+        LevelRenderEvents.END_EXTRACTION.register(context -> {
+            for (EntityRenderState entityRenderState : context.levelState().entityRenderStates) {
+                if (entityRenderState.entityType == EntityType.PLAYER) {
+                    entityRenderState.setData(BOOYAH_RENDER_DATA, new BooyahRenderData(0, 0));
+                }
+            }
+        });
+
+        LevelRenderEvents.AFTER_TRANSLUCENT_FEATURES.register(context -> {
+            for (EntityRenderState entityRenderState : context.levelState().entityRenderStates) {
+                if (entityRenderState.nameTagAttachment == null) continue;
+                BooyahRenderData booyahRenderData = entityRenderState.getData(BOOYAH_RENDER_DATA);
+//                if (booyahRenderData == null) continue;
+
+                Minecraft minecraft = Minecraft.getInstance();
+                CameraRenderState camera = context.levelState().cameraRenderState;
+                PoseStack poseStack = context.poseStack();
+                Vec3 nameTagAttachment = entityRenderState.nameTagAttachment == null ? Vec3.ZERO : entityRenderState.nameTagAttachment;
+                Component text = Component.literal("Booyah!");
+
+                poseStack.pushPose();
+                poseStack.translate(entityRenderState.x - camera.pos.x, entityRenderState.y - camera.pos.y, entityRenderState.z - camera.pos.z);
+                poseStack.translate(nameTagAttachment.x, nameTagAttachment.y + 0.5, nameTagAttachment.z);
+                poseStack.mulPose(camera.orientation);
+                poseStack.scale(0.025f, -0.025f, 0.025f);
+                Matrix4f pose = new Matrix4f(poseStack.last().pose());
+                float x = -minecraft.font.width(text) / 2f;
+                minecraft.font.drawInBatch(
+                        text, x, -10,
+                        -1, true,
+                        pose, context.bufferSource(), Font.DisplayMode.NORMAL,
+                        0, LightCoordsUtil.lightCoordsWithEmission(entityRenderState.lightCoords, 2)
+                );
+                poseStack.popPose();
+            }
+        });
+    }
+
+}
