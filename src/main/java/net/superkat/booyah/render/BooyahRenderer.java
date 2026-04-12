@@ -46,7 +46,7 @@ public class BooyahRenderer {
 
                 float alpha = 1f;
                 int booyahTicks = booyahRenderData.booyahTicks();
-                if (booyahTicks < 2) { // Fade in
+                if (booyahTicks <= 2) { // Fade in
                     alpha = booyahTicks / 2f;
                 } else if (booyahTicks >= 60 - 5) { // Fade out
                     alpha = (60 - booyahTicks) / 5f;
