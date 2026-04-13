@@ -13,6 +13,9 @@
   },
   "client": [
     "comm.AvatarRendererMixin",
-    "comm.LocalPlayerMixin"
+    "comm.LocalPlayerMixin",
+    "splatana.HumanoidModelMixin",
+    "splatana.ItemInHandLayerMixin",
+    "splatana.PlayerModelMixin"
   ]
 }

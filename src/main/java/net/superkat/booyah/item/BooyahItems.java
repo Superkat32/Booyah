@@ -2,18 +2,27 @@ package net.superkat.booyah.item;
 
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.Weapon;
 import net.superkat.booyah.Booyah;
 
 import java.util.function.Function;
 
 public class BooyahItems {
 
-    public static final Item SPLATANA_STAMPER = register("splatana_stamper", Item::new, new Item.Properties());
+    public static final Item SPLATANA_STAMPER = register("splatana_stamper", Item::new,
+            new Item.Properties()
+                    .rarity(Rarity.RARE)
+                    .attributes(SplatanaItem.createAttributes())
+                    .component(DataComponents.WEAPON, new Weapon(1))
+                    .stacksTo(1)
+    );
 
     public static void init() {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT)
