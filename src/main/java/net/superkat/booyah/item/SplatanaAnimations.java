@@ -113,23 +113,34 @@ public class SplatanaAnimations {
         float otherArmRotZ = 0f;
 
         if (attackTime > 0) { // Attack anim
-            mainArmRotX = -25f;
-            mainArmRotZ = -10f;
-            otherArmRotX = -25f;
-            otherArmRotZ = 45f;
-            if (swappedHands) {
-                mainArmRotX = -55f;
-                mainArmRotY = -55;
-                mainArmRotZ = -15f;
-                otherArmRotX = 20f;
-                otherArmRotZ = -10f;
-            }
+            float progress = Ease.inOutQuint(attackTime);
+            mainArmRotX = -55f + (progress * -5f);
+            mainArmRotY = 0 + (progress * -55f);
+            mainArmRotZ = 0 + (progress * 5f);
+            otherArmRotX = -35f + (progress * 90f);
+            otherArmRotY = 55f + (progress * -40f);
+            otherArmRotZ = 25f + (progress * -50f);
+//            mainArmRotX = -55f;
+//            mainArmRotY = 0f;
+//            mainArmRotZ = 0f;
+//            otherArmRotX = -35f;
+//            otherArmRotY = 55f;
+//            otherArmRotZ = 25f;
+//            if (swappedHands) {
+//                mainArmRotX = -85f;
+//                mainArmRotY = -55f;
+//                mainArmRotZ = 25f;
+//                otherArmRotX = 55f;
+//                otherArmRotY = 15f;
+//                otherArmRotZ = -10f;
+//            }
         } else { // Return to idle anim
-            mainArmRotX = -55f;
-            mainArmRotY = -55;
-            mainArmRotZ = -15f;
-            otherArmRotX = 20f;
-            otherArmRotZ = -10f;
+            mainArmRotX = -60;
+            mainArmRotY = -55f;
+            mainArmRotZ = 5;
+            otherArmRotX = 55f;
+            otherArmRotY = 15f;
+            otherArmRotZ = -25f;
         }
 
         if (reversed) {
@@ -192,8 +203,8 @@ public class SplatanaAnimations {
         ModelPart mainArm = model.getArm(arm);
         ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
 
-        float animTime = splatanaData.swingAnim(); // Full animation (including draw back)
-        float attackTime = state.attackTime; // Swing only animation (only swing left/right)
+        float animTime = splatanaData.swingAnim(); // Full animation (including draw back after attack cooldown ends)
+        float attackTime = state.attackTime; // Swing only animation (only swing left/right with attack cooldown)
         boolean swappedHands = attackTime > 0.5f;
 
         float splatanaRotX;
@@ -202,20 +213,19 @@ public class SplatanaAnimations {
         float pivotX = 0;
         float pivotY = swappedHands ? -0.3f : -0.15f;
         float pivotZ = 0;
-        if (attackTime > 0) { // Attack anim
-            splatanaRotX = Ease.inOutQuint(attackTime) * 270;
-//            splatanaRotY = 90f + 10; // minus mainArm rotZ
-//            splatanaRotZ = 180f - 25; // plus mainArm rotX
-            splatanaRotY = (float) (90f - Math.toDegrees(mainArm.zRot)); // minus mainArm rotZ
-            splatanaRotZ = (float) (180f + Math.toDegrees(mainArm.xRot)); // plus mainArm rotX
+        if (attackTime > 0) { // Swing anim
+            float progress = Ease.inOutQuint(attackTime);
+            splatanaRotX = progress * 270;
+            splatanaRotY = (float) (90f - Math.toDegrees(mainArm.zRot));
+            splatanaRotZ = (float) (180f + Math.toDegrees(mainArm.xRot));
             if (swappedHands) {
-                splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot)); // minus otherArm rotZ
-                splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot)); // plus otherArm rotX
+                splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot));
+                splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot));
             }
         } else { // Return to idle anim
             splatanaRotX = 270f;
-            splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot)); // minus otherArm rotZ
-            splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot)); // plus otherArm rotX
+            splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot));
+            splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot));
             pivotY = reversed ? -0.15f : -0.3f;
         }
 
