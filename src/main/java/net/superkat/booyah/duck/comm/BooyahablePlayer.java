@@ -1,4 +1,4 @@
-package net.superkat.booyah.duck;
+package net.superkat.booyah.duck.comm;
 
 public interface BooyahablePlayer {
     int booyah$tickCountOfBooyah();

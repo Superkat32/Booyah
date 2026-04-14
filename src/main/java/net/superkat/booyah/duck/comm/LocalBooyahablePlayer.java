@@ -1,4 +1,4 @@
-package net.superkat.booyah.duck;
+package net.superkat.booyah.duck.comm;
 
 import net.superkat.booyah.comm.BooyahClientManager;
 

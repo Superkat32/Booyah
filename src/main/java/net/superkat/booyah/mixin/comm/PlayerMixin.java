@@ -2,7 +2,7 @@ package net.superkat.booyah.mixin.comm;
 
 import net.minecraft.world.entity.player.Player;
 import net.superkat.booyah.comm.BooyahManager;
-import net.superkat.booyah.duck.BooyahablePlayer;
+import net.superkat.booyah.duck.comm.BooyahablePlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

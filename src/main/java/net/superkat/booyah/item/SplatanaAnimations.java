@@ -2,6 +2,7 @@ package net.superkat.booyah.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
@@ -9,18 +10,68 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.util.Ease;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.render.data.SplatanaWeaponRenderData;
 
+// This whole class is a nightmare of nonsense
 public class SplatanaAnimations {
 
+    public static final RenderStateDataKey<SplatanaWeaponRenderData> SPLATANA_RENDER_DATA = RenderStateDataKey.create(() -> "Splatana swing & charge animation render data");
+
+    public static void updateSplatanaSwingTime(LivingEntity player, int currentSwingDuration) {
+        SplatanaPlayer splatanaPlayer = (SplatanaPlayer) player;
+        if (currentSwingDuration > 0) {
+            currentSwingDuration += 10;
+        }
+
+        int swingTime = splatanaPlayer.booyah$getSplatanaSwingTime();
+
+        if (splatanaPlayer.booyah$isSplatanaSwinging()) {
+            if (swingTime == 0) {
+                splatanaPlayer.booyah$setReverseSplatanaSwing(!splatanaPlayer.booyah$reverseSplatanaSwing());
+            }
+            swingTime++;
+            if (swingTime >= currentSwingDuration) {
+                swingTime = 0;
+                splatanaPlayer.booyah$setIsSplatanaSwinging(false);
+            }
+        } else {
+            splatanaPlayer.booyah$setReverseSplatanaSwing(false);
+            swingTime = 0;
+        }
+
+        splatanaPlayer.booyah$setSplatanaSwingTime(swingTime);
+        splatanaPlayer.booyah$setSplatanaAttackAnim((float) swingTime / currentSwingDuration);
+    }
+
+    public static <T extends ArmedEntityRenderState> HumanoidArm getArmToTranslateSplatanaTo(T state, HumanoidArm original) {
+        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
+        if (!BooyahItems.isSplatana(state.rightHandItemStack) || splatanaData == null) return original;
+
+        boolean swap = splatanaData.reverseSwing();
+        if (state.attackTime > 0.5 || (state.attackTime <= 0 && splatanaData.swingAnim() >= 0.35)) {
+            swap = !swap;
+        }
+
+        if (swap) {
+            return original.getOpposite();
+        }
+        return original;
+    }
+
+    // Arm animation for holding the Splatana, but not actively using it (e.g. swinging or charging)
     public static <T extends HumanoidRenderState> void thirdPersonHold(
             ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean holdingInRightArm, ItemStack item, T state
     ) {
+        // use >= 0 because swingTime gets set to -1 on swing because that's how Mojang does it ¯\_(ツ)_/¯
+        if (state.getData(SPLATANA_RENDER_DATA) != null && state.getData(SPLATANA_RENDER_DATA).swingAnim() > 0) return;
         ModelPart holdingArm = holdingInRightArm ? rightArm : leftArm;
         ModelPart otherArm = holdingInRightArm ? leftArm : rightArm;
 
         // Change animation slightly when walking (hold up more)
-        float walkingExtra = state.walkAnimationSpeed * 25 + Mth.cos(state.walkAnimationPos * 0.6662F) * 5;
+        float walkingExtra = state.walkAnimationSpeed * 35 + Mth.cos(state.walkAnimationPos * 0.6662F) * 5;
 
         if (state.attackTime > 0) return;
 
@@ -36,15 +87,66 @@ public class SplatanaAnimations {
         holdingArm.zRot = (float) Math.toRadians(15);
     }
 
+    // Arm animation for swinging the Splatana horizontally (left-clicked)
     public static <T extends HumanoidRenderState> void thirdPersonSwing(HumanoidModel<T> model, T state) {
-        HumanoidArm arm = state.attackArm;
+        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
+        if (splatanaData == null || splatanaData.swingAnim() <= 0) return;
+        boolean reversed = splatanaData.reverseSwing();
+        HumanoidArm arm = reversed ? swapArm(state.attackArm) : state.attackArm;
         ModelPart mainArm = model.getArm(arm);
-        boolean swappedHands = state.attackTime > 0.5f;
+        ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
 
-        float armRotX = 0f + Ease.inOutQuint(state.attackTime) * -50f;
-        float armRotY = 0f + Ease.inOutQuint(state.attackTime) * -60f;
-        float armRotZ = 15f + Ease.inOutQuint(state.attackTime) * -15f;
+        float animTime = splatanaData.swingAnim(); // Full animation (including draw back)
+        float attackTime = state.attackTime; // Swing only animation (only swing left/right)
+        boolean swappedHands = attackTime > 0.5f;
 
+        float mainArmRotX = 0f;
+        float mainArmRotY = 0f;
+        float mainArmRotZ = 0f;
+        float otherArmRotX = 0f;
+        float otherArmRotY = 0f;
+        float otherArmRotZ = 0f;
+
+        if (attackTime > 0) { // Attack anim
+            mainArmRotX = -25f;
+            mainArmRotZ = -10f;
+            otherArmRotX = -25f;
+            otherArmRotZ = 45f;
+            if (swappedHands) {
+                mainArmRotX = -55f;
+                mainArmRotY = -55;
+                mainArmRotZ = -15f;
+                otherArmRotX = 20f;
+                otherArmRotZ = -10f;
+            }
+        } else { // Return to idle anim
+            mainArmRotX = -55f;
+            mainArmRotY = -55;
+            mainArmRotZ = -15f;
+            otherArmRotX = 20f;
+            otherArmRotZ = -10f;
+        }
+
+        if (reversed) {
+//            mainArmRotX *= -1;
+            mainArmRotY *= -1;
+            mainArmRotZ *= -1;
+//            otherArmRotX *= -1;
+            otherArmRotY *= -1;
+            otherArmRotZ *= -1;
+        }
+
+        mainArm.xRot = radians(mainArmRotX);
+        mainArm.yRot = radians(mainArmRotY);
+        mainArm.zRot = radians(mainArmRotZ);
+        otherArm.xRot = radians(otherArmRotX);
+        otherArm.yRot = radians(otherArmRotY);
+        otherArm.zRot = radians(otherArmRotZ);
+
+////        float armRotX = 0f + Ease.inOutQuint(swingAnim) * -50f;
+////        float armRotY = 0f + Ease.inOutQuint(swingAnim) * -60f;
+////        float armRotZ = 15f + Ease.inOutQuint(swingAnim) * -15f;
+//
 //        float armRotX = 0f;
 //        float armRotY = 0f;
 //        float armRotZ = 15f;
@@ -53,15 +155,15 @@ public class SplatanaAnimations {
 //            armRotY = -60f;
 //            armRotZ = 0f;
 //        }
-        mainArm.xRot = (float) Math.toRadians(armRotX);
-        mainArm.yRot = (float) Math.toRadians(armRotY);
-        mainArm.zRot = (float) Math.toRadians(armRotZ);
-
-        ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
-        float otherArmRotX = -65f + Ease.inOutQuint(state.attackTime) * 85f;
-        float otherArmRotY = 65f + Ease.inOutQuint(state.attackTime) * -80f;
-        float otherArmRotZ = 0 + Ease.inOutQuint(state.attackTime) * -15f;
-
+//        mainArm.xRot = (float) Math.toRadians(armRotX);
+//        mainArm.yRot = (float) Math.toRadians(armRotY);
+//        mainArm.zRot = (float) Math.toRadians(armRotZ);
+//
+//        ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
+////        float otherArmRotX = -65f + Ease.inOutQuint(swingAnim) * 85f;
+////        float otherArmRotY = 65f + Ease.inOutQuint(swingAnim) * -80f;
+////        float otherArmRotZ = 0 + Ease.inOutQuint(swingAnim) * -15f;
+//
 //        float otherArmRotX = -65f;
 //        float otherArmRotY = 65f;
 //        float otherArmRotZ = 0f;
@@ -70,25 +172,83 @@ public class SplatanaAnimations {
 //            otherArmRotY = -15f;
 //            otherArmRotZ = -15f;
 //        }
-        otherArm.xRot = (float) Math.toRadians(otherArmRotX);
-        otherArm.yRot = (float) Math.toRadians(otherArmRotY);
-        otherArm.zRot = (float) Math.toRadians(otherArmRotZ);
-
+//        otherArm.xRot = (float) Math.toRadians(otherArmRotX);
+//        otherArm.yRot = (float) Math.toRadians(otherArmRotY);
+//        otherArm.zRot = (float) Math.toRadians(otherArmRotZ);
     }
 
-    public static <S extends ArmedEntityRenderState> void thirdPersonItemSwing(S state, PoseStack poseStack) {
-        if (state.attackTime <= 0) return;
-        boolean swappedHands = state.attackTime <= 0.5f;
+    // Item model animation for swinging the Splatana horizontally - Only affects the item model, not the arm!
+    public static <T extends HumanoidRenderState, S extends ArmedEntityRenderState> void thirdPersonItemSwing(HumanoidModel<T> model, S state, PoseStack poseStack) {
+        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
+        if (splatanaData == null || splatanaData.swingAnim() <= 0) return;
 
-        float splatanaRotX = 0f + (Ease.inOutQuint(state.attackTime) * 15f);
-        float splatanaRotY = -85f;
-        float splatanaRotZ = 170f - (Ease.inOutQuint(state.attackTime) * 270f);
+        boolean reversed = splatanaData.reverseSwing();
+        HumanoidArm arm = reversed ? state.attackArm.getOpposite() : state.attackArm;
+        ModelPart mainArm = model.getArm(arm);
+        ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
 
-        float pivotY = -0.15f + (Ease.inOutQuint(state.attackTime) * -0.15f);
+        float animTime = splatanaData.swingAnim(); // Full animation (including draw back)
+        float attackTime = state.attackTime; // Swing only animation (only swing left/right)
+        boolean swappedHands = attackTime > 0.5f;
 
-        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), 0, pivotY, 0);
-        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), 0, pivotY, 0);
-        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotX), 0, pivotY, 0);
+        float splatanaRotX;
+        float splatanaRotY;
+        float splatanaRotZ;
+        float pivotX = 0.1f;
+        float pivotY = -0.15f;
+        if (attackTime > 0) { // Attack anim
+            splatanaRotX = Ease.inOutQuint(attackTime) * 270;
+//            splatanaRotY = 90f + 10; // minus mainArm rotZ
+//            splatanaRotZ = 180f - 25; // plus mainArm rotX
+            splatanaRotY = (float) (90f - Math.toDegrees(mainArm.zRot)); // minus mainArm rotZ
+            splatanaRotZ = (float) (180f + Math.toDegrees(mainArm.xRot)); // plus mainArm rotX
+            if (swappedHands) {
+                splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot)); // minus otherArm rotZ
+                splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot)); // plus otherArm rotX
+            }
+        } else { // Return to idle anim
+            splatanaRotX = 270f;
+            splatanaRotY = 90f;
+            splatanaRotZ = 180f;
+        }
+
+        if (reversed) {
+            splatanaRotX *= -1;
+            pivotX *= -1;
+        }
+
+        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), pivotX, pivotY, 0);
+        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), pivotX, pivotY, 0);
+        poseStack.rotateAround(Axis.XN.rotationDegrees(splatanaRotX), pivotX, pivotY, 0);
+
+//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), 0, pivotY, 0);
+//        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), 0, pivotY, 0);
+//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotX), 0, pivotY, 0);
+
+
+
+//        if (state.attackTime <= 0) return;
+//        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
+//        if (splatanaData == null || splatanaData.swingAnim() <= 0) return;
+//        float swingAnim = state.attackTime;
+//        boolean swappedHands = state.attackTime <= 0.5f;
+
+//        float splatanaRotX = 0f + (Ease.inOutQuint(swingAnim) * 15f);
+//        float splatanaRotY = -85f;
+//        float splatanaRotZ = 170f - (Ease.inOutQuint(swingAnim) * 270f);
+//
+//        float pivotY = -0.15f + (Ease.inOutQuint(swingAnim) * -0.15f);
+//
+//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), 0, pivotY, 0);
+//        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), 0, pivotY, 0);
+//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotX), 0, pivotY, 0);
     }
 
+    private static HumanoidArm swapArm(HumanoidArm arm) {
+        return (arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
+    }
+
+    private static float radians(float degrees) {
+        return (float) Math.toRadians(degrees);
+    }
 }

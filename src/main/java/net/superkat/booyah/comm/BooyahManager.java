@@ -1,7 +1,7 @@
 package net.superkat.booyah.comm;
 
 import net.minecraft.world.entity.player.Player;
-import net.superkat.booyah.duck.BooyahablePlayer;
+import net.superkat.booyah.duck.comm.BooyahablePlayer;
 
 public class BooyahManager {
 

@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.superkat.booyah.duck.BooyahablePlayer;
+import net.superkat.booyah.duck.comm.BooyahablePlayer;
 import net.superkat.booyah.render.BooyahRenderer;
 import net.superkat.booyah.render.data.BooyahRenderData;
 import org.spongepowered.asm.mixin.Mixin;
