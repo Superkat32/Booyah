@@ -31,6 +31,8 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     public float booyah$prevSplatanaAttackAnim = 0f;
     @Unique
     public boolean booyah$reverseSplatanaSwing = false;
+    @Unique
+    public boolean booyah$isFirstSwing = true;
 
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("TAIL"))
     public void booyah$updateSplatanaSwinging(InteractionHand hand, boolean sendToSwingingEntity, CallbackInfo ci) {
@@ -90,5 +92,15 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Override
     public void booyah$setReverseSplatanaSwing(boolean reversed) {
         this.booyah$reverseSplatanaSwing = reversed;
+    }
+
+    @Override
+    public boolean booyah$firstSwing() {
+        return this.booyah$isFirstSwing;
+    }
+
+    @Override
+    public void booyah$setFirstSwing(boolean isFirstSwing) {
+        this.booyah$isFirstSwing = isFirstSwing;
     }
 }

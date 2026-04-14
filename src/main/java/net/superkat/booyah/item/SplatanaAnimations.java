@@ -30,7 +30,11 @@ public class SplatanaAnimations {
 
         if (splatanaPlayer.booyah$isSplatanaSwinging()) {
             if (swingTime == 0) {
-                splatanaPlayer.booyah$setReverseSplatanaSwing(!splatanaPlayer.booyah$reverseSplatanaSwing());
+                if (splatanaPlayer.booyah$firstSwing()) {
+                    splatanaPlayer.booyah$setFirstSwing(false);
+                } else {
+                    splatanaPlayer.booyah$setReverseSplatanaSwing(!splatanaPlayer.booyah$reverseSplatanaSwing());
+                }
             }
             swingTime++;
             if (swingTime >= currentSwingDuration) {
@@ -39,6 +43,7 @@ public class SplatanaAnimations {
             }
         } else {
             splatanaPlayer.booyah$setReverseSplatanaSwing(false);
+            splatanaPlayer.booyah$setFirstSwing(true);
             swingTime = 0;
         }
 
@@ -194,8 +199,9 @@ public class SplatanaAnimations {
         float splatanaRotX;
         float splatanaRotY;
         float splatanaRotZ;
-        float pivotX = 0.1f;
-        float pivotY = -0.15f;
+        float pivotX = 0;
+        float pivotY = swappedHands ? -0.3f : -0.15f;
+        float pivotZ = 0;
         if (attackTime > 0) { // Attack anim
             splatanaRotX = Ease.inOutQuint(attackTime) * 270;
 //            splatanaRotY = 90f + 10; // minus mainArm rotZ
@@ -208,18 +214,19 @@ public class SplatanaAnimations {
             }
         } else { // Return to idle anim
             splatanaRotX = 270f;
-            splatanaRotY = 90f;
-            splatanaRotZ = 180f;
+            splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot)); // minus otherArm rotZ
+            splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot)); // plus otherArm rotX
+            pivotY = reversed ? -0.15f : -0.3f;
         }
 
         if (reversed) {
             splatanaRotX *= -1;
-            pivotX *= -1;
+            if (swappedHands) pivotY += 0.15f;
         }
 
-        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), pivotX, pivotY, 0);
-        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), pivotX, pivotY, 0);
-        poseStack.rotateAround(Axis.XN.rotationDegrees(splatanaRotX), pivotX, pivotY, 0);
+        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), pivotX, pivotY, pivotZ);
+        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), pivotX, pivotY, pivotZ);
+        poseStack.rotateAround(Axis.XN.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
 
 //        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), 0, pivotY, 0);
 //        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), 0, pivotY, 0);

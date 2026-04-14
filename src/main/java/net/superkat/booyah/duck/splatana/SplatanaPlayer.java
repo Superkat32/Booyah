@@ -18,6 +18,9 @@ public interface SplatanaPlayer {
         return this.booyah$prevSplatanaAttackAnim() + diff * partialTicks;
     }
 
+    boolean booyah$firstSwing();
+    void booyah$setFirstSwing(boolean isFirstSwing);
+
     boolean booyah$reverseSplatanaSwing();
     void booyah$setReverseSplatanaSwing(boolean reversed);
 
