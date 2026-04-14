@@ -120,20 +120,6 @@ public class SplatanaAnimations {
             otherArmRotX = -35f + (progress * 90f);
             otherArmRotY = 55f + (progress * -40f);
             otherArmRotZ = 25f + (progress * -50f);
-//            mainArmRotX = -55f;
-//            mainArmRotY = 0f;
-//            mainArmRotZ = 0f;
-//            otherArmRotX = -35f;
-//            otherArmRotY = 55f;
-//            otherArmRotZ = 25f;
-//            if (swappedHands) {
-//                mainArmRotX = -85f;
-//                mainArmRotY = -55f;
-//                mainArmRotZ = 25f;
-//                otherArmRotX = 55f;
-//                otherArmRotY = 15f;
-//                otherArmRotZ = -10f;
-//            }
         } else { // Return to idle anim
             mainArmRotX = -60;
             mainArmRotY = -55f;
@@ -144,10 +130,8 @@ public class SplatanaAnimations {
         }
 
         if (reversed) {
-//            mainArmRotX *= -1;
             mainArmRotY *= -1;
             mainArmRotZ *= -1;
-//            otherArmRotX *= -1;
             otherArmRotY *= -1;
             otherArmRotZ *= -1;
         }
@@ -158,39 +142,6 @@ public class SplatanaAnimations {
         otherArm.xRot = radians(otherArmRotX);
         otherArm.yRot = radians(otherArmRotY);
         otherArm.zRot = radians(otherArmRotZ);
-
-////        float armRotX = 0f + Ease.inOutQuint(swingAnim) * -50f;
-////        float armRotY = 0f + Ease.inOutQuint(swingAnim) * -60f;
-////        float armRotZ = 15f + Ease.inOutQuint(swingAnim) * -15f;
-//
-//        float armRotX = 0f;
-//        float armRotY = 0f;
-//        float armRotZ = 15f;
-//        if (swappedHands) {
-//            armRotX = -70f;
-//            armRotY = -60f;
-//            armRotZ = 0f;
-//        }
-//        mainArm.xRot = (float) Math.toRadians(armRotX);
-//        mainArm.yRot = (float) Math.toRadians(armRotY);
-//        mainArm.zRot = (float) Math.toRadians(armRotZ);
-//
-//        ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
-////        float otherArmRotX = -65f + Ease.inOutQuint(swingAnim) * 85f;
-////        float otherArmRotY = 65f + Ease.inOutQuint(swingAnim) * -80f;
-////        float otherArmRotZ = 0 + Ease.inOutQuint(swingAnim) * -15f;
-//
-//        float otherArmRotX = -65f;
-//        float otherArmRotY = 65f;
-//        float otherArmRotZ = 0f;
-//        if (swappedHands) {
-//            otherArmRotX = 25f;
-//            otherArmRotY = -15f;
-//            otherArmRotZ = -15f;
-//        }
-//        otherArm.xRot = (float) Math.toRadians(otherArmRotX);
-//        otherArm.yRot = (float) Math.toRadians(otherArmRotY);
-//        otherArm.zRot = (float) Math.toRadians(otherArmRotZ);
     }
 
     // Item model animation for swinging the Splatana horizontally - Only affects the item model, not the arm!
@@ -237,28 +188,6 @@ public class SplatanaAnimations {
         poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), pivotX, pivotY, pivotZ);
         poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), pivotX, pivotY, pivotZ);
         poseStack.rotateAround(Axis.XN.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
-
-//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), 0, pivotY, 0);
-//        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), 0, pivotY, 0);
-//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotX), 0, pivotY, 0);
-
-
-
-//        if (state.attackTime <= 0) return;
-//        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
-//        if (splatanaData == null || splatanaData.swingAnim() <= 0) return;
-//        float swingAnim = state.attackTime;
-//        boolean swappedHands = state.attackTime <= 0.5f;
-
-//        float splatanaRotX = 0f + (Ease.inOutQuint(swingAnim) * 15f);
-//        float splatanaRotY = -85f;
-//        float splatanaRotZ = 170f - (Ease.inOutQuint(swingAnim) * 270f);
-//
-//        float pivotY = -0.15f + (Ease.inOutQuint(swingAnim) * -0.15f);
-//
-//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), 0, pivotY, 0);
-//        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), 0, pivotY, 0);
-//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotX), 0, pivotY, 0);
     }
 
     private static HumanoidArm swapArm(HumanoidArm arm) {

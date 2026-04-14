@@ -11,6 +11,8 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 
 public class SplatanaItem extends Item {
+    public static final float PLAYER_SPEED_SWING_REDUCER_AMOUNT = 0.6f;
+
     public static ItemAttributeModifiers createAttributes() {
         return ItemAttributeModifiers.builder()
                 .add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 4, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
@@ -24,7 +26,6 @@ public class SplatanaItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-
         return super.use(level, player, hand);
     }
 }

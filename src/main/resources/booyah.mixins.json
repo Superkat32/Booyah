@@ -5,6 +5,7 @@
   "mixins": [
     "comm.PlayerMixin",
     "splatana.LivingEntityMixin",
+    "splatana.LocalPlayerMixin",
     "splatana.RenderLayerMixin"
   ],
   "injectors": {
