@@ -5,6 +5,7 @@ import net.minecraft.resources.Identifier;
 import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.network.BooyahPackets;
 import net.superkat.booyah.network.BooyahServerNetworkHandler;
+import net.superkat.booyah.particles.BooyahParticles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ public class Booyah implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		BooyahItems.init();
+		BooyahParticles.init();
 		BooyahPackets.init();
 		BooyahServerNetworkHandler.init();
 	}

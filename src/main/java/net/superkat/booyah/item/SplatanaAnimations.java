@@ -111,22 +111,27 @@ public class SplatanaAnimations {
         float otherArmRotX = 0f;
         float otherArmRotY = 0f;
         float otherArmRotZ = 0f;
-
-        if (attackTime > 0) { // Attack anim
-            float progress = Ease.inOutQuint(attackTime);
-            mainArmRotX = -55f + (progress * -5f);
-            mainArmRotY = 0 + (progress * -55f);
-            mainArmRotZ = 0 + (progress * 5f);
-            otherArmRotX = -35f + (progress * 90f);
-            otherArmRotY = 55f + (progress * -40f);
-            otherArmRotZ = 25f + (progress * -50f);
-        } else { // Return to idle anim
-            mainArmRotX = -60;
-            mainArmRotY = -55f;
-            mainArmRotZ = 5;
-            otherArmRotX = 55f;
-            otherArmRotY = 15f;
-            otherArmRotZ = -25f;
+        if (attackTime > 0) {
+            float progress = Ease.inOutExpo(attackTime);
+            float preSwapProgress = Ease.inExpo(swappedHands ? 1 : (attackTime) * 2);
+            float postSwapProgress = Ease.outExpo(swappedHands ? (Math.max(0, attackTime - 0.5f)) * 2 : 0);
+            mainArmRotX = -45f;
+            mainArmRotY = 0 + (progress * -45f);
+            mainArmRotZ = 10f + (progress * -40f);
+            otherArmRotX = -35f + (progress * 95f);
+            otherArmRotY = 45f + (preSwapProgress * -45f);
+            otherArmRotZ = 35f + (progress * -70f) + (-45f * (swappedHands ? 1 - postSwapProgress : preSwapProgress));
+//            mainArmRotX = -45f;
+//            mainArmRotZ = 5f;
+//            otherArmRotX = -35f;
+//            otherArmRotY = 45f;
+//            otherArmRotZ = 35f;
+        } else {
+            mainArmRotX = -45f;
+            mainArmRotY = -45f;
+            mainArmRotZ = -30f;
+            otherArmRotX = 60f;
+            otherArmRotZ = -35f;
         }
 
         if (reversed) {
@@ -135,6 +140,30 @@ public class SplatanaAnimations {
             otherArmRotY *= -1;
             otherArmRotZ *= -1;
         }
+
+//        if (attackTime > 0) { // Attack anim
+//            float progress = Ease.inOutQuint(attackTime);
+//            mainArmRotX = -55f + (progress * -5f);
+//            mainArmRotY = 0 + (progress * -55f);
+//            mainArmRotZ = 0 + (progress * 5f);
+//            otherArmRotX = -35f + (progress * 90f);
+//            otherArmRotY = 55f + (progress * -40f);
+//            otherArmRotZ = 25f + (progress * -50f);
+//        } else { // Return to idle anim
+//            mainArmRotX = -60;
+//            mainArmRotY = -55f;
+//            mainArmRotZ = 5;
+//            otherArmRotX = 55f;
+//            otherArmRotY = 15f;
+//            otherArmRotZ = -25f;
+//        }
+//
+//        if (reversed) {
+//            mainArmRotY *= -1;
+//            mainArmRotZ *= -1;
+//            otherArmRotY *= -1;
+//            otherArmRotZ *= -1;
+//        }
 
         mainArm.xRot = radians(mainArmRotX);
         mainArm.yRot = radians(mainArmRotY);
@@ -158,36 +187,78 @@ public class SplatanaAnimations {
         float attackTime = state.attackTime; // Swing only animation (only swing left/right with attack cooldown)
         boolean swappedHands = attackTime > 0.5f;
 
-        float splatanaRotX;
-        float splatanaRotY;
-        float splatanaRotZ;
+        float splatanaRotX = 0;
+        float splatanaRotY = 0;
+        float splatanaRotZ = 0;
         float pivotX = 0;
         float pivotY = swappedHands ? -0.3f : -0.15f;
         float pivotZ = 0;
-        if (attackTime > 0) { // Swing anim
-            float progress = Ease.inOutQuint(attackTime);
-            splatanaRotX = progress * 270;
-            splatanaRotY = (float) (90f - Math.toDegrees(mainArm.zRot));
-            splatanaRotZ = (float) (180f + Math.toDegrees(mainArm.xRot));
-            if (swappedHands) {
-                splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot));
-                splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot));
-            }
-        } else { // Return to idle anim
-            splatanaRotX = 270f;
-            splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot));
-            splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot));
-            pivotY = reversed ? -0.15f : -0.3f;
+        float undoArmX = swappedHands ? otherArm.xRot : mainArm.xRot;
+        float undoArmY = swappedHands ? otherArm.zRot : mainArm.zRot;
+        float undoArmZ = swappedHands ? otherArm.yRot : mainArm.yRot;
+
+        if (attackTime > 0) {
+            float progress = Ease.inOutExpo(attackTime);
+            float preSwapProgress = Ease.inExpo(swappedHands ? 0 : (attackTime) * 2);
+            float postSwapProgress = Ease.outExpo(swappedHands ? (Math.max(0, attackTime - 0.5f)) * 2 : 0);
+//            splatanaRotX = 0; // forget rot x this nimble gimble gooble gabble lock nonsesne is asbolute trash
+            splatanaRotY = 90;
+            splatanaRotZ = -170 + (progress * 260);
+            pivotX = 0.05f + (progress * -0.05f);
+            pivotY = -0.15f + (progress * -0.1f);
+            pivotZ = 0 + (progress * 0.1f) + (-0.1f * preSwapProgress);
+        } else {
+            splatanaRotY = 90;
+            splatanaRotZ = 90;
+            pivotY = -0.25f;
+            pivotZ = 0.1f;
+            undoArmX = otherArm.xRot;
+            undoArmY = otherArm.zRot;
+            undoArmZ = otherArm.yRot;
         }
 
         if (reversed) {
-            splatanaRotX *= -1;
-            if (swappedHands) pivotY += 0.15f;
+            splatanaRotY *= -1;
+            splatanaRotZ *= -1;
+            pivotX *= -1;
+            pivotX -= 0.15f;
+            pivotY += 0.1f;
+            pivotZ -= 0.1f;
         }
 
-        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), pivotX, pivotY, pivotZ);
-        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), pivotX, pivotY, pivotZ);
-        poseStack.rotateAround(Axis.XN.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
+        // Undo arm rotations
+        poseStack.rotateAround(Axis.XP.rotation(undoArmX), 0, 0, 0);
+        poseStack.rotateAround(Axis.YP.rotation(undoArmY), 0, 0, 0);
+        poseStack.rotateAround(Axis.ZP.rotation(undoArmZ), 0, 0, 0);
+
+//        poseStack.rotateAround(Axis.XP.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
+        poseStack.rotateAround(Axis.ZP.rotationDegrees(splatanaRotZ), pivotX, pivotY, 0);
+        poseStack.rotateAround(Axis.YP.rotationDegrees(splatanaRotY), pivotZ, 0, 0);
+
+//        if (attackTime > 0) { // Swing anim
+//            float progress = Ease.inOutQuint(attackTime);
+//            splatanaRotX = progress * 260;
+//            splatanaRotY = (float) (90f - Math.toDegrees(mainArm.zRot));
+//            splatanaRotZ = (float) (180f + Math.toDegrees(mainArm.xRot));
+//            if (swappedHands) {
+//                splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot) + Math.toDegrees(otherArm.yRot));
+//                splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot));
+//            }
+//        } else { // Return to idle anim
+//            splatanaRotX = 260f;
+//            splatanaRotY = (float) (90f - Math.toDegrees(otherArm.zRot) + Math.toDegrees(otherArm.yRot));
+//            splatanaRotZ = (float) (180f + Math.toDegrees(otherArm.xRot));
+//            pivotY = reversed ? -0.15f : -0.3f;
+//        }
+//
+//        if (reversed) {
+//            splatanaRotX *= -1;
+//            if (swappedHands) pivotY += 0.15f;
+//        }
+
+//        poseStack.rotateAround(Axis.YN.rotationDegrees(splatanaRotY), pivotX, pivotY, pivotZ);
+//        poseStack.rotateAround(Axis.ZN.rotationDegrees(splatanaRotZ), pivotX, pivotY, pivotZ);
+//        poseStack.rotateAround(Axis.XN.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
     }
 
     private static HumanoidArm swapArm(HumanoidArm arm) {
