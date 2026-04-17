@@ -16,8 +16,16 @@
       }
     ],
     "fallback": {
-      "type": "minecraft:model",
-      "model": "booyah:item/splatana_stamper_in_hand"
+      "type": "minecraft:condition",
+      "on_false": {
+        "type": "minecraft:model",
+        "model": "booyah:item/splatana_stamper_in_hand"
+      },
+      "on_true": {
+        "type": "minecraft:model",
+        "model": "booyah:item/splatana_stamper_in_hand_animated"
+      },
+      "property": "booyah:stamper"
     },
     "property": "minecraft:display_context"
   }

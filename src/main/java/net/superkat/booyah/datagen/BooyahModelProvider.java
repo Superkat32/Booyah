@@ -10,6 +10,7 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.world.item.Item;
 import net.superkat.booyah.item.BooyahItems;
+import net.superkat.booyah.item.client.SplatanaCharge;
 
 public class BooyahModelProvider extends FabricModelProvider {
     public BooyahModelProvider(FabricPackOutput output) {
@@ -28,7 +29,10 @@ public class BooyahModelProvider extends FabricModelProvider {
 
     public void generateModelWithFlatTexture(Item item, ItemModelGenerators itemModelGenerators) {
         ItemModel.Unbaked flatModel = ItemModelUtils.plainModel(itemModelGenerators.createFlatItemModel(item, ModelTemplates.FLAT_ITEM));
-        ItemModel.Unbaked inHandModel = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_in_hand"));
+        ItemModel.Unbaked inHandModelNormal = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_in_hand"));
+        ItemModel.Unbaked inHandAnimatedModel = ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item, "_in_hand_animated"));
+
+        ItemModel.Unbaked inHandModel = ItemModelUtils.conditional(new SplatanaCharge(), inHandAnimatedModel, inHandModelNormal);
         itemModelGenerators.itemModelOutput.accept(item, ItemModelGenerators.createFlatModelDispatch(flatModel, inHandModel));
     }
 
