@@ -7,7 +7,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.HumanoidArm;
 import net.superkat.booyah.item.BooyahItems;
-import net.superkat.booyah.item.SplatanaAnimations;
+import net.superkat.booyah.item.client.SplatanaAnimations;
 import net.superkat.booyah.render.data.SplatanaWeaponRenderData;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

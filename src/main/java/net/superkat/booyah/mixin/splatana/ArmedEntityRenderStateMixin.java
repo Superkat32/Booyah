@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.world.entity.LivingEntity;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
-import net.superkat.booyah.item.SplatanaAnimations;
+import net.superkat.booyah.item.client.SplatanaAnimations;
 import net.superkat.booyah.render.data.SplatanaWeaponRenderData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

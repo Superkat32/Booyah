@@ -15,10 +15,10 @@ import org.joml.Quaternionf;
 import org.jspecify.annotations.NonNull;
 
 @Environment(EnvType.CLIENT)
-public class SplatanaSwingParticle extends SingleQuadParticle {
+public class SmearParticle extends SingleQuadParticle {
     private final SpriteSet sprites;
     public boolean reversed;
-    public SplatanaSwingParticle(ClientLevel level, double x, double y, double z, SplatanaSwingParticleOptions options, SpriteSet sprites) {
+    public SmearParticle(ClientLevel level, double x, double y, double z, SmearParticleOptions options, SpriteSet sprites) {
         super(level, x, y, z, sprites.first());
         this.sprites = sprites;
         this.lifetime = 4;
@@ -87,7 +87,7 @@ public class SplatanaSwingParticle extends SingleQuadParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class Provider implements ParticleProvider<SplatanaSwingParticleOptions> {
+    public static class Provider implements ParticleProvider<SmearParticleOptions> {
         private final SpriteSet sprites;
 
         public Provider(final SpriteSet sprites) {
@@ -95,7 +95,7 @@ public class SplatanaSwingParticle extends SingleQuadParticle {
         }
 
         public Particle createParticle(
-                final SplatanaSwingParticleOptions options,
+                final SmearParticleOptions options,
                 final @NonNull ClientLevel level,
                 final double x,
                 final double y,
@@ -105,7 +105,7 @@ public class SplatanaSwingParticle extends SingleQuadParticle {
                 final double zAux,
                 final @NonNull RandomSource random
         ) {
-            return new SplatanaSwingParticle(level, x, y, z, options, this.sprites);
+            return new SmearParticle(level, x, y, z, options, this.sprites);
         }
     }
 }

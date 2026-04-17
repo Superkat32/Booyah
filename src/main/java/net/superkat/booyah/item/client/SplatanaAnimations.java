@@ -1,4 +1,4 @@
-package net.superkat.booyah.item;
+package net.superkat.booyah.item.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -13,6 +13,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.render.data.SplatanaWeaponRenderData;
 
 // This whole class is a nightmare of nonsense

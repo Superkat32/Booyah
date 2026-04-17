@@ -1,13 +1,10 @@
 package net.superkat.booyah.mixin.splatana;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
-import net.superkat.booyah.item.BooyahItems;
-import net.superkat.booyah.item.SplatanaAnimations;
-import net.superkat.booyah.item.SplatanaItem;
+import net.superkat.booyah.item.SplatanaManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -37,26 +34,29 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Unique
     public boolean booyah$reverseSplatanaSwing = false;
     @Unique
+    public boolean booyah$queuedReverseSplatanaSwing = false;
+    @Unique
     public boolean booyah$isFirstSwing = true;
 
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("TAIL"))
     public void booyah$updateSplatanaSwinging(InteractionHand hand, boolean sendToSwingingEntity, CallbackInfo ci) {
-        if (this.swinging) { // Only activate if original arm is swinging
-            this.booyah$isSplatanaSwinging = true;
-            this.booyah$splatanaSwingTime = -1; // Start at -1 for buffer?
-            if (BooyahItems.isSplatana(this.getMainHandItem())) {
-                LivingEntity self = (LivingEntity) (Object) this;
-                if (self.level() instanceof ServerLevel serverLevel) {
-                    SplatanaItem.spawnSplatanaSwingParticles(self, serverLevel);
-                }
-            }
-        }
+        SplatanaManager.onSplatanaPlayerSwing((LivingEntity) (Object) this);
+//        if (this.swinging) { // Only activate if original arm is swinging
+//            this.booyah$isSplatanaSwinging = true;
+//            this.booyah$splatanaSwingTime = -1; // Start at -1 for buffer?
+////            if (BooyahItems.isSplatana(this.getMainHandItem())) {
+////                LivingEntity self = (LivingEntity) (Object) this;
+////                if (self.level() instanceof ServerLevel serverLevel) {
+////                    SplatanaManager.spawnSplatanaSwingParticles(self, serverLevel);
+////                }
+////            }
+//        }
     }
 
     @Inject(method = "updateSwingTime", at = @At("TAIL"))
     public void booyah$updateSplatanaSwingTime(CallbackInfo ci) {
-        // Can't be bothered to access widener lol
-        SplatanaAnimations.updateSplatanaSwingTime((LivingEntity) (Object) this, this.getCurrentSwingDuration());
+        // Called on server and client - Can't be bothered to access widener lol
+        SplatanaManager.updateSplatanaPlayer((LivingEntity) (Object) this, this.getCurrentSwingDuration());
     }
 
     @Override
@@ -103,6 +103,16 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Override
     public void booyah$setReverseSplatanaSwing(boolean reversed) {
         this.booyah$reverseSplatanaSwing = reversed;
+    }
+
+    @Override
+    public boolean booyah$queuedReverseUpdate() {
+        return this.booyah$queuedReverseSplatanaSwing;
+    }
+
+    @Override
+    public void booyah$setQueuedReverseUpdate(boolean reversed) {
+        this.booyah$queuedReverseSplatanaSwing = reversed;
     }
 
     @Override

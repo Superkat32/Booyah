@@ -12,23 +12,23 @@ import net.minecraft.util.ExtraCodecs;
 import net.superkat.booyah.particles.BooyahParticles;
 import org.jspecify.annotations.NonNull;
 
-public record SplatanaSwingParticleOptions(int color, boolean reversed) implements ParticleOptions {
+public record SmearParticleOptions(int color, boolean reversed) implements ParticleOptions {
 
-    public static final MapCodec<SplatanaSwingParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
+    public static final MapCodec<SmearParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     ExtraCodecs.RGB_COLOR_CODEC.fieldOf("color").forGetter(options -> options.color),
                     Codec.BOOL.fieldOf("reversed").forGetter(options -> options.reversed)
-            ).apply(instance, SplatanaSwingParticleOptions::new)
+            ).apply(instance, SmearParticleOptions::new)
     );
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, SplatanaSwingParticleOptions> STREAM_CODEC = StreamCodec.composite(
+    public static final StreamCodec<RegistryFriendlyByteBuf, SmearParticleOptions> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, options -> options.color,
             ByteBufCodecs.BOOL, options -> options.reversed,
-            SplatanaSwingParticleOptions::new
+            SmearParticleOptions::new
     );
 
     @Override
     public @NonNull ParticleType<?> getType() {
-        return BooyahParticles.SPLATANA_SWING;
+        return BooyahParticles.SMEAR;
     }
 }

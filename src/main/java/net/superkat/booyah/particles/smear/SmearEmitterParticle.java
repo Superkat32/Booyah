@@ -40,7 +40,7 @@ public class SmearEmitterParticle extends NoRenderParticle {
                 float offsetX = this.random.nextFloat() * 0.4f;
                 float offsetY = this.random.nextFloat() * 0.2f;
                 float offsetZ = this.random.nextFloat() * 0.4f;
-                this.level.addParticle(new SplatanaSwingParticleOptions(this.color, this.reversed),
+                this.level.addParticle(new SmearParticleOptions(this.color, this.reversed),
                         this.x + offsetX, this.y + offsetY, this.z + offsetZ, 0, 0, 0);
             }
         }
