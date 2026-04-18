@@ -20,6 +20,7 @@
     "splatana.ArmedEntityRenderStateMixin",
     "splatana.HumanoidModelMixin",
     "splatana.ItemInHandLayerMixin",
+    "splatana.MinecraftMixin",
     "splatana.PlayerModelMixin"
   ]
 }

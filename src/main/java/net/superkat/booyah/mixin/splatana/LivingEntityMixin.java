@@ -41,16 +41,6 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("TAIL"))
     public void booyah$updateSplatanaSwinging(InteractionHand hand, boolean sendToSwingingEntity, CallbackInfo ci) {
         SplatanaManager.onSplatanaPlayerSwing((LivingEntity) (Object) this);
-//        if (this.swinging) { // Only activate if original arm is swinging
-//            this.booyah$isSplatanaSwinging = true;
-//            this.booyah$splatanaSwingTime = -1; // Start at -1 for buffer?
-////            if (BooyahItems.isSplatana(this.getMainHandItem())) {
-////                LivingEntity self = (LivingEntity) (Object) this;
-////                if (self.level() instanceof ServerLevel serverLevel) {
-////                    SplatanaManager.spawnSplatanaSwingParticles(self, serverLevel);
-////                }
-////            }
-//        }
     }
 
     @Inject(method = "updateSwingTime", at = @At("TAIL"))

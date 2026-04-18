@@ -10,9 +10,7 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.util.Ease;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.render.data.SplatanaWeaponRenderData;
 
@@ -21,40 +19,9 @@ public class SplatanaAnimations {
 
     public static final RenderStateDataKey<SplatanaWeaponRenderData> SPLATANA_RENDER_DATA = RenderStateDataKey.create(() -> "Splatana swing & charge animation render data");
 
-    public static void updateSplatanaSwingTime(LivingEntity player, int currentSwingDuration) {
-        SplatanaPlayer splatanaPlayer = (SplatanaPlayer) player;
-        if (currentSwingDuration > 0) {
-            currentSwingDuration += 10;
-        }
-
-        int swingTime = splatanaPlayer.booyah$getSplatanaSwingTime();
-
-        if (splatanaPlayer.booyah$isSplatanaSwinging()) {
-            if (swingTime == 0) {
-                if (splatanaPlayer.booyah$firstSwing()) {
-                    splatanaPlayer.booyah$setFirstSwing(false);
-                } else {
-                    splatanaPlayer.booyah$setReverseSplatanaSwing(!splatanaPlayer.booyah$reverseSplatanaSwing());
-                }
-            }
-            swingTime++;
-            if (swingTime >= currentSwingDuration) {
-                swingTime = 0;
-                splatanaPlayer.booyah$setIsSplatanaSwinging(false);
-            }
-        } else {
-            splatanaPlayer.booyah$setReverseSplatanaSwing(false);
-            splatanaPlayer.booyah$setFirstSwing(true);
-            swingTime = 0;
-        }
-
-        splatanaPlayer.booyah$setSplatanaSwingTime(swingTime);
-        splatanaPlayer.booyah$setSplatanaAttackAnim((float) swingTime / currentSwingDuration);
-    }
-
     public static <T extends ArmedEntityRenderState> HumanoidArm getArmToTranslateSplatanaTo(T state, HumanoidArm original) {
         SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
-        if (!BooyahItems.isSplatana(state.rightHandItemStack) || splatanaData == null) return original;
+        if (!BooyahItems.isSplatana(state.rightHandItemStack) || splatanaData == null || splatanaData.swingAnim() == 0) return original;
 
         boolean swap = splatanaData.reverseSwing();
         if (state.attackTime > 0.5 || (state.attackTime <= 0 && splatanaData.swingAnim() >= 0.35)) {

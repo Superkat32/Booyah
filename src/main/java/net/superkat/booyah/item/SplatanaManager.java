@@ -69,11 +69,7 @@ public class SplatanaManager {
         double dx = -Mth.sin(player.getYRot() * (float) (Math.PI / 180.0)) * 0.8f;
         double dz = Mth.cos(player.getYRot() * (float) (Math.PI / 180.0)) * 0.8f;
         int color = ARGB.colorFromFloat(1f, 0.71f, 0.37f, 0.92f);
-//        boolean reversed = (player instanceof SplatanaPlayer splatanaPlayer && !splatanaPlayer.booyah$firstSwing() && !splatanaPlayer.booyah$reverseSplatanaSwing());
         boolean reversed = splatanaPlayer.booyah$queuedReverseUpdate();
         level.addParticle(new SmearEmitterParticleOptions(1, 1, 16, color, reversed), player.getX() + dx, player.getY(0.4), player.getZ() + dz, dx, 0, dz);
-
-//        serverLevel.sendParticles(new SplatanaSwingParticleOptions(color, reversed), player.getX() + dx, player.getY(0.5), player.getZ() + dz, 0, dx, 0, dz, 0);
-//        serverLevel.sendParticles(new SmearEmitterParticleOptions(1, 1, 16, color, reversed), player.getX() + dx, player.getY(0.4), player.getZ() + dz, 0, dx, 0, dz, 0);
     }
 }
