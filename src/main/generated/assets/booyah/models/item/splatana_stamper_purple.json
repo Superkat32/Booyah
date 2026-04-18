@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "booyah:item/splatana_stamper"
+    "layer0": "booyah:item/splatana_stamper_purple"
   }
 }

@@ -4,11 +4,12 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.item.color.SplatanaColorSet;
+import net.superkat.booyah.item.color.SplatanaColors;
 import net.superkat.booyah.network.packets.S2CSplatanaSwingPacket;
 import net.superkat.booyah.particles.smear.SmearEmitterParticleOptions;
 
@@ -68,8 +69,11 @@ public class SplatanaManager {
         if (!player.level().isClientSide() || !(player instanceof SplatanaPlayer splatanaPlayer)) return;
         double dx = -Mth.sin(player.getYRot() * (float) (Math.PI / 180.0)) * 0.8f;
         double dz = Mth.cos(player.getYRot() * (float) (Math.PI / 180.0)) * 0.8f;
-        int color = ARGB.colorFromFloat(1f, 0.71f, 0.37f, 0.92f);
+
+        SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
+//        int color = colorSet.getRandomColor(player.getRandom(), 0.5f);
+//        int color = ARGB.colorFromFloat(1f, 0.71f, 0.37f, 0.92f);
         boolean reversed = splatanaPlayer.booyah$queuedReverseUpdate();
-        level.addParticle(new SmearEmitterParticleOptions(1, 1, 16, color, reversed), player.getX() + dx, player.getY(0.4), player.getZ() + dz, dx, 0, dz);
+        level.addParticle(new SmearEmitterParticleOptions(1, 1, 16, colorSet, reversed), player.getX() + dx, player.getY(0.4), player.getZ() + dz, dx, 0, dz);
     }
 }

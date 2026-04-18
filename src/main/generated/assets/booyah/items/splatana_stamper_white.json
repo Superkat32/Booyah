@@ -5,7 +5,7 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "booyah:item/splatana_stamper"
+          "model": "booyah:item/splatana_stamper_white"
         },
         "when": [
           "gui",
@@ -19,11 +19,11 @@
       "type": "minecraft:condition",
       "on_false": {
         "type": "minecraft:model",
-        "model": "booyah:item/splatana_stamper_in_hand"
+        "model": "booyah:item/splatana_stamper_white_hand"
       },
       "on_true": {
         "type": "minecraft:model",
-        "model": "booyah:item/splatana_stamper_in_hand_animated"
+        "model": "booyah:item/splatana_stamper_white_hand_animated"
       },
       "property": "booyah:stamper"
     },

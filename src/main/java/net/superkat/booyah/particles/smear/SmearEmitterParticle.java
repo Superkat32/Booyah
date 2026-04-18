@@ -5,13 +5,14 @@ import net.minecraft.client.particle.NoRenderParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.util.RandomSource;
+import net.superkat.booyah.item.color.SplatanaColorSet;
 import org.jspecify.annotations.NonNull;
 
 public class SmearEmitterParticle extends NoRenderParticle {
     public int delay;
     public int count;
     public int countPerTick;
-    public int color;
+    public SplatanaColorSet colorSet;
     public boolean reversed;
     public SmearEmitterParticle(ClientLevel level, double x, double y, double z, SmearEmitterParticleOptions options) {
         super(level, x, y, z);
@@ -24,7 +25,7 @@ public class SmearEmitterParticle extends NoRenderParticle {
         this.lifetime = time + this.delay;
         this.count = options.count();
         this.countPerTick = time <= 1 ? this.count : this.count / time;
-        this.color = options.color();
+        this.colorSet = options.colorSet();
         this.reversed = options.reversed();
     }
 
@@ -40,7 +41,8 @@ public class SmearEmitterParticle extends NoRenderParticle {
                 float offsetX = this.random.nextFloat() * 0.4f;
                 float offsetY = this.random.nextFloat() * 0.2f;
                 float offsetZ = this.random.nextFloat() * 0.4f;
-                this.level.addParticle(new SmearParticleOptions(this.color, this.reversed),
+                int color = colorSet.getRandomColor(this.random, 0.5f);
+                this.level.addParticle(new SmearParticleOptions(color, this.reversed),
                         this.x + offsetX, this.y + offsetY, this.z + offsetZ, 0, 0, 0);
             }
         }

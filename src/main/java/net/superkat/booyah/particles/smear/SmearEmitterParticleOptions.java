@@ -8,17 +8,18 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.particles.BooyahParticles;
 import org.jspecify.annotations.NonNull;
 
-public record SmearEmitterParticleOptions(int time, int delay, int count, int color, boolean reversed) implements ParticleOptions {
+public record SmearEmitterParticleOptions(int time, int delay, int count, SplatanaColorSet colorSet, boolean reversed) implements ParticleOptions {
 
     public static final MapCodec<SmearEmitterParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     Codec.INT.fieldOf("time").forGetter(options -> options.time),
                     Codec.INT.fieldOf("delay").forGetter(options -> options.delay),
                     Codec.INT.fieldOf("count").forGetter(options -> options.count),
-                    Codec.INT.fieldOf("color").forGetter(options -> options.color),
+                    SplatanaColorSet.CODEC.fieldOf("color_set").forGetter(options -> options.colorSet),
                     Codec.BOOL.fieldOf("reversed").forGetter(options -> options.reversed)
             ).apply(instance, SmearEmitterParticleOptions::new)
     );
@@ -27,7 +28,7 @@ public record SmearEmitterParticleOptions(int time, int delay, int count, int co
             ByteBufCodecs.INT, SmearEmitterParticleOptions::time,
             ByteBufCodecs.INT, SmearEmitterParticleOptions::delay,
             ByteBufCodecs.INT, SmearEmitterParticleOptions::count,
-            ByteBufCodecs.INT, SmearEmitterParticleOptions::color,
+            SplatanaColorSet.STREAM_CODEC, SmearEmitterParticleOptions::colorSet,
             ByteBufCodecs.BOOL, SmearEmitterParticleOptions::reversed,
             SmearEmitterParticleOptions::new
     );

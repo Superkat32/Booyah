@@ -23,7 +23,7 @@ public abstract class ItemInHandLayerMixin<S extends ArmedEntityRenderState, M e
 
     @Inject(method = "submitArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/item/ItemStackRenderState;submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;III)V"))
     public void booyah$animateSplatanaItem(S state, ItemStackRenderState item, ItemStack itemStack, HumanoidArm arm, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, CallbackInfo ci) {
-        if (itemStack.is(BooyahItems.SPLATANA_STAMPER)) {
+        if (BooyahItems.isSplatana(itemStack)) {
             if (this.getParentModel() instanceof HumanoidModel<? extends HumanoidRenderState> model) {
                 SplatanaAnimations.thirdPersonItemSwing(model, state, poseStack);
             }
