@@ -12,18 +12,22 @@ import net.minecraft.util.ExtraCodecs;
 import net.superkat.booyah.particles.BooyahParticles;
 import org.jspecify.annotations.NonNull;
 
-public record SmearParticleOptions(int color, boolean reversed) implements ParticleOptions {
+public record SmearParticleOptions(int color, boolean reversed, float rotX, float rotY) implements ParticleOptions {
 
     public static final MapCodec<SmearParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     ExtraCodecs.RGB_COLOR_CODEC.fieldOf("color").forGetter(options -> options.color),
-                    Codec.BOOL.fieldOf("reversed").forGetter(options -> options.reversed)
+                    Codec.BOOL.fieldOf("reversed").forGetter(options -> options.reversed),
+                    Codec.FLOAT.fieldOf("rotx").forGetter(options -> options.rotX),
+                    Codec.FLOAT.fieldOf("roty").forGetter(options -> options.rotY)
             ).apply(instance, SmearParticleOptions::new)
     );
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SmearParticleOptions> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, options -> options.color,
             ByteBufCodecs.BOOL, options -> options.reversed,
+            ByteBufCodecs.FLOAT, options -> options.rotX,
+            ByteBufCodecs.FLOAT, options -> options.rotY,
             SmearParticleOptions::new
     );
 

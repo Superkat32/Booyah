@@ -12,7 +12,7 @@ import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.particles.BooyahParticles;
 import org.jspecify.annotations.NonNull;
 
-public record SmearEmitterParticleOptions(int time, int delay, int count, SplatanaColorSet colorSet, boolean reversed) implements ParticleOptions {
+public record SmearEmitterParticleOptions(int time, int delay, int count, SplatanaColorSet colorSet, boolean reversed, float rotX, float rotY) implements ParticleOptions {
 
     public static final MapCodec<SmearEmitterParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
@@ -20,7 +20,9 @@ public record SmearEmitterParticleOptions(int time, int delay, int count, Splata
                     Codec.INT.fieldOf("delay").forGetter(options -> options.delay),
                     Codec.INT.fieldOf("count").forGetter(options -> options.count),
                     SplatanaColorSet.CODEC.fieldOf("color_set").forGetter(options -> options.colorSet),
-                    Codec.BOOL.fieldOf("reversed").forGetter(options -> options.reversed)
+                    Codec.BOOL.fieldOf("reversed").forGetter(options -> options.reversed),
+                    Codec.FLOAT.fieldOf("rotx").forGetter(options -> options.rotX),
+                    Codec.FLOAT.fieldOf("rotz").forGetter(options -> options.rotY)
             ).apply(instance, SmearEmitterParticleOptions::new)
     );
 
@@ -30,6 +32,8 @@ public record SmearEmitterParticleOptions(int time, int delay, int count, Splata
             ByteBufCodecs.INT, SmearEmitterParticleOptions::count,
             SplatanaColorSet.STREAM_CODEC, SmearEmitterParticleOptions::colorSet,
             ByteBufCodecs.BOOL, SmearEmitterParticleOptions::reversed,
+            ByteBufCodecs.FLOAT, SmearEmitterParticleOptions::rotX,
+            ByteBufCodecs.FLOAT, SmearEmitterParticleOptions::rotY,
             SmearEmitterParticleOptions::new
     );
 

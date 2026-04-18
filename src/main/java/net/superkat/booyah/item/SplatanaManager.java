@@ -67,13 +67,12 @@ public class SplatanaManager {
 
     public static void spawnSplatanaSwingParticles(Level level, LivingEntity player) {
         if (!player.level().isClientSide() || !(player instanceof SplatanaPlayer splatanaPlayer)) return;
-        double dx = -Mth.sin(player.getYRot() * (float) (Math.PI / 180.0)) * 0.8f;
-        double dz = Mth.cos(player.getYRot() * (float) (Math.PI / 180.0)) * 0.8f;
+        float distanceFromPlayer = 0.75f;
+        double dx = -Mth.sin(player.getYRot() * (float) (Math.PI / 180.0)) * distanceFromPlayer;
+        double dz = Mth.cos(player.getYRot() * (float) (Math.PI / 180.0)) * distanceFromPlayer;
 
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
-//        int color = colorSet.getRandomColor(player.getRandom(), 0.5f);
-//        int color = ARGB.colorFromFloat(1f, 0.71f, 0.37f, 0.92f);
         boolean reversed = splatanaPlayer.booyah$queuedReverseUpdate();
-        level.addParticle(new SmearEmitterParticleOptions(1, 1, 16, colorSet, reversed), player.getX() + dx, player.getY(0.4), player.getZ() + dz, dx, 0, dz);
+        level.addParticle(new SmearEmitterParticleOptions(1, 2, 16, colorSet, reversed, 0, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
     }
 }

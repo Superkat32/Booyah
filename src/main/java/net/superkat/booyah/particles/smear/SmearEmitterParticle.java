@@ -14,6 +14,8 @@ public class SmearEmitterParticle extends NoRenderParticle {
     public int countPerTick;
     public SplatanaColorSet colorSet;
     public boolean reversed;
+    public float rotX;
+    public float rotY;
     public SmearEmitterParticle(ClientLevel level, double x, double y, double z, SmearEmitterParticleOptions options) {
         super(level, x, y, z);
         this.xd = 0;
@@ -27,6 +29,8 @@ public class SmearEmitterParticle extends NoRenderParticle {
         this.countPerTick = time <= 1 ? this.count : this.count / time;
         this.colorSet = options.colorSet();
         this.reversed = options.reversed();
+        this.rotX = options.rotX();
+        this.rotY = options.rotY();
     }
 
     @Override
@@ -38,11 +42,13 @@ public class SmearEmitterParticle extends NoRenderParticle {
         if (this.age >= this.delay) {
             for (int i = 0; i < this.countPerTick; i++) {
                 this.count--;
-                float offsetX = this.random.nextFloat() * 0.4f;
-                float offsetY = this.random.nextFloat() * 0.2f;
-                float offsetZ = this.random.nextFloat() * 0.4f;
+                float spreadXZ = 0.3f;
+                float spreadY = 0.2f;
+                float offsetX = this.random.nextFloat() * spreadXZ;
+                float offsetY = this.random.nextFloat() * spreadY;
+                float offsetZ = this.random.nextFloat() * spreadXZ;
                 int color = colorSet.getRandomColor(this.random, 0.5f);
-                this.level.addParticle(new SmearParticleOptions(color, this.reversed),
+                this.level.addParticle(new SmearParticleOptions(color, this.reversed, this.rotX, this.rotY),
                         this.x + offsetX, this.y + offsetY, this.z + offsetZ, 0, 0, 0);
             }
         }
