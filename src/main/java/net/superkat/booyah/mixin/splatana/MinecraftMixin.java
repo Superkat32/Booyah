@@ -35,21 +35,6 @@ public class MinecraftMixin {
     @Nullable
     public MultiPlayerGameMode gameMode;
 
-//    @Inject(method = "startAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/HitResult;getType()Lnet/minecraft/world/phys/HitResult$Type;"), cancellable = true)
-//    public void booyah$preventSplatanaFromHittingBlock(CallbackInfoReturnable<Boolean> cir) {
-//        if (this.hitResult.getType() == HitResult.Type.BLOCK && BooyahItems.isSplatana(this.player.getMainHandItem())) {
-//            // Act as if MISS was the case instead of BLOCK
-//            if (this.gameMode.hasMissTime()) {
-//                this.missTime = 10;
-//            }
-//
-//            this.player.resetAttackStrengthTicker();
-//            this.player.swing(InteractionHand.MAIN_HAND);
-//            cir.setReturnValue(true);
-//            cir.cancel();
-//        }
-//    }
-
     @Shadow
     @Nullable
     public ClientLevel level;
