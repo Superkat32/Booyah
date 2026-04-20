@@ -2,7 +2,6 @@ package net.superkat.booyah.mixin.splatana;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.item.SplatanaManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,13 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Shadow
-    public boolean swinging;
-
-    @Shadow
     protected abstract int getCurrentSwingDuration();
-
-    @Shadow
-    public abstract ItemStack getMainHandItem();
 
     @Unique
     public boolean booyah$isSplatanaSwinging = false;
@@ -36,7 +29,19 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Unique
     public boolean booyah$queuedReverseSplatanaSwing = false;
     @Unique
-    public boolean booyah$isFirstSwing = true;
+    public int booyah$splatanaSlashTime = 0;
+    @Unique
+    public int booyah$maxSplatanaSlashTime = 0;
+    @Unique
+    public float booyah$splatanaSlashAnim = 0f;
+    @Unique
+    public float booyah$prevSplatanaSlashAnim = 0f;
+    @Unique
+    public int booyah$dashTime = 0;
+    @Unique
+    public float booyah$dashAnim = 0f;
+    @Unique
+    public float booyah$prevDashAnim =0f;
 
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("TAIL"))
     public void booyah$updateSplatanaSwinging(InteractionHand hand, boolean sendToSwingingEntity, CallbackInfo ci) {
@@ -106,12 +111,64 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     }
 
     @Override
-    public boolean booyah$firstSwing() {
-        return this.booyah$isFirstSwing;
+    public int booyah$splatanaSlashTime() {
+        return this.booyah$splatanaSlashTime;
     }
 
     @Override
-    public void booyah$setFirstSwing(boolean isFirstSwing) {
-        this.booyah$isFirstSwing = isFirstSwing;
+    public void booyah$setSplatanaSlashTime(int slashTime) {
+        this.booyah$splatanaSlashTime = slashTime;
+    }
+
+    @Override
+    public int booyah$maxSplatanaSlashTime() {
+        return this.booyah$maxSplatanaSlashTime;
+    }
+
+    @Override
+    public void booyah$setMaxSplatanaSlashTime(int maxSlashTime) {
+        this.booyah$maxSplatanaSlashTime = maxSlashTime;
+    }
+
+    @Override
+    public float booyah$splatanaSlashAnim() {
+        return this.booyah$splatanaSlashAnim;
+    }
+
+    @Override
+    public float booyah$prevSplatanaSlashAnim() {
+        return this.booyah$prevSplatanaSlashAnim;
+    }
+
+    @Override
+    public void booyah$setSplatanaSlashAnim(float anim) {
+        this.booyah$prevSplatanaSlashAnim = this.booyah$splatanaSlashAnim;
+        this.booyah$splatanaSlashAnim = anim;
+    }
+
+    @Override
+    public int booyah$dashTime() {
+        return this.booyah$dashTime;
+    }
+
+    @Override
+    public void booyah$setDashTime(int dashTime) {
+        this.booyah$dashTime = dashTime;
+    }
+
+    @Override
+    public float booyah$dashAnim() {
+        return this.booyah$dashAnim;
+    }
+
+    @Override
+    public float booyah$prevDashAnim() {
+        return this.booyah$prevDashAnim;
+    }
+
+    @Override
+    public void booyah$setDashAnim(float anim) {
+        this.booyah$prevDashAnim = this.booyah$dashAnim;
+        this.booyah$dashAnim = anim;
     }
 }

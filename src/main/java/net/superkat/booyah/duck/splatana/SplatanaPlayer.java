@@ -19,9 +19,6 @@ public interface SplatanaPlayer {
         return this.booyah$prevSplatanaAttackAnim() + diff * partialTicks;
     }
 
-    boolean booyah$firstSwing();
-    void booyah$setFirstSwing(boolean isFirstSwing);
-
     boolean booyah$reverseSplatanaSwing();
     void booyah$setReverseSplatanaSwing(boolean reversed);
 
@@ -32,5 +29,34 @@ public interface SplatanaPlayer {
     // This took like 40 minutes to get a half decent solution while accounting for networking and all
     boolean booyah$queuedReverseUpdate();
     void booyah$setQueuedReverseUpdate(boolean reversed);
+
+    int booyah$splatanaSlashTime();
+    void booyah$setSplatanaSlashTime(int slashTime);
+
+    int booyah$maxSplatanaSlashTime();
+    void booyah$setMaxSplatanaSlashTime(int maxSlashTime);
+
+    float booyah$splatanaSlashAnim();
+    float booyah$prevSplatanaSlashAnim();
+    void booyah$setSplatanaSlashAnim(float anim);
+    default float booyah$getSplatanaSlashAnim(float partialTicks) {
+        float diff = this.booyah$splatanaSlashAnim() - this.booyah$prevSplatanaSlashAnim();
+        if (diff < 0) diff++;
+
+        return this.booyah$prevSplatanaSlashAnim() + diff * partialTicks;
+    }
+
+    int booyah$dashTime();
+    void booyah$setDashTime(int dashTime);
+
+    float booyah$dashAnim();
+    float booyah$prevDashAnim();
+    void booyah$setDashAnim(float anim);
+    default float booyah$getDashAnim(float partialTicks) {
+        float diff = this.booyah$dashAnim() - this.booyah$prevDashAnim();
+        if (diff < 0) diff++;
+
+        return this.booyah$prevDashAnim() + diff * partialTicks;
+    }
 
 }

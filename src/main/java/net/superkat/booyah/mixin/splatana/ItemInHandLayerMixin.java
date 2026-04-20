@@ -26,6 +26,7 @@ public abstract class ItemInHandLayerMixin<S extends ArmedEntityRenderState, M e
         if (BooyahItems.isSplatana(itemStack)) {
             if (this.getParentModel() instanceof HumanoidModel<? extends HumanoidRenderState> model) {
                 SplatanaAnimations.thirdPersonItemSwing(model, state, poseStack);
+                SplatanaAnimations.thirdPersonItemCharge(model, state, poseStack);
             }
         }
     }

@@ -15,7 +15,7 @@ public record SplatanaCharge() implements ConditionalItemModelProperty {
 
     @Override
     public boolean get(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity owner, int seed, ItemDisplayContext displayContext) {
-        if (owner instanceof SplatanaPlayer splatanaPlayer && splatanaPlayer.booyah$isSplatanaSwinging()) {
+        if (owner instanceof SplatanaPlayer splatanaPlayer && (splatanaPlayer.booyah$isSplatanaSwinging() || owner.isUsingItem())) {
             return owner.getItemHeldByArm(owner.getMainArm()) == itemStack;
         }
         return false;

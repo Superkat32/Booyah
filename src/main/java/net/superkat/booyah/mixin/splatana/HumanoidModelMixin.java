@@ -32,12 +32,28 @@ public abstract class HumanoidModelMixin<T extends HumanoidRenderState> {
     public ModelPart head;
 
     @Shadow
-    public abstract ModelPart getArm(HumanoidArm arm);
+    @Final
+    public ModelPart body;
+
+    @Shadow
+    @Final
+    public ModelPart leftLeg;
+
+    @Shadow
+    @Final
+    public ModelPart rightLeg;
 
     @Inject(method = "poseRightArm", at = @At("HEAD"), cancellable = true)
-    public void booyah$poseArmWithSplatana(T state, CallbackInfo ci) {
+    public void booyah$poseRightArmWithSplatana(T state, CallbackInfo ci) {
         if (BooyahItems.isSplatana(state.rightHandItemStack)) {
-            SplatanaAnimations.thirdPersonHold(this.rightArm, this.leftArm, this.head, true, state.getUseItemStackForArm(HumanoidArm.RIGHT), state);
+            SplatanaAnimations.thirdPersonHold(this.rightArm, this.leftArm, this.body, this.head, this.rightLeg, this.leftLeg, true, state.getUseItemStackForArm(HumanoidArm.RIGHT), state);
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "poseLeftArm", at = @At("HEAD"), cancellable = true)
+    public void booyah$cancelPoseLeftArmWithSplatana(T state, CallbackInfo ci) {
+        if (BooyahItems.isSplatana(state.rightHandItemStack) && state.ticksUsingItem > 0) {
             ci.cancel();
         }
     }

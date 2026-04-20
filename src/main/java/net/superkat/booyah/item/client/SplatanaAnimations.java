@@ -21,10 +21,10 @@ public class SplatanaAnimations {
 
     public static <T extends ArmedEntityRenderState> HumanoidArm getArmToTranslateSplatanaTo(T state, HumanoidArm original) {
         SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
-        if (!BooyahItems.isSplatana(state.rightHandItemStack) || splatanaData == null || splatanaData.swingAnim() == 0) return original;
+        if (!BooyahItems.isSplatana(state.rightHandItemStack) || splatanaData == null || (splatanaData.swingAnim() == 0 && splatanaData.slashAnim() == 0)) return original;
 
         boolean swap = splatanaData.reverseSwing();
-        if (state.attackTime > 0.5 || (state.attackTime <= 0 && splatanaData.swingAnim() >= 0.35)) {
+        if (state.attackTime > 0.5 || (state.attackTime <= 0 && splatanaData.swingAnim() >= 0.35) || splatanaData.slashAnim() > 0) {
             swap = !swap;
         }
 
@@ -34,12 +34,14 @@ public class SplatanaAnimations {
         return original;
     }
 
-    // Arm animation for holding the Splatana, but not actively using it (e.g. swinging or charging)
+    // Arm animation for holding the Splatana, but not actively using it (e.g. swinging, charging, or slashing)
     public static <T extends HumanoidRenderState> void thirdPersonHold(
-            ModelPart rightArm, ModelPart leftArm, ModelPart head, boolean holdingInRightArm, ItemStack item, T state
+            ModelPart rightArm, ModelPart leftArm, ModelPart body, ModelPart head, ModelPart rightLeg, ModelPart leftLeg,
+            boolean holdingInRightArm, ItemStack item, T state
     ) {
-        // use >= 0 because swingTime gets set to -1 on swing because that's how Mojang does it ¯\_(ツ)_/¯
-        if (state.getData(SPLATANA_RENDER_DATA) != null && state.getData(SPLATANA_RENDER_DATA).swingAnim() > 0) return;
+        SplatanaWeaponRenderData renderData = state.getData(SPLATANA_RENDER_DATA);
+        // use > 0 because swingTime gets set to -1 on swing because that's how Mojang does it ¯\_(ツ)_/¯
+        if (renderData != null && renderData.swingAnim() > 0) return;
         ModelPart holdingArm = holdingInRightArm ? rightArm : leftArm;
         ModelPart otherArm = holdingInRightArm ? leftArm : rightArm;
 
@@ -47,17 +49,58 @@ public class SplatanaAnimations {
         float walkingExtra = state.walkAnimationSpeed * 35 + Mth.cos(state.walkAnimationPos * 0.6662F) * 5;
 
         if (state.attackTime > 0) return;
+        if (state.ticksUsingItem > 0) { // Charging
+            holdingArm.xRot = (float) Math.toRadians(-35);
+            holdingArm.yRot = (float) Math.toRadians(-15);
+            holdingArm.zRot = (float) Math.toRadians(10);
+            holdingArm.x += 0.5f;
+            holdingArm.y += 1.5f;
+            holdingArm.z += 2;
 
-        // Horizontal rotation
-        holdingArm.yRot = (holdingInRightArm ? -0.6F : 0.6F) + head.yRot;
-        otherArm.yRot = (holdingInRightArm ? 0.6F : -0.6F) + head.yRot;
+            otherArm.xRot = (float) Math.toRadians(-55);
+            otherArm.yRot = (float) Math.toRadians(65);
+            otherArm.zRot = (float) Math.toRadians(-15);
+            otherArm.x -= 2;
+            otherArm.y += 2f;
+            otherArm.z -= 2;
 
-        // Vertical rotation
-        holdingArm.xRot = (float) (head.xRot - Math.toRadians(45 + walkingExtra));
-        otherArm.xRot = (float) (head.xRot - Math.toRadians(55 + walkingExtra));
+            body.xRot = radians(20);
+            body.y += 1.5f;
+            head.y += 1.5f;
+//            rightLeg.x += 1;
+            rightLeg.z += 4f;
+//            leftLeg.x += 1;
+            leftLeg.z += 4f;
+        } else if (renderData.slashAnim() > 0) { // Slashing
+            holdingArm.xRot = radians(-135);
+            holdingArm.yRot = radians(-55);
+            holdingArm.zRot = radians(15);
+            holdingArm.x += 2;
+//            holdingArm.y -= 1;
+            holdingArm.z -= 3;
+//            holdingArm.zRot = radians(15);
 
-        // The other horizontal rotation I suppose
-        holdingArm.zRot = (float) Math.toRadians(15);
+            otherArm.xRot = radians(-125);
+            otherArm.yRot = radians(-10);
+//            otherArm.zRot = radians(25);
+//            otherArm.zRot = radians(5);
+            otherArm.y -= 1;
+//            otherArm.x -= 1;
+
+            body.yRot = radians(-20);
+        } else { // Holding
+            // Horizontal rotation
+            holdingArm.yRot = (holdingInRightArm ? -0.6F : 0.6F) + head.yRot;
+            otherArm.yRot = (holdingInRightArm ? 0.6F : -0.6F) + head.yRot;
+
+            // Vertical rotation
+            holdingArm.xRot = (float) (head.xRot - Math.toRadians(45 + walkingExtra));
+            otherArm.xRot = (float) (head.xRot - Math.toRadians(55 + walkingExtra));
+
+            // The other horizontal rotation I suppose
+            holdingArm.zRot = (float) Math.toRadians(15);
+        }
+
     }
 
     // Arm animation for swinging the Splatana horizontally (left-clicked)
@@ -195,6 +238,46 @@ public class SplatanaAnimations {
 //        poseStack.rotateAround(Axis.XP.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
         poseStack.rotateAround(Axis.ZP.rotationDegrees(splatanaRotZ), pivotX, pivotY, 0);
         poseStack.rotateAround(Axis.YP.rotationDegrees(splatanaRotY), pivotZ, 0, 0);
+    }
+
+    // Item model animations for charging (holding down right click) the Splatana - Only affects item model!
+    public static <T extends HumanoidRenderState, S extends ArmedEntityRenderState> void thirdPersonItemCharge(HumanoidModel<T> model, S state, PoseStack poseStack) {
+        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
+        if (splatanaData == null || (state.ticksUsingItem(HumanoidArm.RIGHT) <= 0 && splatanaData.slashAnim() <= 0)) return;
+        HumanoidArm arm = state.attackArm;
+        ModelPart mainArm = model.getArm(arm);
+        ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
+
+        float splatanaRotX = 50;
+        float splatanaRotY = -10;
+        float splatanaRotZ = -180;
+        float pivotX = 0;
+        float pivotY = -0.1f;
+        float pivotZ = 0.1f;
+        float transX = 0;
+        float transY = 0;
+        float transZ = 0;
+        if (splatanaData.slashAnim() > 0) {
+            splatanaRotX = -75;
+            splatanaRotY = -5;
+            splatanaRotZ = -175;
+            transX = 0.125f;
+            transY = 0.1f;
+            transZ = -0.025f;
+        }
+//        float undoArmX = mainArm.xRot;
+//        float undoArmY = mainArm.zRot;
+//        float undoArmZ = mainArm.yRot;
+
+        // Undo arm rotations
+//        poseStack.rotateAround(Axis.XP.rotation(undoArmX), pivotX, pivotY, 0);
+//        poseStack.rotateAround(Axis.YP.rotation(undoArmY), pivotX, pivotY, 0);
+//        poseStack.rotateAround(Axis.ZP.rotation(undoArmZ), pivotX, pivotY, 0);
+
+        poseStack.rotateAround(Axis.ZP.rotationDegrees(splatanaRotZ), pivotX, pivotY, pivotZ);
+        poseStack.rotateAround(Axis.YP.rotationDegrees(splatanaRotY), pivotX, pivotY, pivotZ);
+        poseStack.rotateAround(Axis.XP.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
+        poseStack.translate(transX, transY, transZ);
     }
 
     private static HumanoidArm swapArm(HumanoidArm arm) {

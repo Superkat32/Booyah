@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.Tool;
+import net.minecraft.world.item.component.UseEffects;
 import net.minecraft.world.item.component.Weapon;
 import net.superkat.booyah.Booyah;
 import net.superkat.booyah.item.color.SplatanaColorSet;
@@ -59,6 +60,7 @@ public class BooyahItems {
                         .component(DataComponents.WEAPON, new Weapon(1))
                         .component(DataComponents.MINIMUM_ATTACK_CHARGE, 1f)
                         .component(DataComponents.TOOL, new Tool(List.of(), 1f, 2, false))
+                        .component(DataComponents.USE_EFFECTS, new UseEffects(true, true, 0.25f))
                         .component(SPLATANA_COMPONENT, splatanaComponent)
                         .stacksTo(1)
                 );

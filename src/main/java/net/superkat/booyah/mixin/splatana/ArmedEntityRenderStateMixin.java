@@ -18,7 +18,8 @@ public class ArmedEntityRenderStateMixin {
     private static void booyah$extractSplatanaWeaponRenderData(LivingEntity entity, ArmedEntityRenderState state, ItemModelResolver itemModelResolver, float partialTicks, CallbackInfo ci) {
         if (entity instanceof SplatanaPlayer player) {
             state.setData(SplatanaAnimations.SPLATANA_RENDER_DATA, new SplatanaWeaponRenderData(
-                    player.booyah$getSplatanaAttackAnim(partialTicks), player.booyah$reverseSplatanaSwing()
+                    player.booyah$getSplatanaAttackAnim(partialTicks), player.booyah$reverseSplatanaSwing(),
+                    player.booyah$maxSplatanaSlashTime() != 0, player.booyah$getSplatanaSlashAnim(partialTicks), player.booyah$getDashAnim(partialTicks)
             ));
         }
     }
