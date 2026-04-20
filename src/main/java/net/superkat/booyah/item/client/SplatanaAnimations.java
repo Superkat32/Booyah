@@ -15,6 +15,9 @@ import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.render.data.SplatanaWeaponRenderData;
 
 // This whole class is a nightmare of nonsense
+// I seriously apologize if you were hoping to get something useful out of this...
+// TLDR: It's *all* math. No Blockbench. No keyframes. Just math. This is how Vanilla does it, even with the spear.
+// If you were hoping to recreate a similar thing: accept your fate. You're cooked...
 public class SplatanaAnimations {
 
     public static final RenderStateDataKey<SplatanaWeaponRenderData> SPLATANA_RENDER_DATA = RenderStateDataKey.create(() -> "Splatana swing & charge animation render data");
@@ -24,7 +27,7 @@ public class SplatanaAnimations {
         if (!BooyahItems.isSplatana(state.rightHandItemStack) || splatanaData == null || (splatanaData.swingAnim() == 0 && splatanaData.slashAnim() == 0)) return original;
 
         boolean swap = splatanaData.reverseSwing();
-        if (state.attackTime > 0.5 || (state.attackTime <= 0 && splatanaData.swingAnim() >= 0.35) || splatanaData.slashAnim() > 0) {
+        if (state.attackTime > 0.5 || (state.attackTime <= 0 && splatanaData.swingAnim() >= 0.35)) {
             swap = !swap;
         }
 
@@ -42,64 +45,159 @@ public class SplatanaAnimations {
         SplatanaWeaponRenderData renderData = state.getData(SPLATANA_RENDER_DATA);
         // use > 0 because swingTime gets set to -1 on swing because that's how Mojang does it ¯\_(ツ)_/¯
         if (renderData != null && renderData.swingAnim() > 0) return;
-        ModelPart holdingArm = holdingInRightArm ? rightArm : leftArm;
+        ModelPart mainArm = holdingInRightArm ? rightArm : leftArm;
         ModelPart otherArm = holdingInRightArm ? leftArm : rightArm;
 
         // Change animation slightly when walking (hold up more)
         float walkingExtra = state.walkAnimationSpeed * 35 + Mth.cos(state.walkAnimationPos * 0.6662F) * 5;
 
         if (state.attackTime > 0) return;
+        float mainArmRotX = 0;
+        float mainArmRotY = 0;
+        float mainArmRotZ = 0;
+        float otherArmRotX = 0;
+        float otherArmRotY = 0;
+        float otherArmRotZ = 0;
+        float bodyRotX = 0;
+        float bodyRotY = 0;
         if (state.ticksUsingItem > 0) { // Charging
-            holdingArm.xRot = (float) Math.toRadians(-35);
-            holdingArm.yRot = (float) Math.toRadians(-15);
-            holdingArm.zRot = (float) Math.toRadians(10);
-            holdingArm.x += 0.5f;
-            holdingArm.y += 1.5f;
-            holdingArm.z += 2;
+//            mainArm.xRot = (float) Math.toRadians(-35);
+//            mainArm.yRot = (float) Math.toRadians(-15);
+//            mainArm.zRot = (float) Math.toRadians(10);
+//            mainArm.x += 0.5f;
+//            mainArm.y += 1.5f;
+//            mainArm.z += 2;
 
-            otherArm.xRot = (float) Math.toRadians(-55);
-            otherArm.yRot = (float) Math.toRadians(65);
-            otherArm.zRot = (float) Math.toRadians(-15);
-            otherArm.x -= 2;
-            otherArm.y += 2f;
-            otherArm.z -= 2;
+//            otherArm.xRot = (float) Math.toRadians(-55);
+//            otherArm.yRot = (float) Math.toRadians(65);
+//            otherArm.zRot = (float) Math.toRadians(-15);
+//            otherArm.x -= 2;
+//            otherArm.y += 2f;
+//            otherArm.z -= 2;
 
-            body.xRot = radians(20);
-            body.y += 1.5f;
-            head.y += 1.5f;
-//            rightLeg.x += 1;
-            rightLeg.z += 4f;
-//            leftLeg.x += 1;
-            leftLeg.z += 4f;
+//            body.xRot = radians(20);
+//            body.y += 1.5f;
+//            head.y += 1.5f;
+////            rightLeg.x += 1;
+//            rightLeg.z += 4f;
+////            leftLeg.x += 1;
+//            leftLeg.z += 4f;
         } else if (renderData.slashAnim() > 0) { // Slashing
-            holdingArm.xRot = radians(-135);
-            holdingArm.yRot = radians(-55);
-            holdingArm.zRot = radians(15);
-            holdingArm.x += 2;
-//            holdingArm.y -= 1;
-            holdingArm.z -= 3;
-//            holdingArm.zRot = radians(15);
+//            mainArm.xRot = radians(-135);
+//            mainArm.yRot = radians(-55);
+//            mainArm.zRot = radians(15);
+//            mainArm.x += 2;
+//            mainArm.z -= 3;
 
-            otherArm.xRot = radians(-125);
-            otherArm.yRot = radians(-10);
-//            otherArm.zRot = radians(25);
-//            otherArm.zRot = radians(5);
-            otherArm.y -= 1;
-//            otherArm.x -= 1;
-
-            body.yRot = radians(-20);
+//            otherArm.xRot = radians(-125);
+//            otherArm.yRot = radians(-10);
+//            otherArm.y -= 1;
+//
+//            body.yRot = radians(-20);
         } else { // Holding
-            // Horizontal rotation
-            holdingArm.yRot = (holdingInRightArm ? -0.6F : 0.6F) + head.yRot;
-            otherArm.yRot = (holdingInRightArm ? 0.6F : -0.6F) + head.yRot;
+            mainArmRotX = (float) (Math.toDegrees(head.xRot) - (45 + walkingExtra));
+            mainArmRotY = (float) (Math.toDegrees((holdingInRightArm ? -0.6f : 0.6f) + head.yRot));
+            mainArmRotZ = 15;
 
-            // Vertical rotation
-            holdingArm.xRot = (float) (head.xRot - Math.toRadians(45 + walkingExtra));
-            otherArm.xRot = (float) (head.xRot - Math.toRadians(55 + walkingExtra));
+            otherArmRotX = (float) (Math.toDegrees(head.xRot) - (55 + walkingExtra));
+            otherArmRotY = (float) (Math.toDegrees((holdingInRightArm ? 0.6f : -0.6f) + head.yRot));
 
-            // The other horizontal rotation I suppose
-            holdingArm.zRot = (float) Math.toRadians(15);
+//            // Horizontal rotation
+//            mainArm.yRot = (holdingInRightArm ? -0.6F : 0.6F) + head.yRot;
+//            otherArm.yRot = (holdingInRightArm ? 0.6F : -0.6F) + head.yRot;
+//
+//            // Vertical rotation
+//            mainArm.xRot = (float) (head.xRot - Math.toRadians(45 + walkingExtra));
+//            otherArm.xRot = (float) (head.xRot - Math.toRadians(55 + walkingExtra));
+//
+//            // The other horizontal rotation I suppose
+//            mainArm.zRot = (float) Math.toRadians(15);
         }
+
+        // Holding animation
+        mainArmRotX = (float) (Math.toDegrees(head.xRot) - (45 + walkingExtra));
+        mainArmRotY = (float) (Math.toDegrees((holdingInRightArm ? -0.6f : 0.6f) + head.yRot));
+        mainArmRotZ = 15;
+
+        otherArmRotX = (float) (Math.toDegrees(head.xRot) - (55 + walkingExtra));
+        otherArmRotY = (float) (Math.toDegrees((holdingInRightArm ? 0.6f : -0.6f) + head.yRot));
+        if (state.ticksUsingItem > 0 || renderData.slashAnim() > 0) { // Charge animation
+            int chargeTicks = 8;
+            float chargeProgress = Ease.inOutQuint(Math.min(state.ticksUsingItem / chargeTicks, 1));
+            if (state.ticksUsingItem == 0) chargeProgress = 1f;
+            float mainArmX = 0;
+            float mainArmY = 0;
+            float mainArmZ = 0;
+            float otherArmX = 0;
+            float otherArmY = 0;
+            float otherArmZ = 0;
+
+            mainArmRotX = Mth.lerp(chargeProgress, mainArmRotX, -35);
+            mainArmRotY = Mth.lerp(chargeProgress, mainArmRotY, -15);
+            mainArmRotZ = Mth.lerp(chargeProgress, mainArmRotZ, 10);
+            mainArmX += 0.5f * chargeProgress;
+            mainArmY += 1.5f;
+            mainArmZ += 2f * chargeProgress;
+
+            otherArmRotX = Mth.lerp(chargeProgress, otherArmRotX, -55);
+            otherArmRotY = Mth.lerp(chargeProgress, otherArmRotY, 65);
+            otherArmRotZ = Mth.lerp(chargeProgress, otherArmRotZ, -15);
+            otherArmX -= 2f * chargeProgress;
+            otherArmY += 2f;
+            otherArmZ -= 2f * chargeProgress;
+
+            bodyRotX = 20f;
+            float bodyY = 1.5f;
+            float headY = 1.5f;
+            float rightLegZ = 4f;
+            float leftLegZ = 4f;
+
+            if (renderData.slashAnim() > 0) {
+                // Slash up
+                float slashProgress = renderData.slashAnim() <= 0.25f ? Ease.inOutExpo(renderData.slashAnim() * 4f) : 1f;
+                mainArmRotX = Mth.lerp(slashProgress, mainArmRotX, -135);
+                mainArmRotY = Mth.lerp(slashProgress, mainArmRotY, -55);
+                mainArmRotZ = Mth.lerp(slashProgress, mainArmRotZ, 15);
+                mainArmX = Mth.lerp(slashProgress, mainArmX, 2);
+                mainArmY = Mth.lerp(slashProgress, mainArmY, 0);
+                mainArmZ = Mth.lerp(slashProgress, mainArmZ, -3);
+
+                otherArmRotX = Mth.lerp(slashProgress, otherArmRotX, -125);
+                otherArmRotY = Mth.lerp(slashProgress, otherArmRotY, -10);
+                otherArmX = Mth.lerp(slashProgress, otherArmX, 0);
+                otherArmY = Mth.lerp(slashProgress, otherArmY, -1);
+                otherArmZ = Mth.lerp(slashProgress, otherArmZ, 0);
+
+                bodyRotX = Mth.lerp(slashProgress, bodyRotX, 0);
+                bodyRotY = Mth.lerp(slashProgress, bodyRotY, -20);
+                bodyY = Mth.lerp(slashProgress, bodyY, 0);
+
+                headY = Mth.lerp(slashProgress, headY, 0);
+                rightLegZ = Mth.lerp(slashProgress, rightLegZ, 0);
+                leftLegZ = Mth.lerp(slashProgress, headY, 0);
+            }
+
+            mainArm.x += mainArmX;
+            mainArm.y += mainArmY;
+            mainArm.z += mainArmZ;
+            otherArm.x += otherArmX;
+            otherArm.y += otherArmY;
+            otherArm.z += otherArmZ;
+            body.y += bodyY;
+            head.y += headY;
+            rightLeg.z += rightLegZ;
+            leftLeg.z += leftLegZ;
+        }
+
+        mainArm.xRot = radians(mainArmRotX);
+        mainArm.yRot = radians(mainArmRotY);
+        mainArm.zRot = radians(mainArmRotZ);
+        otherArm.xRot = radians(otherArmRotX);
+        otherArm.yRot = radians(otherArmRotY);
+        otherArm.zRot = radians(otherArmRotZ);
+
+        body.xRot = radians(bodyRotX);
+        body.yRot = radians(bodyRotY);
 
     }
 
@@ -242,37 +340,36 @@ public class SplatanaAnimations {
 
     // Item model animations for charging (holding down right click) the Splatana - Only affects item model!
     public static <T extends HumanoidRenderState, S extends ArmedEntityRenderState> void thirdPersonItemCharge(HumanoidModel<T> model, S state, PoseStack poseStack) {
-        SplatanaWeaponRenderData splatanaData = state.getData(SPLATANA_RENDER_DATA);
-        if (splatanaData == null || (state.ticksUsingItem(HumanoidArm.RIGHT) <= 0 && splatanaData.slashAnim() <= 0)) return;
+        SplatanaWeaponRenderData renderData = state.getData(SPLATANA_RENDER_DATA);
+        if (renderData == null || (state.ticksUsingItem(HumanoidArm.RIGHT) <= 0 && renderData.slashAnim() <= 0)) return;
         HumanoidArm arm = state.attackArm;
         ModelPart mainArm = model.getArm(arm);
         ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);
 
-        float splatanaRotX = 50;
-        float splatanaRotY = -10;
-        float splatanaRotZ = -180;
+        int chargeTicks = 8;
+        float chargeProgress = Ease.inQuint(Math.min(state.ticksUsingItem(HumanoidArm.RIGHT) / chargeTicks, 1));
+        if (state.ticksUsingItem(HumanoidArm.RIGHT) == 0) chargeProgress = 1f;
+        float inChargeProgress = chargeProgress < 0.5f ? (chargeProgress * 2f) : 0;
+        float endChargeProgress = chargeProgress < 0.5f ? 0 : (chargeProgress - 0.5f) * 2f;
+
+        float splatanaRotX = -10 * inChargeProgress + 60 * endChargeProgress;
+        float splatanaRotY = -10 * chargeProgress;
+        float splatanaRotZ = -180 * chargeProgress;
         float pivotX = 0;
         float pivotY = -0.1f;
         float pivotZ = 0.1f;
         float transX = 0;
         float transY = 0;
         float transZ = 0;
-        if (splatanaData.slashAnim() > 0) {
-            splatanaRotX = -75;
-            splatanaRotY = -5;
-            splatanaRotZ = -175;
-            transX = 0.125f;
-            transY = 0.1f;
-            transZ = -0.025f;
+        if (renderData.slashAnim() > 0) {
+            float slashProgress = renderData.slashAnim() <= 0.25f ? Ease.inOutExpo(renderData.slashAnim() * 4f) : 1f;
+            splatanaRotX = Mth.lerp(slashProgress, splatanaRotX, -75);
+            splatanaRotY = Mth.lerp(slashProgress, splatanaRotY, 55);
+            splatanaRotZ = Mth.lerp(slashProgress, splatanaRotZ, -175);
+            transX = 0.125f * slashProgress;
+            transY = 0.1f * slashProgress;
+            transZ = -0.025f * slashProgress;
         }
-//        float undoArmX = mainArm.xRot;
-//        float undoArmY = mainArm.zRot;
-//        float undoArmZ = mainArm.yRot;
-
-        // Undo arm rotations
-//        poseStack.rotateAround(Axis.XP.rotation(undoArmX), pivotX, pivotY, 0);
-//        poseStack.rotateAround(Axis.YP.rotation(undoArmY), pivotX, pivotY, 0);
-//        poseStack.rotateAround(Axis.ZP.rotation(undoArmZ), pivotX, pivotY, 0);
 
         poseStack.rotateAround(Axis.ZP.rotationDegrees(splatanaRotZ), pivotX, pivotY, pivotZ);
         poseStack.rotateAround(Axis.YP.rotationDegrees(splatanaRotY), pivotX, pivotY, pivotZ);

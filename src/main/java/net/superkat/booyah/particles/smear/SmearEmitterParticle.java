@@ -42,7 +42,7 @@ public class SmearEmitterParticle extends NoRenderParticle {
         if (this.age >= this.delay) {
             for (int i = 0; i < this.countPerTick; i++) {
                 this.count--;
-                float spreadXZ = 0.3f;
+                float spreadXZ = 0.3f + (this.rotX == -90 ? this.random.nextFloat() * 0.8f - 0.4f : 0);
                 float spreadY = 0.2f;
                 float offsetX = this.random.nextFloat() * spreadXZ;
                 float offsetY = this.random.nextFloat() * spreadY;

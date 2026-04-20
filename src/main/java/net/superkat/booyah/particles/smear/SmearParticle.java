@@ -28,7 +28,7 @@ public class SmearParticle extends SingleQuadParticle {
         this.lifetime = 4;
         this.reversed = options.reversed();
         this.rotX = options.rotX();
-        this.rotY = options.rotY();
+        this.rotY = options.rotY() + (this.rotX == -90 ? this.random.nextFloat() * 20 - 10 : 0);
         this.rCol = ARGB.redFloat(options.color());
         this.gCol = ARGB.greenFloat(options.color());
         this.bCol = ARGB.blueFloat(options.color());

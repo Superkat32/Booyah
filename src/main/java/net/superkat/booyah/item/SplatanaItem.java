@@ -1,5 +1,6 @@
 package net.superkat.booyah.item;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -14,6 +15,9 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.item.color.SplatanaColorSet;
+import net.superkat.booyah.item.color.SplatanaColors;
+import net.superkat.booyah.particles.smear.SmearEmitterParticleOptions;
 
 public class SplatanaItem extends Item {
     public static final float PLAYER_SPEED_SWING_REDUCER_AMOUNT = 0.6f;
@@ -50,13 +54,20 @@ public class SplatanaItem extends Item {
         int timeHeld = this.getUseDuration(itemStack, entity) - remainingTime;
         if (timeHeld < 8) return false;
 
-        splatanaPlayer.booyah$setSplatanaSlashTime(28);
+        splatanaPlayer.booyah$setSplatanaSlashTime(0);
         splatanaPlayer.booyah$setMaxSplatanaSlashTime(28);
 
         float speed = itemStack.has(BooyahItems.SPLATANA_COMPONENT) ? itemStack.get(BooyahItems.SPLATANA_COMPONENT).dashAmount() : 1f;
         Vec3 look = entity.getLookAngle();
         Vec3 direction = look.addLocalCoordinates(new Vec3(0, 0, 1)).scale(0.55f);
         entity.addDeltaMovement(direction);
+
+        float distanceFromPlayer = 3f;
+        double dx = -Mth.sin(player.getYRot() * (float) (Math.PI / 180.0)) * distanceFromPlayer;
+        double dz = Mth.cos(player.getYRot() * (float) (Math.PI / 180.0)) * distanceFromPlayer;
+
+        SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
+        level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
         return true;
     }
 

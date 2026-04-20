@@ -66,15 +66,16 @@ public class SplatanaManager {
 
         int slashTime = splatanaPlayer.booyah$splatanaSlashTime();
         int maxSlashTime = splatanaPlayer.booyah$maxSplatanaSlashTime();
-        if (slashTime > 0) {
-            slashTime--;
+        if (maxSlashTime > 0) {
+            slashTime++;
 
-            if (slashTime <= 0) {
+            if (slashTime >= maxSlashTime) {
+                slashTime = 0;
                 splatanaPlayer.booyah$setMaxSplatanaSlashTime(-1);
             }
         }
         splatanaPlayer.booyah$setSplatanaSlashTime(slashTime);
-        splatanaPlayer.booyah$setSplatanaSlashAnim((float) slashTime / maxSlashTime);
+        splatanaPlayer.booyah$setSplatanaSlashAnim(maxSlashTime == 0 ? 0 : (float) slashTime / maxSlashTime);
     }
 
     public static void spawnSplatanaSwingParticles(Level level, LivingEntity player) {

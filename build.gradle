@@ -30,7 +30,7 @@ dependencies {
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	// Freecam for looking at models
-//	implementation "maven.modrinth:XeEZ3fK2:AT0Z8Fuv"
+	implementation "maven.modrinth:XeEZ3fK2:AT0Z8Fuv"
 	
 }
 
