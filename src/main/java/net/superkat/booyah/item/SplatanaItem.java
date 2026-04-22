@@ -1,5 +1,6 @@
 package net.superkat.booyah.item;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUseAnimation;
@@ -15,6 +17,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
 import net.superkat.booyah.particles.smear.SmearEmitterParticleOptions;
@@ -68,6 +71,11 @@ public class SplatanaItem extends Item {
 
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
+        if (level instanceof ServerLevel serverLevel) {
+            Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.5F, 0);
+//            swipe.setDeltaMovement(2, 0, 0);
+//            swipe.addDeltaMovement(new Vec3(3, 0, 0));
+        }
         return true;
     }
 
@@ -80,4 +88,9 @@ public class SplatanaItem extends Item {
     public int getUseDuration(ItemStack itemStack, LivingEntity user) {
         return 72000;
     }
+
+//    @Override
+//    public Projectile asProjectile(Level level, Position position, ItemStack itemStack, Direction direction) {
+//        return new SplatanaSwipe(level, position.x(), position.y(), position.z());
+//    }
 }
