@@ -341,7 +341,7 @@ public class SplatanaAnimations {
     // Item model animations for charging (holding down right click) the Splatana - Only affects item model!
     public static <T extends HumanoidRenderState, S extends ArmedEntityRenderState> void thirdPersonItemCharge(HumanoidModel<T> model, S state, PoseStack poseStack) {
         SplatanaWeaponRenderData renderData = state.getData(SPLATANA_RENDER_DATA);
-        if (renderData == null || (state.ticksUsingItem(HumanoidArm.RIGHT) <= 0 && renderData.slashAnim() <= 0)) return;
+        if (renderData == null || (state.ticksUsingItem(HumanoidArm.RIGHT) <= 0 && renderData.slashAnim() <= 0) || (renderData.swingAnim()> 0)) return;
         HumanoidArm arm = state.attackArm;
         ModelPart mainArm = model.getArm(arm);
         ModelPart otherArm = model.getArm(arm == HumanoidArm.RIGHT ? HumanoidArm.LEFT : HumanoidArm.RIGHT);

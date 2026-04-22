@@ -6,8 +6,10 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
 import net.superkat.booyah.network.packets.S2CSplatanaSwingPacket;
@@ -26,8 +28,15 @@ public class SplatanaManager {
         }
         splatanaPlayer.booyah$setIsSplatanaSwinging(true);
         splatanaPlayer.booyah$setSplatanaSwingTime(-1); // Start at -1 for buffer? Vanilla does it so ¯\_(ツ)_/¯
+        splatanaPlayer.booyah$setSplatanaSlashTime(0);
+        splatanaPlayer.booyah$setMaxSplatanaSlashTime(-1);
 
-        if (player.level() instanceof ServerLevel) {
+        if (player.level() instanceof ServerLevel serverLevel) {
+            int color = player.getMainHandItem().get(BooyahItems.SPLATANA_COMPONENT).colorSet().getRandomColor(player.getRandom(), 0);
+            SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, player.getMainHandItem(), player, 0, 1.5F, 0);
+            swipe.setPos(swipe.position().add(0, -0.75, 0));
+            swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, color);
+
             S2CSplatanaSwingPacket swingPacket = new S2CSplatanaSwingPacket(player.getId(), -1, splatanaPlayer.booyah$queuedReverseUpdate());
             for (ServerPlayer serverPlayer : PlayerLookup.tracking(player)) {
                 if (serverPlayer == player) continue;

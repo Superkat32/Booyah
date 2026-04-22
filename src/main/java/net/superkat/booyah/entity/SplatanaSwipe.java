@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 
 public class SplatanaSwipe extends Projectile {
     public static final EntityDataAccessor<Integer> COLOR_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ROT_Z = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public int maxAge = 100;
     public SplatanaSwipe(EntityType<? extends Projectile> type, Level level) {
         super(type, level);
@@ -23,12 +24,13 @@ public class SplatanaSwipe extends Projectile {
     }
 
     public SplatanaSwipe(ServerLevel serverLevel, LivingEntity livingEntity, ItemStack itemStack) {
-        this(serverLevel, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+        this(serverLevel, livingEntity.getX(), livingEntity.getEyeY(), livingEntity.getZ());
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         entityData.define(COLOR_ID, -1);
+        entityData.define(ROT_Z, 0);
     }
 
     @Override

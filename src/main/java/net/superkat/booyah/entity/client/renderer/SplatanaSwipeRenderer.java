@@ -17,7 +17,7 @@ import net.superkat.booyah.entity.client.state.SplatanaSwipeRenderState;
 
 @Environment(EnvType.CLIENT)
 public class SplatanaSwipeRenderer extends EntityRenderer<SplatanaSwipe, SplatanaSwipeRenderState> {
-    public static final Identifier TEXTURE = Booyah.id("textures/entity/splatana/swipe.png");
+    public static final Identifier TEXTURE = Booyah.id("textures/entity/splatana/slash.png");
     protected final SplatanaSwipeModel model;
 
     public SplatanaSwipeRenderer(EntityRendererProvider.Context context) {
@@ -28,15 +28,12 @@ public class SplatanaSwipeRenderer extends EntityRenderer<SplatanaSwipe, Splatan
     @Override
     public void submit(SplatanaSwipeRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
-        poseStack.scale(1.75f, 1.75f, 1.75f);
-        poseStack.translate(0, -1.35f, 0);
+        poseStack.scale(1.5f, 1.5f, 1.5f);
         poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot + 180f));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(state.xRot));
-//        poseStack.translate(0.0F, 0.15F, 0.0F);
-//        poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot - 90.0F));
-//        poseStack.mulPose(Axis.ZP.rotationDegrees(state.xRot));
-//        submitNodeCollector.submitModel(this.model, state, poseStack, );
-        submitNodeCollector.submitModel(this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
+        poseStack.mulPose(Axis.XP.rotationDegrees(state.xRot));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(state.zRot));
+        poseStack.translate(0, -1.35f - (state.zRot == 90 ? 0.15f : 0), 0);
+        submitNodeCollector.submitModel(this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, state.color, null, state.outlineColor, null);
         poseStack.popPose();
         super.submit(state, poseStack, submitNodeCollector, camera);
     }
@@ -51,5 +48,7 @@ public class SplatanaSwipeRenderer extends EntityRenderer<SplatanaSwipe, Splatan
         super.extractRenderState(entity, state, partialTicks);
         state.xRot = entity.getXRot(partialTicks);
         state.yRot = entity.getYRot(partialTicks);
+        state.zRot = entity.getEntityData().get(SplatanaSwipe.ROT_Z);
+        state.color = entity.getEntityData().get(SplatanaSwipe.COLOR_ID);
     }
 }

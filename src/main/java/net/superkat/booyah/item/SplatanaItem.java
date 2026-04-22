@@ -38,9 +38,12 @@ public class SplatanaItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (player instanceof SplatanaPlayer splatanaPlayer && splatanaPlayer.booyah$isSplatanaSwinging()) {
+        if (!(player instanceof SplatanaPlayer splatanaPlayer)) return InteractionResult.FAIL;
+        if (splatanaPlayer.booyah$isSplatanaSwinging() || (splatanaPlayer.booyah$maxSplatanaSlashTime() > 0 && splatanaPlayer.booyah$splatanaSlashTime() <= 10)) {
             return InteractionResult.FAIL;
         }
+        splatanaPlayer.booyah$setSplatanaSlashTime(0);
+        splatanaPlayer.booyah$setMaxSplatanaSlashTime(-1);
         player.startUsingItem(hand);
         return InteractionResult.CONSUME;
     }
@@ -72,7 +75,10 @@ public class SplatanaItem extends Item {
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
         if (level instanceof ServerLevel serverLevel) {
-            Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.5F, 0);
+            SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.5F, 0);
+            int color = itemStack.get(BooyahItems.SPLATANA_COMPONENT).colorSet().getRandomColor(entity.getRandom(), 0);
+            swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, color);
+            swipe.getEntityData().set(SplatanaSwipe.ROT_Z, 90);
 //            swipe.setDeltaMovement(2, 0, 0);
 //            swipe.addDeltaMovement(new Vec3(3, 0, 0));
         }
