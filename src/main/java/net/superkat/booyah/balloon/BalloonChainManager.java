@@ -27,11 +27,8 @@ public class BalloonChainManager {
     );
 
     public static final AttachmentType<BalloonChainManager> LEVEL_ATTACHMENT = AttachmentRegistry.create(
-            Booyah.id("balloon_chain_manager_attachment"), builder ->
-                    builder.persistent(CODEC)
-                            // For some reason Fabric isn't working with this
-//                            .syncWith(STREAM_CODEC, AttachmentSyncPredicate.all())
-                            .initializer(BalloonChainManager::new)
+            Booyah.id("balloon_chain_manager_attachment"), builder -> builder
+                    .initializer(BalloonChainManager::new)
     );
 
     public Map<String, BalloonChain> chains;
@@ -59,6 +56,22 @@ public class BalloonChainManager {
         BalloonChain chain = new BalloonChain(id, new HashMap<>());
         this.chains.put(id, chain);
         return chain;
+    }
+
+    public void addEntry(String chainId, BalloonEntry entry) {
+        if (entry == null) return;
+        BalloonChain chain = this.getOrCreateChain(chainId);
+        chain.putEntry(entry);
+    }
+
+    public void removeEntry(String chainId, BalloonEntry entry) {
+        if (entry == null) return;
+        BalloonChain chain = this.getOrCreateChain(chainId);
+        chain.removeEntry(entry);
+
+        if (chain.entries().isEmpty()) {
+            this.chains.remove(chainId);
+        }
     }
 
     public boolean hasChain(String id) {

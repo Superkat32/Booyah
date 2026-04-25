@@ -46,7 +46,12 @@ public class BalloonChaseBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return (BooyahBlocks.BALLOON_CHASE_BLOCK != null && context.isHoldingItem(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())) ? Shapes.block() : Shapes.empty();
+        return Shapes.block();
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override

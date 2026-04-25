@@ -48,15 +48,13 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 0.5f);
         poseStack.translate(0, 8, 0);
-        Component indexText = Component.literal(String.valueOf(state.entryIndex));
+        Component indexText = Component.literal(state.entryIndex);
         submitNodeCollector.submitText(
                 poseStack, -font.width(indexText) / 2f, -4f,
                 indexText.getVisualOrderText(), true, Font.DisplayMode.SEE_THROUGH,
                 state.lightCoords, CommonColors.WHITE, 0, 0
         );
         poseStack.popPose();
-
-
 
         poseStack.popPose();
     }
@@ -66,11 +64,10 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         if (Minecraft.getInstance().player != null
                 && Minecraft.getInstance().player.getMainHandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
-                && blockEntity.balloonEntry != null
         ) {
             state.render = true;
             state.chainId = blockEntity.balloonChainId.isBlank() ? "Empty!" : blockEntity.balloonChainId;
-            state.entryIndex = blockEntity.balloonEntry.index();
+            state.entryIndex = blockEntity.balloonEntry == null ? "" : String.valueOf(blockEntity.balloonEntry.index());
         }
     }
 

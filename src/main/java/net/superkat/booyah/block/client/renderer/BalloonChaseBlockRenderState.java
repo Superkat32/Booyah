@@ -7,6 +7,6 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 @Environment(EnvType.CLIENT)
 public class BalloonChaseBlockRenderState extends BlockEntityRenderState {
     public boolean render = false;
-    public String chainId = null;
-    public int entryIndex = -1;
+    public String chainId = "";
+    public String entryIndex = "";
 }

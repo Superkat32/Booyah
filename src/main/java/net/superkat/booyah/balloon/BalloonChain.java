@@ -14,12 +14,9 @@ import java.util.Map;
 
 public record BalloonChain(String id, Map<BlockPos, BalloonEntry> entries) {
 
-//    private static final Codec<Map<BlockPos, BalloonEntry>> ENTRY_MAP_CODEC = Codec.unboundedMap(BlockPos.CODEC, BalloonEntry.CODEC);
-
     public static final Codec<BalloonChain> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
                     Codec.STRING.fieldOf("id").forGetter(chain -> chain.id),
-//                    ENTRY_MAP_CODEC.fieldOf("entries").forGetter(chain -> chain.entries)
                     BalloonEntry.CODEC.listOf().fieldOf("entries").forGetter(chain -> chain.entries.values().stream().toList())
             ).apply(instance, BalloonChain::new)
     );
@@ -40,6 +37,10 @@ public record BalloonChain(String id, Map<BlockPos, BalloonEntry> entries) {
 
     public void putEntry(BalloonEntry entry) {
         this.entries.put(entry.pos(), entry);
+    }
+
+    public void removeEntry(BalloonEntry entry) {
+        this.entries.remove(entry.pos());
     }
 
     @Nullable

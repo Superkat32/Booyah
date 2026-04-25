@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -34,6 +35,22 @@ public class BalloonChaseBlockEntity extends BlockEntity {
         this.balloonChainId = chain.id();
         this.setChanged();
         this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (!this.level.isClientSide()) {
+            BalloonChainManager.get(this.level).addEntry(this.balloonChainId, this.balloonEntry);
+        }
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+        super.preRemoveSideEffects(pos, state);
+        if (!this.level.isClientSide()) {
+            BalloonChainManager.get(this.level).removeEntry(this.balloonChainId, this.balloonEntry);
+        }
     }
 
     @Override
