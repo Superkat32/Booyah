@@ -11,6 +11,7 @@ import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.world.item.Item;
 import net.superkat.booyah.Booyah;
+import net.superkat.booyah.block.BooyahBlocks;
 import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.item.client.SplatanaCharge;
 
@@ -30,7 +31,8 @@ public class BooyahModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockModelGenerators blockModelGenerators) {
-
+        blockModelGenerators.createAirLikeBlock(BooyahBlocks.BALLOON_CHASE_BLOCK, BooyahBlocks.BALLOON_CHASE_BLOCK.asItem());
+        blockModelGenerators.registerSimpleFlatItemModel(BooyahBlocks.BALLOON_CHASE_BLOCK);
     }
 
     @Override

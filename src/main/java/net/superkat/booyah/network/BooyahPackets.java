@@ -3,6 +3,7 @@ package net.superkat.booyah.network;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.superkat.booyah.network.packets.CommonBooyahPacket;
 import net.superkat.booyah.network.packets.S2CSplatanaSwingPacket;
+import net.superkat.booyah.network.packets.balloon.C2SBalloonChaseBlockUpdatePacket;
 
 public class BooyahPackets {
 
@@ -11,6 +12,8 @@ public class BooyahPackets {
         PayloadTypeRegistry.serverboundPlay().register(CommonBooyahPacket.TYPE, CommonBooyahPacket.CODEC);
 
         PayloadTypeRegistry.clientboundPlay().register(S2CSplatanaSwingPacket.TYPE, S2CSplatanaSwingPacket.CODEC);
+
+        PayloadTypeRegistry.serverboundPlay().register(C2SBalloonChaseBlockUpdatePacket.TYPE, C2SBalloonChaseBlockUpdatePacket.CODEC);
     }
 
 }

@@ -3,6 +3,7 @@
   "package": "net.superkat.booyah.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
+    "balloon.PlayerMixin",
     "comm.PlayerMixin",
     "splatana.LivingEntityMixin",
     "splatana.LocalPlayerMixin",
@@ -15,6 +16,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "balloon.LocalPlayerMixin",
     "comm.AvatarRendererMixin",
     "comm.LocalPlayerMixin",
     "splatana.ArmedEntityRenderStateMixin",

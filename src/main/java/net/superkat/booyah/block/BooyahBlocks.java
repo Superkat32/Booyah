@@ -1,0 +1,84 @@
+package net.superkat.booyah.block;
+
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
+import net.superkat.booyah.Booyah;
+
+import java.util.function.Function;
+
+public class BooyahBlocks {
+
+    public static final Block BALLOON_CHASE_BLOCK = registerBlock(
+            "balloon_chase_block",
+            BalloonChaseBlock::new,
+            BlockBehaviour.Properties.of()
+                    .strength(-1.0F, 3600000.8F)
+                    .mapColor(MapColor.NONE)
+                    .noLootTable()
+                    .noOcclusion()
+                    .isValidSpawn(Blocks::never)
+                    .noTerrainParticles()
+                    .pushReaction(PushReaction.BLOCK),
+            true
+    );
+
+    public static final BlockEntityType<BalloonChaseBlockEntity> BALLOON_CHASE_BLOCK_ENTITY = registerBlockEntity(
+            "balloon_chase_block_entity",
+            BalloonChaseBlockEntity::new,
+            BALLOON_CHASE_BLOCK
+    );
+
+    public static void init() {
+
+    }
+
+    // Copy-pasted from docs
+    private static Block registerBlock(String name, Function<BlockBehaviour.Properties, Block> blockFactory, BlockBehaviour.Properties settings, boolean shouldRegisterItem) {
+        ResourceKey<Block> blockKey = keyOfBlock(name);
+        Block block = blockFactory.apply(settings.setId(blockKey));
+        if (shouldRegisterItem) {
+            ResourceKey<Item> itemKey = keyOfItem(name);
+            BlockItem blockItem = new BlockItem(block, new Item.Properties().setId(itemKey).useBlockDescriptionPrefix());
+            Registry.register(BuiltInRegistries.ITEM, itemKey, blockItem);
+        }
+
+        return Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
+    }
+
+    private static ResourceKey<Block> keyOfBlock(String name) {
+        return ResourceKey.create(Registries.BLOCK, Booyah.id(name));
+    }
+
+    private static ResourceKey<Item> keyOfItem(String name) {
+        return ResourceKey.create(Registries.ITEM, Booyah.id(name));
+    }
+
+    private static Function<BlockState, MapColor> waterloggedMapColor(final MapColor mapColor) {
+        return blockState -> blockState.getValue(BlockStateProperties.WATERLOGGED) ? MapColor.WATER : mapColor;
+    }
+
+    private static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(
+            String name,
+            FabricBlockEntityTypeBuilder.Factory<? extends T> entityFactory,
+            Block... blocks
+    ) {
+        Identifier id = Booyah.id(name);
+        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, id, FabricBlockEntityTypeBuilder.<T>create(entityFactory, blocks).build());
+    }
+
+}

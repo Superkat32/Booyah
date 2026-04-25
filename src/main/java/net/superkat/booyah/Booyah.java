@@ -2,6 +2,7 @@ package net.superkat.booyah;
 
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
+import net.superkat.booyah.block.BooyahBlocks;
 import net.superkat.booyah.entity.BooyahEntities;
 import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.network.BooyahPackets;
@@ -17,6 +18,7 @@ public class Booyah implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		BooyahItems.init();
+		BooyahBlocks.init();
 		BooyahParticles.init();
 		BooyahPackets.init();
 		BooyahEntities.init();

@@ -16,6 +16,7 @@ import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.component.UseEffects;
 import net.minecraft.world.item.component.Weapon;
 import net.superkat.booyah.Booyah;
+import net.superkat.booyah.block.BooyahBlocks;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
 import net.superkat.booyah.item.component.SplatanaComponent;
@@ -41,6 +42,11 @@ public class BooyahItems {
                 .register((tab) -> {
                     tab.accept(STAMPER_WHITE);
                     tab.accept(STAMPER_PURPLE);
+                });
+
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS)
+                .register(tab -> {
+                    tab.accept(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem());
                 });
     }
 
