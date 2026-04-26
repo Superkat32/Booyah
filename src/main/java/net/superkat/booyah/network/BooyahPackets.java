@@ -1,9 +1,9 @@
 package net.superkat.booyah.network;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.superkat.booyah.network.packets.CommonBooyahPacket;
-import net.superkat.booyah.network.packets.S2CSplatanaSwingPacket;
 import net.superkat.booyah.network.packets.balloon.C2SBalloonChaseBlockUpdatePacket;
+import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
+import net.superkat.booyah.network.packets.splatana.S2CSplatanaSwingPacket;
 
 public class BooyahPackets {
 

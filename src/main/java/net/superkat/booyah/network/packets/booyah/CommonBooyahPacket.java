@@ -1,4 +1,4 @@
-package net.superkat.booyah.network.packets;
+package net.superkat.booyah.network.packets.booyah;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

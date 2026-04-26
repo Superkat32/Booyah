@@ -6,8 +6,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.comm.BooyahClientManager;
 import net.superkat.booyah.item.client.SplatanaClientManager;
-import net.superkat.booyah.network.packets.CommonBooyahPacket;
-import net.superkat.booyah.network.packets.S2CSplatanaSwingPacket;
+import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
+import net.superkat.booyah.network.packets.splatana.S2CSplatanaSwingPacket;
 
 public class BooyahClientNetworkHandler {
 

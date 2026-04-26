@@ -8,8 +8,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
-import net.superkat.booyah.network.packets.CommonBooyahPacket;
 import net.superkat.booyah.network.packets.balloon.C2SBalloonChaseBlockUpdatePacket;
+import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
 
 public class BooyahServerNetworkHandler {
 

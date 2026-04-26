@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "booyah:item/balloon_chase_block"
+    "model": "booyah:item/balloon_chase_block",
+    "tints": [
+      {
+        "type": "booyah:balloon_chase_connection_colors",
+        "color": -1
+      }
+    ]
   }
 }

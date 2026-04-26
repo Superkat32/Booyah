@@ -12,7 +12,7 @@ import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
-import net.superkat.booyah.network.packets.S2CSplatanaSwingPacket;
+import net.superkat.booyah.network.packets.splatana.S2CSplatanaSwingPacket;
 import net.superkat.booyah.particles.smear.SmearEmitterParticleOptions;
 
 public class SplatanaManager {

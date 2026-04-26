@@ -27,11 +27,27 @@ public class BalloonChaseBlock extends BaseEntityBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (player.canUseGameMasterBlocks() && itemStack.is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
-            && level.getBlockEntity(pos) instanceof BalloonChaseBlockEntity balloonChaseBlockEntity) {
+        if (player.canUseGameMasterBlocks()
+            && level.getBlockEntity(pos) instanceof BalloonChaseBlockEntity balloonChaseBlockEntity
+            && player instanceof BalloonBlockEditCapablePlayer balloonPlayer
+        ) {
 
-            if (level.isClientSide()) {
-                ((BalloonBlockEditCapablePlayer) player).booyah$openBalloonBlockEditScreen(balloonChaseBlockEntity);
+            if (itemStack.is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())) {
+                if (balloonPlayer.booyah$isConnectingBalloonBlocks()) {
+                    BlockPos initPos = balloonPlayer.booyah$getConnectingBalloonBlockPos();
+                    if (!pos.equals(initPos) && level.getBlockEntity(initPos) instanceof BalloonChaseBlockEntity initBalloonBlock) {
+                        balloonChaseBlockEntity.updateBalloonEntry(initBalloonBlock.balloonChainId, initBalloonBlock.balloonEntry == null ? 1 : initBalloonBlock.balloonEntry.index() + 1);
+                    }
+                    balloonPlayer.booyah$setConnectingBalloonBlocks(null);
+                } else {
+                    if (balloonChaseBlockEntity.balloonChainId.isBlank()) {
+                        balloonPlayer.booyah$openBalloonBlockEditScreen(balloonChaseBlockEntity);
+                    } else {
+                        balloonPlayer.booyah$setConnectingBalloonBlocks(pos);
+                    }
+                }
+            } else if (level.isClientSide()) {
+                balloonPlayer.booyah$openBalloonBlockEditScreen(balloonChaseBlockEntity);
             }
 
             return InteractionResult.SUCCESS;

@@ -40,8 +40,8 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         Component idText = Component.literal(state.chainId);
         submitNodeCollector.submitText(
                 poseStack, -font.width(idText) / 2f, -4f,
-                idText.getVisualOrderText(), true, Font.DisplayMode.SEE_THROUGH,
-                state.lightCoords, CommonColors.WHITE, 0, 0
+                idText.getVisualOrderText(), false, Font.DisplayMode.POLYGON_OFFSET,
+                state.lightCoords, CommonColors.WHITE, 0, CommonColors.BLACK
         );
         poseStack.popPose();
 
@@ -51,8 +51,8 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         Component indexText = Component.literal(state.entryIndex);
         submitNodeCollector.submitText(
                 poseStack, -font.width(indexText) / 2f, -4f,
-                indexText.getVisualOrderText(), true, Font.DisplayMode.SEE_THROUGH,
-                state.lightCoords, CommonColors.WHITE, 0, 0
+                indexText.getVisualOrderText(), false, Font.DisplayMode.POLYGON_OFFSET,
+                state.lightCoords, CommonColors.WHITE, 0, CommonColors.BLACK
         );
         poseStack.popPose();
 
@@ -62,8 +62,9 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
     @Override
     public void extractRenderState(BalloonChaseBlockEntity blockEntity, BalloonChaseBlockRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        if (Minecraft.getInstance().player != null
-                && Minecraft.getInstance().player.getMainHandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
+        if (Minecraft.getInstance().player != null && (
+                Minecraft.getInstance().player.getMainHandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
+                || Minecraft.getInstance().player.getOffhandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()))
         ) {
             state.render = true;
             state.chainId = blockEntity.balloonChainId.isBlank() ? "Empty!" : blockEntity.balloonChainId;

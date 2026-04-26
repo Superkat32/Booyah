@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.duck.comm.BooyahablePlayer;
 import net.superkat.booyah.duck.comm.LocalBooyahablePlayer;
-import net.superkat.booyah.network.packets.CommonBooyahPacket;
+import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
 
 @Environment(EnvType.CLIENT)
 public class BooyahClientManager {
