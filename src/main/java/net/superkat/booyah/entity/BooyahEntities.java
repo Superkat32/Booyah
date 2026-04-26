@@ -1,5 +1,6 @@
 package net.superkat.booyah.entity;
 
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -19,8 +20,15 @@ public class BooyahEntities {
                     .updateInterval(20)
     );
 
-    public static void init() {
+    public static final EntityType<Balloon> BALLOON_CHASE = register("balloon_chase",
+            EntityType.Builder.of(Balloon::new, MobCategory.MISC)
+                    .noLootTable()
+                    .sized(0.75f, 0.85f)
+                    .clientTrackingRange(10)
+    );
 
+    public static void init() {
+        FabricDefaultAttributeRegistry.register(BALLOON_CHASE, Balloon.createAttributes());
     }
 
     public static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {
