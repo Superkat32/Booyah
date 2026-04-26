@@ -6,13 +6,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.superkat.booyah.entity.Balloon;
+import net.superkat.booyah.entity.BooyahEntities;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
-public record BalloonChain(String id, Map<BlockPos, BalloonEntry> entries) {
+public class BalloonChain {
 
     public static final Codec<BalloonChain> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
@@ -27,6 +34,27 @@ public record BalloonChain(String id, Map<BlockPos, BalloonEntry> entries) {
             BalloonChain::new
     );
 
+    public final String id;
+    public final Map<BlockPos, BalloonEntry> entries;
+
+    public int ticks = 0;
+    public int balloonSpawnDelayTicks = 0;
+    public int balloonWaveTicks = 0;
+
+    public boolean chasing = false;
+    public boolean balloonSpawned = false;
+    public List<UUID> balloonUuids = new ArrayList<>();
+
+    public int startingIndex = 0;
+    public int endingIndex = 0;
+    public int currentIndex = 0;
+    public List<Integer> knownEntryIndexes = new ArrayList<>();
+
+    public BalloonChain(String id, Map<BlockPos, BalloonEntry> entries) {
+        this.id = id;
+        this.entries = entries;
+    }
+
     public BalloonChain(String id, List<BalloonEntry> entries) {
         HashMap<BlockPos, BalloonEntry> entriesMap = new HashMap<>();
         for (BalloonEntry entry : entries) {
@@ -35,17 +63,118 @@ public record BalloonChain(String id, Map<BlockPos, BalloonEntry> entries) {
         this(id, entriesMap);
     }
 
+    public void tick(ServerLevel level) {
+        if (this.entries.isEmpty() || this.knownEntryIndexes.isEmpty()) return;
+
+        this.ticks++;
+        if (this.chasing) {
+            this.balloonWaveTicks++;
+        }
+
+        if (!this.balloonSpawned && !this.chasing && this.currentIndex == this.startingIndex) {
+            spawnBalloons(level, this.startingIndex);
+        }
+    }
+
+    public void spawnNextWave(ServerLevel level) {
+        this.balloonWaveTicks = 0;
+        if (this.currentIndex == this.endingIndex) {
+            this.onComplete(level);
+        } else {
+            this.currentIndex++;
+            this.spawnBalloons(level, this.currentIndex);
+            this.chasing = true;
+        }
+    }
+
+    public void onComplete(ServerLevel level) {
+        this.chasing = false;
+        this.currentIndex = this.startingIndex;
+        this.balloonSpawned = false;
+    }
+
+    public void spawnBalloons(ServerLevel level, int index) {
+        List<BalloonEntry> entriesForIndex = this.entries.values().stream().filter(entry -> entry.index() == index).toList();
+        for (BalloonEntry entry : entriesForIndex) {
+            BlockPos pos = entry.pos();
+            Balloon balloon = BooyahEntities.BALLOON_CHASE.create(level, EntitySpawnReason.MOB_SUMMONED);
+            if (balloon == null) continue;
+
+            // Move pos up if either of the 2 blocks beneath aren't air
+            if (!level.getBlockState(pos.below()).isAir() || !level.getBlockState(pos.below(2)).isAir()) {
+                pos = pos.above(2);
+            }
+
+            balloon.setPos(pos.getCenter());
+            balloon.setOnGround(false);
+            balloon.snapTo(pos.getBottomCenter(), 0, 0);
+            level.addFreshEntity(balloon);
+            balloon.setChain(this);
+            this.balloonUuids.add(balloon.getUUID());
+        }
+
+        this.balloonSpawned = true;
+    }
+
+    public void despawnBalloon(ServerLevel level) {
+
+    }
+
+    // Server only - used when a player pops a balloon, not when it despawns
+    public void onBalloonPop(Balloon balloon) {
+        this.balloonUuids.remove(balloon.getUUID());
+        if (this.balloonUuids.isEmpty()) {
+            this.spawnNextWave((ServerLevel) balloon.level());
+        }
+    }
+
     public void putEntry(BalloonEntry entry) {
         this.entries.put(entry.pos(), entry);
+        this.knownEntryIndexes = new ArrayList<>(this.entries.values().stream().map(BalloonEntry::index).sorted().toList());
+
+        this.startingIndex = knownEntryIndexes.getFirst();
+        this.endingIndex = knownEntryIndexes.getLast();
+        if (!this.chasing) this.currentIndex = this.startingIndex;
     }
 
     public void removeEntry(BalloonEntry entry) {
         this.entries.remove(entry.pos());
+        this.knownEntryIndexes.remove(Integer.valueOf(entry.index()));
     }
 
     @Nullable
     public BalloonEntry getEntryForPos(BlockPos pos) {
         return this.entries.get(pos);
     }
+
+    public String id() {
+        return id;
+    }
+
+    public Map<BlockPos, BalloonEntry> entries() {
+        return entries;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (BalloonChain) obj;
+        return Objects.equals(this.id, that.id) &&
+                Objects.equals(this.entries, that.entries);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, entries);
+    }
+
+    @Override
+    public String toString() {
+        return "BalloonChain[" +
+                "id=" + id + ", " +
+                "entries=" + entries + ']';
+    }
+
 
 }

@@ -4,9 +4,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.Booyah;
 
@@ -31,6 +33,12 @@ public class BalloonChainManager {
                     .initializer(BalloonChainManager::new)
     );
 
+    public static void init() {
+        ServerTickEvents.END_LEVEL_TICK.register(serverLevel -> {
+            BalloonChainManager.get(serverLevel).tick(serverLevel);
+        });
+    }
+
     public Map<String, BalloonChain> chains;
 
     public BalloonChainManager(Map<String, BalloonChain> chains) {
@@ -47,6 +55,12 @@ public class BalloonChainManager {
             chainMap.put(chain.id(), chain);
         }
         this(chainMap);
+    }
+
+    public void tick(ServerLevel level) {
+        for (BalloonChain chain : chains.values()) {
+            chain.tick(level);
+        }
     }
 
     public BalloonChain getOrCreateChain(String id) {
