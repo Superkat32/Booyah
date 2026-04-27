@@ -9,9 +9,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.Level;
 import net.superkat.booyah.entity.Balloon;
 import net.superkat.booyah.entity.BooyahEntities;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class BalloonChain {
 
     public boolean chasing = false;
     public boolean balloonSpawned = false;
-    public List<UUID> balloonUuids = new ArrayList<>();
+    public Map<BlockPos, UUID> balloonUuids = new HashMap<>();
     public boolean waveFailed = false;
 
     public int startingIndex = 0;
@@ -86,7 +86,10 @@ public class BalloonChain {
         if (this.currentIndex == this.endingIndex) {
             this.onComplete(level);
         } else {
-            this.currentIndex++;
+            List<Integer> uniqueKnownIndexes = this.knownEntryIndexes.stream().distinct().toList();
+            // Wow Kat! *you are so funny* - Could you say that with a little more gusto? - BALALALA
+            int currentIndexIndex = uniqueKnownIndexes.indexOf(this.currentIndex);
+            this.currentIndex = uniqueKnownIndexes.get(currentIndexIndex + 1);
             this.spawnBalloons(level, this.currentIndex);
             this.chasing = true;
         }
@@ -117,9 +120,9 @@ public class BalloonChain {
             balloon.snapTo(pos.getBottomCenter(), 0, 0);
             level.addFreshEntity(balloon);
             balloon.setChain(this);
-            balloon.setChainPos(pos);
+            balloon.setChainPos(entry.pos());
             balloon.setTicksUntilFloatAway(ticksUntilFloatAway);
-            this.balloonUuids.add(balloon.getUUID());
+            this.balloonUuids.put(entry.pos(), balloon.getUUID());
         }
 
         this.balloonSpawned = true;
@@ -127,19 +130,21 @@ public class BalloonChain {
 
     // Server only - used when a player pops a balloon, not when it despawns
     public void onBalloonPop(Balloon balloon) {
-        this.balloonUuids.remove(balloon.getUUID());
+        this.balloonUuids.remove(balloon.getChainPos());
         if (this.balloonUuids.isEmpty()) {
             this.spawnNextWave((ServerLevel) balloon.level());
         }
     }
 
     public void onBalloonDespawn(Balloon balloon) {
-        this.balloonUuids.remove(balloon.getUUID());
+        this.balloonUuids.remove(balloon.getChainPos());
+        // FIXME - Breaking a balloon block while the next index has multiple positions causes a reset loop
+        //  of failures and sadness and heart break and total destruction and a lot of particles
         this.waveFailed = true;
     }
 
     public void reset(ServerLevel level) {
-        for (UUID balloonUuid : new ArrayList<>(balloonUuids)) {
+        for (UUID balloonUuid : balloonUuids.values()) {
             Entity balloon = level.getEntity(balloonUuid);
             if (balloon == null || balloon.isRemoved()) continue;
             balloon.remove(Entity.RemovalReason.DISCARDED);
@@ -158,14 +163,21 @@ public class BalloonChain {
         if (!this.chasing) this.currentIndex = this.startingIndex;
     }
 
-    public void removeEntry(BalloonEntry entry) {
+    public void removeEntry(Level level, BalloonEntry entry) {
+        if (this.balloonUuids.containsKey(entry.pos()) && level.getEntity(this.balloonUuids.get(entry.pos())) != null) {
+            level.getEntity(this.balloonUuids.get(entry.pos())).remove(Entity.RemovalReason.DISCARDED);
+        }
         this.entries.remove(entry.pos());
         this.knownEntryIndexes.remove(Integer.valueOf(entry.index()));
-    }
 
-    @Nullable
-    public BalloonEntry getEntryForPos(BlockPos pos) {
-        return this.entries.get(pos);
+        if (!this.knownEntryIndexes.isEmpty()) {
+            this.startingIndex = knownEntryIndexes.getFirst();
+            this.endingIndex = knownEntryIndexes.getLast();
+        } else {
+            this.startingIndex = 0;
+            this.endingIndex = 0;
+        }
+        if (!this.chasing) this.currentIndex = this.startingIndex;
     }
 
     public String id() {

@@ -33,10 +33,10 @@ public class BooyahServerNetworkHandler {
 
     public static void onBalloonChaseBlockUpdate(C2SBalloonChaseBlockUpdatePacket payload, ServerPlayNetworking.Context context) {
         ServerLevel level = context.player().level();
-        BlockPos pos = payload.pos();
+        BlockPos pos = payload.entry().pos();
 
         if (level.getBlockEntity(pos) instanceof BalloonChaseBlockEntity balloonChaseBlock) {
-            balloonChaseBlock.updateBalloonEntry(payload.chainId(), payload.entryIndex());
+            balloonChaseBlock.updateBalloonEntry(payload.chainId(), payload.entry());
         }
     }
 }

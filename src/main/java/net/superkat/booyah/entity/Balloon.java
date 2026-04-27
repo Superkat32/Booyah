@@ -125,6 +125,10 @@ public class Balloon extends LivingEntity {
         this.chainPos = pos;
     }
 
+    public BlockPos getChainPos() {
+        return this.chainPos;
+    }
+
     public void setTicksUntilFloatAway(int ticks) {
         this.ticksUntilFloatAway = ticks;
     }

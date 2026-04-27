@@ -1,6 +1,7 @@
 package net.superkat.booyah.block.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,16 +11,21 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.phys.Vec3;
+import net.superkat.booyah.Booyah;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
 import net.superkat.booyah.block.BooyahBlocks;
 import org.jspecify.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonChaseBlockEntity, BalloonChaseBlockRenderState> {
+    public static final Identifier ICON_TEXTURE = Booyah.id("textures/entity/balloon/icon.png");
     public final Font font;
     public BalloonChaseBlockRenderer(BlockEntityRendererProvider.Context context) {
         this.font = context.font();
@@ -28,12 +34,26 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
     @Override
     public void submit(BalloonChaseBlockRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         if (!state.render || state.chainId == null) return;
+        // Icon Rendering
+        poseStack.pushPose();
+        poseStack.rotateAround(camera.orientation, 0.5f, 0.5f, 0.5f);
+        submitNodeCollector.submitCustomGeometry(
+                poseStack,
+                RenderTypes.entityTranslucent(ICON_TEXTURE),
+                (pose, buffer) -> {
+                    renderQuad(pose, buffer, CommonColors.WHITE, 0, 1, 0, 0, 1, 0, 0f, 1f, 0f, 1f);
+                }
+        );
+        poseStack.popPose();
+
+        // Info Rendering
         poseStack.pushPose();
 
         poseStack.translate(0.5, 1, 0.5);
         poseStack.mulPose(Axis.XP.rotationDegrees(90));
         poseStack.scale(1 / 18f, 1 / 18f, 1 / 18f);
 
+        // Chain ID
         poseStack.pushPose();
         poseStack.scale(0.75f, 0.75f, 0.75f);
         poseStack.translate(0, -4, 0);
@@ -45,6 +65,7 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         );
         poseStack.popPose();
 
+        // Chain Index
         poseStack.pushPose();
         poseStack.scale(0.5f, 0.5f, 0.5f);
         poseStack.translate(0, 8, 0);
@@ -75,5 +96,37 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
     @Override
     public BalloonChaseBlockRenderState createRenderState() {
         return new BalloonChaseBlockRenderState();
+    }
+
+    private static void renderQuad(
+            final PoseStack.Pose pose,
+            final VertexConsumer builder,
+            final int color,
+            final int beamStart,
+            final int beamEnd,
+            final float wnx,
+            final float wnz,
+            final float enx,
+            final float enz,
+            final float uu1,
+            final float uu2,
+            final float vv1,
+            final float vv2
+    ) {
+        addVertex(pose, builder, color, beamEnd, wnx, wnz, uu2, vv1);
+        addVertex(pose, builder, color, beamStart, wnx, wnz, uu2, vv2);
+        addVertex(pose, builder, color, beamStart, enx, enz, uu1, vv2);
+        addVertex(pose, builder, color, beamEnd, enx, enz, uu1, vv1);
+    }
+
+    private static void addVertex(
+            final PoseStack.Pose pose, final VertexConsumer builder, final int color, final int y, final float x, final float z, final float u, final float v
+    ) {
+        builder.addVertex(pose, x, (float)y, z)
+                .setColor(color)
+                .setUv(u, v)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(15728880)
+                .setNormal(pose, 0.0F, 1.0F, 0.0F);
     }
 }

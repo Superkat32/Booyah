@@ -25,6 +25,7 @@ public class BooyahEntities {
                     .noLootTable()
                     .sized(0.75f, 0.85f)
                     .clientTrackingRange(10)
+                    .noSave()
     );
 
     public static void init() {

@@ -78,10 +78,10 @@ public class BalloonChainManager {
         chain.putEntry(entry);
     }
 
-    public void removeEntry(String chainId, BalloonEntry entry) {
+    public void removeEntry(Level level, String chainId, BalloonEntry entry) {
         if (entry == null) return;
         BalloonChain chain = this.getOrCreateChain(chainId);
-        chain.removeEntry(entry);
+        chain.removeEntry(level, entry);
 
         if (chain.entries().isEmpty()) {
             this.chains.remove(chainId);

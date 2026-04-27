@@ -19,16 +19,19 @@ public class BalloonChaseBlockEntity extends BlockEntity {
     @Nullable
     public BalloonEntry balloonEntry = null;
 
+    public boolean isChainStart = false;
+    public boolean isChainEnd = false;
+
     public BalloonChaseBlockEntity(BlockPos worldPosition, BlockState blockState) {
         super(BooyahBlocks.BALLOON_CHASE_BLOCK_ENTITY, worldPosition, blockState);
     }
 
     // Intended for server only
-    public void updateBalloonEntry(String chainId, int entryIndex) {
+    public void updateBalloonEntry(String chainId, BalloonEntry entry) {
         if (this.level == null) return;
         BalloonChainManager chainManager = BalloonChainManager.get(this.level);
         BalloonChain chain = chainManager.getOrCreateChain(chainId);
-        BalloonEntry entry = new BalloonEntry(this.getBlockPos(), entryIndex);
+//        BalloonEntry entry = new BalloonEntry(this.getBlockPos(), entryIndex);
         chain.putEntry(entry);
 
         this.balloonEntry = entry;
@@ -49,7 +52,7 @@ public class BalloonChaseBlockEntity extends BlockEntity {
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
         if (!this.level.isClientSide()) {
-            BalloonChainManager.get(this.level).removeEntry(this.balloonChainId, this.balloonEntry);
+            BalloonChainManager.get(this.level).removeEntry(level, this.balloonChainId, this.balloonEntry);
         }
     }
 
@@ -81,7 +84,19 @@ public class BalloonChaseBlockEntity extends BlockEntity {
         return this.balloonChainId;
     }
 
-    public String getChainIndex() {
+    public String getChainIndexString() {
         return this.balloonEntry == null ? "0" : String.valueOf(this.balloonEntry.index());
+    }
+
+    public String getSpawnDelayString() {
+        return this.balloonEntry == null ? "0" : String.valueOf(this.balloonEntry.spawnDelayTicks());
+    }
+
+    public String getFloatAwayString() {
+        return this.balloonEntry == null ? "300" : String.valueOf(this.balloonEntry.floatAwayTicks());
+    }
+
+    public String getYawString() {
+        return this.balloonEntry == null ? "0.0" : String.valueOf(this.balloonEntry.balloonYaw());
     }
 }
