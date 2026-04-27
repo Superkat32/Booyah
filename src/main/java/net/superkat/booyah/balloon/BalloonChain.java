@@ -7,6 +7,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.superkat.booyah.entity.Balloon;
 import net.superkat.booyah.entity.BooyahEntities;
@@ -44,6 +45,7 @@ public class BalloonChain {
     public boolean chasing = false;
     public boolean balloonSpawned = false;
     public List<UUID> balloonUuids = new ArrayList<>();
+    public boolean waveFailed = false;
 
     public int startingIndex = 0;
     public int endingIndex = 0;
@@ -73,6 +75,9 @@ public class BalloonChain {
 
         if (!this.balloonSpawned && !this.chasing && this.currentIndex == this.startingIndex) {
             spawnBalloons(level, this.startingIndex);
+        } else if (this.waveFailed) {
+            this.waveFailed = false;
+            this.reset(level);
         }
     }
 
@@ -98,6 +103,8 @@ public class BalloonChain {
         for (BalloonEntry entry : entriesForIndex) {
             BlockPos pos = entry.pos();
             Balloon balloon = BooyahEntities.BALLOON_CHASE.create(level, EntitySpawnReason.MOB_SUMMONED);
+            int ticksUntilFloatAway = index == this.startingIndex ? -1 : 300;
+//            int ticksUntilFloatAway = index == this.startingIndex ? -1 : 100;
             if (balloon == null) continue;
 
             // Move pos up if either of the 2 blocks beneath aren't air
@@ -110,14 +117,12 @@ public class BalloonChain {
             balloon.snapTo(pos.getBottomCenter(), 0, 0);
             level.addFreshEntity(balloon);
             balloon.setChain(this);
+            balloon.setChainPos(pos);
+            balloon.setTicksUntilFloatAway(ticksUntilFloatAway);
             this.balloonUuids.add(balloon.getUUID());
         }
 
         this.balloonSpawned = true;
-    }
-
-    public void despawnBalloon(ServerLevel level) {
-
     }
 
     // Server only - used when a player pops a balloon, not when it despawns
@@ -126,6 +131,22 @@ public class BalloonChain {
         if (this.balloonUuids.isEmpty()) {
             this.spawnNextWave((ServerLevel) balloon.level());
         }
+    }
+
+    public void onBalloonDespawn(Balloon balloon) {
+        this.balloonUuids.remove(balloon.getUUID());
+        this.waveFailed = true;
+    }
+
+    public void reset(ServerLevel level) {
+        for (UUID balloonUuid : new ArrayList<>(balloonUuids)) {
+            Entity balloon = level.getEntity(balloonUuid);
+            if (balloon == null || balloon.isRemoved()) continue;
+            balloon.remove(Entity.RemovalReason.DISCARDED);
+        }
+        this.chasing = false;
+        this.currentIndex = this.startingIndex;
+        this.balloonSpawned = false;
     }
 
     public void putEntry(BalloonEntry entry) {
