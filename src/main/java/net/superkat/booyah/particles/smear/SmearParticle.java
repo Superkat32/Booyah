@@ -101,28 +101,6 @@ public class SmearParticle extends SingleQuadParticle {
         return Layer.TRANSLUCENT;
     }
 
-//    @Override
-//    protected float getU0() {
-//        return this.reversed ? this.sprite.getU1() : this.sprite.getU0();
-//    }
-//
-//    @Override
-//    protected float getU1() {
-//        return this.reversed ? this.sprite.getU0() : this.sprite.getU1();
-//    }
-//
-//    @Override
-//    protected float getV0() {
-////        return this.reversed ? this.sprite.getV1() : this.sprite.getV0();
-//        return super.getV0();
-//    }
-//
-//    @Override
-//    protected float getV1() {
-////        return this.reversed ? this.sprite.getV0() : this.sprite.getV1();
-//        return super.getV1();
-//    }
-
     @Environment(EnvType.CLIENT)
     public static class Provider implements ParticleProvider<SmearParticleOptions> {
         private final SpriteSet sprites;
