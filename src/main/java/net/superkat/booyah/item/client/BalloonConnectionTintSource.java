@@ -35,14 +35,6 @@ public record BalloonConnectionTintSource(int color) implements ItemTintSource {
                 } else {
                     return CommonColors.BLACK;
                 }
-
-//                Random random = new Random(player.booyah$getConnectingBalloonBlockPos().asLong());
-//                float hue = random.nextFloat();
-//                float saturation = 0.7f + random.nextFloat() * 0.3f;
-//                float value = 0.8f + random.nextFloat() * 0.2f;
-//                return new HSVColor(hue, saturation, value).getARGB();
-
-//                return CommonColors.SOFT_YELLOW;
             }
         }
         return CommonColors.WHITE;

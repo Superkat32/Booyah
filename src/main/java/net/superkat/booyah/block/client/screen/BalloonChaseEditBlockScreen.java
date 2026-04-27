@@ -10,10 +10,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import net.superkat.booyah.balloon.BalloonEntry;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
 import net.superkat.booyah.network.packets.balloon.C2SBalloonChaseBlockUpdatePacket;
@@ -27,6 +29,7 @@ public class BalloonChaseEditBlockScreen extends Screen {
     public TextField<Integer> spawnDelayField;
     public TextField<Integer> floatAwayField;
     public TextField<Float> yawField;
+    public Button roundYawButton;
 
     public BalloonChaseEditBlockScreen(BalloonChaseBlockEntity blockEntity) {
         super(Component.literal("Balloon Chase Block Edit Screen"));
@@ -45,7 +48,6 @@ public class BalloonChaseEditBlockScreen extends Screen {
                 .build();
 
         Panel inputsPanel = Panel.builder()
-                .tooltip(Tooltip.create(Component.literal("inputs")))
                 .dimensions(true, true)
                 .padding(0, 0, 8, 0)
                 .build();
@@ -56,7 +58,6 @@ public class BalloonChaseEditBlockScreen extends Screen {
         inputsPanel.addChild(title);
 
         Panel chainInfoPanel = Panel.builder()
-                .tooltip(Tooltip.create(Component.literal("chainInfo")))
                 .dimensions(true, 44)
                 .alignCenter()
                 .padding(0, 4)
@@ -200,14 +201,40 @@ public class BalloonChaseEditBlockScreen extends Screen {
                 .build();
         Panel autoYawPanel = Panel.builder()
                 .dimensions(128, true)
-                .alignRight()
+                .alignCenter()
+                .flowAxis(FlowAxis.HORIZONTAL)
                 .build();
         Button autoYawButton = Button.builder()
                 .text(Component.literal("Face Me!"))
-                .dimensions(64, true)
+                .onPress(button -> {
+                    LocalPlayer player = this.minecraft.player;
+                    if (player == null) return;
+
+                    float angle = (float) Mth.atan2(player.getZ() - this.blockEntity.getBlockPos().getCenter().z(), player.getX() - this.blockEntity.getBlockPos().getCenter().x());
+                    this.yawField.setValue((float) Math.toDegrees(angle) - 90);
+                })
+                .dimensions(60, true)
+                .alignCenter()
+                .build();
+        this.roundYawButton = Button.builder()
+                .text(Component.literal("Round 45"))
+                .onPress(button -> {
+                    float roundAmount = 45f;
+                    if (this.minecraft.hasShiftDown()) {
+                        roundAmount = 90f;
+                    } else if (this.minecraft.hasControlDown()) {
+                        roundAmount = 22.5f;
+                    }
+
+                    if (this.yawField.getValue() == null) return;
+                    float angle = this.yawField.getValue();
+                    this.yawField.setValue(Math.round(angle / roundAmount) * roundAmount);
+                })
+                .dimensions(62, true)
                 .alignCenter()
                 .build();
         autoYawPanel.addChild(autoYawButton);
+        autoYawPanel.addChild(roundYawButton);
         yawPanel.addChild(yawField);
         yawPanel.addChild(autoYawPanel);
 
@@ -252,7 +279,21 @@ public class BalloonChaseEditBlockScreen extends Screen {
         if (event.isConfirmation()) {
             this.save();
         }
+
+        if (event.hasShiftDown()) {
+            this.roundYawButton.setText(Component.literal("Round 90"));
+        } else if (event.hasControlDown()) {
+            this.roundYawButton.setText(Component.literal("Round 22.5"));
+        }
         return super.keyPressed(event);
+    }
+
+    @Override
+    public boolean keyReleased(KeyEvent event) {
+        if (!this.minecraft.hasShiftDown() && !this.minecraft.hasControlDown()) {
+            this.roundYawButton.setText(Component.literal("Round 45"));
+        }
+        return super.keyReleased(event);
     }
 
     public void save() {
@@ -268,7 +309,13 @@ public class BalloonChaseEditBlockScreen extends Screen {
                 ))
         );
 
-        this.minecraft.player.sendSystemMessage(Component.literal("Saved Balloon Chase Block!"));
+        Component chainIdName = Component.literal(chainId).withStyle(ChatFormatting.AQUA);
+        MutableComponent message = Component.literal("Saved Balloon Chase Block");
+        if (!chainId.isBlank()) {
+            message.append(" ").append(chainIdName);
+        }
+        message.append("!");
+        this.minecraft.player.sendSystemMessage(message);
 
         this.onClose();
     }

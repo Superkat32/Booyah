@@ -30,6 +30,7 @@ public class BalloonRenderer extends LivingEntityRenderer<Balloon, BalloonRender
     @Override
     public void extractRenderState(Balloon entity, BalloonRenderState state, float partialTicks) {
         super.extractRenderState(entity, state, partialTicks);
+        state.bodyRot = entity.getYRot();
         state.idleAnimationState.copyFrom(entity.idleAnimationState);
     }
 

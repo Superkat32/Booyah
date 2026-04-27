@@ -117,7 +117,8 @@ public class BalloonChain {
 
             balloon.setPos(pos.getCenter());
             balloon.setOnGround(false);
-            balloon.snapTo(pos.getBottomCenter(), 0, 0);
+            balloon.snapTo(pos.getBottomCenter(), entry.balloonYaw(), 0);
+            balloon.setYBodyRot(entry.balloonYaw());
             level.addFreshEntity(balloon);
             balloon.setChain(this);
             balloon.setChainPos(entry.pos());

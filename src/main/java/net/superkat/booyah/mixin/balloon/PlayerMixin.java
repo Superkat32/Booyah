@@ -1,5 +1,6 @@
 package net.superkat.booyah.mixin.balloon;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
@@ -17,6 +18,15 @@ public class PlayerMixin implements BalloonBlockEditCapablePlayer {
     @Unique
     @Nullable
     public BlockPos booyah$initConnectingBalloonBlockPos = null;
+
+    @ModifyReturnValue(method = "isSecondaryUseActive", at = @At(value = "RETURN"))
+    public boolean booyah$allowShiftClickingBalloonScreenWithBalloonItemInHand(boolean original) {
+        Player self = (Player) (Object) this;
+        if (self.getMainHandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())) {
+            return false;
+        }
+        return original;
+    }
 
     @Inject(method = "tick", at = @At(value = "TAIL"))
     public void booyah$updatePlayerBalloonBlockConnection(CallbackInfo ci) {

@@ -32,7 +32,7 @@ public class BalloonChaseBlock extends BaseEntityBlock {
             && player instanceof BalloonBlockEditCapablePlayer balloonPlayer
         ) {
 
-            if (itemStack.is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())) {
+            if (itemStack.is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()) && !player.isShiftKeyDown()) {
                 if (balloonPlayer.booyah$isConnectingBalloonBlocks()) {
                     BlockPos initPos = balloonPlayer.booyah$getConnectingBalloonBlockPos();
                     if (!pos.equals(initPos) && level.getBlockEntity(initPos) instanceof BalloonChaseBlockEntity initBalloonBlock && initBalloonBlock.balloonEntry != null) {
@@ -64,7 +64,8 @@ public class BalloonChaseBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return context.isHoldingItem(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()) ? Shapes.block() : Shapes.empty();
+        return (BooyahBlocks.BALLOON_CHASE_BLOCK != null && context.isHoldingItem(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()))
+                ? Shapes.block() : Shapes.empty();
     }
 
     @Override

@@ -21,11 +21,15 @@ import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.Booyah;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
 import net.superkat.booyah.block.BooyahBlocks;
+import net.superkat.booyah.color.HSVColor;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonChaseBlockEntity, BalloonChaseBlockRenderState> {
     public static final Identifier ICON_TEXTURE = Booyah.id("textures/entity/balloon/icon.png");
+    public static final Identifier ARROW_TEXTURE = Booyah.id("textures/entity/balloon/arrow.png");
     public final Font font;
     public BalloonChaseBlockRenderer(BlockEntityRendererProvider.Context context) {
         this.font = context.font();
@@ -40,9 +44,8 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         submitNodeCollector.submitCustomGeometry(
                 poseStack,
                 RenderTypes.entityTranslucent(ICON_TEXTURE),
-                (pose, buffer) -> {
-                    renderQuad(pose, buffer, CommonColors.WHITE, 0, 1, 0, 0, 1, 0, 0f, 1f, 0f, 1f);
-                }
+                (pose, buffer) ->
+                        renderQuad(pose, buffer, state.color, 0, 1, 0, 0, 1, 0, 0f, 1f, 0f, 1f)
         );
         poseStack.popPose();
 
@@ -77,6 +80,20 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
         );
         poseStack.popPose();
 
+        // Arrow
+        poseStack.pushPose();
+        poseStack.scale(4f, 4f, 4f);
+        poseStack.translate(0, 1f, 0.1f);
+        poseStack.rotateAround(Axis.ZP.rotationDegrees(state.balloonSpawnYaw), 0, -1f, 0);
+        poseStack.mulPose(Axis.ZP.rotationDegrees(45));
+        submitNodeCollector.submitCustomGeometry(
+                poseStack,
+                RenderTypes.entityTranslucent(ARROW_TEXTURE),
+                (pose, buffer) ->
+                        renderQuad(pose, buffer, CommonColors.WHITE, 0, 1, 0, 0, 1, 0, 0f, 1f, 0f, 1f)
+        );
+        poseStack.popPose();
+
         poseStack.popPose();
     }
 
@@ -90,6 +107,15 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
             state.render = true;
             state.chainId = blockEntity.balloonChainId.isBlank() ? "Empty!" : blockEntity.balloonChainId;
             state.entryIndex = blockEntity.balloonEntry == null ? "" : String.valueOf(blockEntity.balloonEntry.index());
+            state.balloonSpawnYaw = blockEntity.balloonEntry == null ? 0 : blockEntity.balloonEntry.balloonYaw();
+
+            if (blockEntity.balloonEntry != null) {
+                Random random = new Random(blockEntity.balloonEntry.index() * 2048L + 1000);
+                float hue = random.nextFloat();
+                float saturation = 0.7f + random.nextFloat() * 0.3f;
+                float value = 0.8f + random.nextFloat() * 0.2f;
+                state.color = new HSVColor(hue, saturation, value).getARGB();
+            }
         }
     }
 
@@ -127,6 +153,6 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
                 .setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(15728880)
-                .setNormal(pose, 0.0F, 1.0F, 0.0F);
+                .setNormal(pose, 1.0F, 1.0F, 1.0F);
     }
 }
