@@ -43,7 +43,7 @@ public record SplatanaColorSet(List<HSVColor> colors, Vec3 colorVariation) {
 
     public int getRandomColor(RandomSource random, float chanceOfVariation) {
         HSVColor baseColor = this.colors.get(random.nextInt(this.colors.size()));
-        if (random.nextFloat() >= chanceOfVariation) {
+        if (random.nextFloat() <= chanceOfVariation) {
             float randomHue = (float) (this.colorVariation.x() * randomFloat(random));
             float randomSaturation = (float) (this.colorVariation.y() * randomFloat(random));
             float randomValue = (float) (this.colorVariation.z() * randomFloat(random));

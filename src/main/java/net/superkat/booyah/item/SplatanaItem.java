@@ -75,12 +75,19 @@ public class SplatanaItem extends Item {
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
         if (level instanceof ServerLevel serverLevel) {
-            SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.5F, 0);
-            int color = itemStack.get(BooyahItems.SPLATANA_COMPONENT).colorSet().getRandomColor(entity.getRandom(), 0);
-            swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, color);
+            SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.15F, 0);
+            int mainColor = colorSet.getRandomColor(entity.getRandom(), 0);
+            swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, mainColor);
+            int altColorA = colorSet.getRandomColor(entity.getRandom(), 1);
+            swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_A_ID, altColorA);
+            int altColorB = colorSet.getRandomColor(entity.getRandom(), 1);
+            swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_B_ID, altColorB);
+            int altColorC = colorSet.getRandomColor(entity.getRandom(), 1);
+            swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_C_ID, altColorC);
+
             swipe.getEntityData().set(SplatanaSwipe.ROT_Z, 90);
-//            swipe.setDeltaMovement(2, 0, 0);
-//            swipe.addDeltaMovement(new Vec3(3, 0, 0));
+
+            swipe.setOwner(player);
         }
         return true;
     }

@@ -4,15 +4,29 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class SplatanaSwipe extends Projectile {
     public static final EntityDataAccessor<Integer> COLOR_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ALT_COLOR_A_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ALT_COLOR_B_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> ALT_COLOR_C_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ROT_Z = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
+    public ExtraAnimInfo extraAnimA = new ExtraAnimInfo(0);
+    public ExtraAnimInfo extraAnimB = new ExtraAnimInfo(1);
+    public ExtraAnimInfo extraAnimC = new ExtraAnimInfo(2);
     public int maxAge = 100;
     public SplatanaSwipe(EntityType<? extends Projectile> type, Level level) {
         super(type, level);
@@ -30,17 +44,57 @@ public class SplatanaSwipe extends Projectile {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         entityData.define(COLOR_ID, -1);
+        entityData.define(ALT_COLOR_A_ID, -1);
+        entityData.define(ALT_COLOR_B_ID, -1);
+        entityData.define(ALT_COLOR_C_ID, -1);
         entityData.define(ROT_Z, 0);
     }
 
     @Override
     public void tick() {
+        HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         this.setPos(this.position().add(this.getDeltaMovement()));
         this.updateRotation();
+
+        if (result.getType() != HitResult.Type.MISS && this.isAlive()) {
+            this.onHit(result);
+        }
+
+        this.extraAnimA.update(this.tickCount);
+        this.extraAnimB.update(this.tickCount);
+        this.extraAnimC.update(this.tickCount);
         super.tick();
         if (this.tickCount >= this.getMaxAge()) {
             this.remove(RemovalReason.KILLED);
         }
+    }
+
+    @Override
+    protected void onHitEntity(final EntityHitResult hitResult) {
+        super.onHitEntity(hitResult);
+        Entity entity = hitResult.getEntity();
+        int damage = entity instanceof Blaze ? 3 : 0;
+        entity.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+    }
+
+    @Override
+    protected void onHit(final HitResult hitResult) {
+        super.onHit(hitResult);
+        if (!this.level().isClientSide()) {
+            this.level().broadcastEntityEvent(this, (byte)3);
+            this.discard();
+        }
+    }
+
+    @Override
+    protected AABB makeBoundingBox(Vec3 position) {
+        float width = 1.75f;
+        float height = 0.75f;
+        if (this.getEntityData().get(ROT_Z) == 90f) {
+            width = 0.7f;
+            height = 1.85f;
+        }
+        return AABB.ofSize(position, width, height, width);
     }
 
     public int getMaxAge() {
@@ -49,5 +103,54 @@ public class SplatanaSwipe extends Projectile {
 
     public void setMaxAge(int maxAge) {
         this.maxAge = maxAge;
+    }
+
+    public static final class ExtraAnimInfo {
+        private final int index;
+        private float x = 0;
+        private float y = 0;
+        private float prevX = 0;
+        private float prevY = 0;
+
+        public ExtraAnimInfo(int index) {
+            this.index = index;
+        }
+
+        public float getX(float partialTicks) {
+            return Mth.lerp(partialTicks, this.prevX, this.x);
+        }
+
+        public float getY(float partialTicks) {
+            return Mth.lerp(partialTicks, this.prevY, this.y);
+        }
+
+        public void update(int age) {
+            this.updateX(age);
+            this.updateY(age);
+        }
+
+        public void updateX(int age) {
+            this.prevX = this.x;
+            this.x = getModelX(age, this.index);
+        }
+
+        public void updateY(int age) {
+            this.prevY = this.y;
+            this.y = getModelY(age, this.index);
+        }
+
+        // Mathematically accurate Trizooka shots with configurable distance (this makes me so happy)
+        // https://www.desmos.com/calculator/f60n1p4fez
+        private static float getModelX(int age, int extraIndex) {
+            float size = (1f / 10f) * Math.min(age, 10);
+            float distance = 0.15f * size;
+            return (float) (Math.cos((-12 * (age - (4 * extraIndex))) + (120 * extraIndex) + 300) * distance);
+        }
+
+        private static float getModelY(int age, int extraIndex) {
+            float size = (1f / 10f) * Math.min(age, 10);
+            float distance = 0.045f * size;
+            return (float) (Math.sin((-12 * (age - (4 * extraIndex))) + (120 * extraIndex) + 300) * distance);
+        }
     }
 }

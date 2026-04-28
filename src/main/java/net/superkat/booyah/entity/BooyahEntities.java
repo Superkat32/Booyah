@@ -23,7 +23,7 @@ public class BooyahEntities {
     public static final EntityType<Balloon> BALLOON_CHASE = register("balloon_chase",
             EntityType.Builder.of(Balloon::new, MobCategory.MISC)
                     .noLootTable()
-                    .sized(0.75f, 0.85f)
+                    .sized(1f, 0.9f)
                     .clientTrackingRange(10)
                     .noSave()
     );

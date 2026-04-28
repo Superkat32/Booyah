@@ -32,10 +32,20 @@ public class SplatanaManager {
         splatanaPlayer.booyah$setMaxSplatanaSlashTime(-1);
 
         if (player.level() instanceof ServerLevel serverLevel) {
-            int color = player.getMainHandItem().get(BooyahItems.SPLATANA_COMPONENT).colorSet().getRandomColor(player.getRandom(), 0);
-            SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, player.getMainHandItem(), player, 0, 1.5F, 0);
-            swipe.setPos(swipe.position().add(0, -0.75, 0));
-            swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, color);
+            SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
+            SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, player.getMainHandItem(), player, 0, 1.25F, 0);
+            swipe.setPos(swipe.position().add(0, -0.15, 0));
+
+            int mainColor = colorSet.getRandomColor(player.getRandom(), 0);
+            swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, mainColor);
+            int altColorA = colorSet.getRandomColor(player.getRandom(), 0.75f);
+            swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_A_ID, altColorA);
+            int altColorB = colorSet.getRandomColor(player.getRandom(), 0.75f);
+            swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_B_ID, altColorB);
+            int altColorC = colorSet.getRandomColor(player.getRandom(), 0.75f);
+            swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_C_ID, altColorC);
+
+            swipe.setOwner(player);
 
             S2CSplatanaSwingPacket swingPacket = new S2CSplatanaSwingPacket(player.getId(), -1, splatanaPlayer.booyah$queuedReverseUpdate());
             for (ServerPlayer serverPlayer : PlayerLookup.tracking(player)) {

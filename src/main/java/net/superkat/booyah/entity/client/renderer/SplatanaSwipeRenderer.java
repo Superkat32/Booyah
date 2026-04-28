@@ -28,12 +28,47 @@ public class SplatanaSwipeRenderer extends EntityRenderer<SplatanaSwipe, Splatan
     @Override
     public void submit(SplatanaSwipeRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
-        poseStack.scale(1.5f, 1.5f, 1.5f);
+
+//        poseStack.scale(1.5f, 1.5f, 1.5f);
         poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot + 180f));
         poseStack.mulPose(Axis.XP.rotationDegrees(state.xRot));
         poseStack.mulPose(Axis.ZP.rotationDegrees(state.zRot));
         poseStack.translate(0, -1.35f - (state.zRot == 90 ? 0.15f : 0), 0);
-        submitNodeCollector.submitModel(this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords, OverlayTexture.NO_OVERLAY, state.color, null, state.outlineColor, null);
+        // Main
+        submitNodeCollector.submitModel(
+                this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords,
+                OverlayTexture.NO_OVERLAY, state.mainColor, null, state.outlineColor, null
+        );
+
+        poseStack.scale(1, 1.5f, 1f);
+        poseStack.translate(0, -0.5f, 0);
+        // Alt 1
+        poseStack.pushPose();
+        poseStack.translate(state.extraModelAX, state.extraModelAY, 0.1f);
+        submitNodeCollector.submitModel(
+                this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords,
+                OverlayTexture.NO_OVERLAY, state.extraColorA, null, state.outlineColor, null
+        );
+        poseStack.popPose();
+
+        // Alt 2
+        poseStack.pushPose();
+        poseStack.translate(state.extraModelBX, state.extraModelBY, 0.15f);
+        submitNodeCollector.submitModel(
+                this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords,
+                OverlayTexture.NO_OVERLAY, state.extraColorB, null, state.outlineColor, null
+        );
+        poseStack.popPose();
+
+        // Alt 3
+        poseStack.pushPose();
+        poseStack.translate(state.extraModelCX, state.extraModelCY, 0.05f);
+        submitNodeCollector.submitModel(
+                this.model, state, poseStack, this.model.renderType(TEXTURE), state.lightCoords,
+                OverlayTexture.NO_OVERLAY, state.extraColorC, null, state.outlineColor, null
+        );
+        poseStack.popPose();
+
         poseStack.popPose();
         super.submit(state, poseStack, submitNodeCollector, camera);
     }
@@ -49,6 +84,18 @@ public class SplatanaSwipeRenderer extends EntityRenderer<SplatanaSwipe, Splatan
         state.xRot = entity.getXRot(partialTicks);
         state.yRot = entity.getYRot(partialTicks);
         state.zRot = entity.getEntityData().get(SplatanaSwipe.ROT_Z);
-        state.color = entity.getEntityData().get(SplatanaSwipe.COLOR_ID);
+        state.mainColor = entity.getEntityData().get(SplatanaSwipe.COLOR_ID);
+
+        state.extraModelAX = entity.extraAnimA.getX(partialTicks);
+        state.extraModelAY = entity.extraAnimA.getY(partialTicks);
+        state.extraColorA = entity.getEntityData().get(SplatanaSwipe.ALT_COLOR_A_ID);
+
+        state.extraModelBX = entity.extraAnimB.getX(partialTicks);
+        state.extraModelBY = entity.extraAnimB.getY(partialTicks);
+        state.extraColorB = entity.getEntityData().get(SplatanaSwipe.ALT_COLOR_B_ID);
+
+        state.extraModelCX = entity.extraAnimC.getX(partialTicks);
+        state.extraModelCY = entity.extraAnimC.getY(partialTicks);
+        state.extraColorC = entity.getEntityData().get(SplatanaSwipe.ALT_COLOR_C_ID);
     }
 }

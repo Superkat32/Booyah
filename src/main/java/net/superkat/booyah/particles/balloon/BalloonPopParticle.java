@@ -22,7 +22,7 @@ public class BalloonPopParticle extends SingleQuadParticle {
         this.roll = (float) Math.toRadians(this.random.nextInt(360));
         this.oRoll = this.roll;
         this.rollPerTick = (float) Math.toRadians(this.random.nextFloat() * 75);
-        this.lifetime = 60;
+        this.lifetime = 80;
 
         this.setSprite(sprites.get(this.random));
     }
