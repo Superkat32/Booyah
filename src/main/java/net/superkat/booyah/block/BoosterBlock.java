@@ -63,14 +63,15 @@ public class BoosterBlock extends Block {
         entity.push(baseVelocity.add(0, 0.25f, 0));
         level.playSound(null, pos, SoundEvents.BREEZE_CHARGE, SoundSource.BLOCKS, 0.75f, 1.25f);
         if (level.isClientSide()) {
-            for (int i = 0; i < 16; i++) {
+            for (int i = 0; i < 8; i++) {
                 float x = (float) entity.getRandomX(2);
                 float y = (float) entity.getRandomY(0.5) + 1f;
                 float z = (float) entity.getRandomZ(2);
-                float velX = (float) baseVelocity.x;
-                float velY = (float) baseVelocity.y;
-                float velZ = (float) baseVelocity.z;
-                level.addParticle(new ZoomParticleOptions(CommonColors.WHITE, state.getValue(FACING).getOpposite().toYRot() + 90, 0, 0), x, y, z, velX, velY, velZ);
+                float velocityMultiplier = 1f + (entity.getRandom().nextFloat() * 0.5f) - 0.25f;
+                float velX = (float) baseVelocity.scale(velocityMultiplier + 0.15f).x;
+                float velY = (float) baseVelocity.add(0, 0.05f, 0).scale(velocityMultiplier).y;
+                float velZ = (float) baseVelocity.scale(velocityMultiplier + 0.15f).z;
+                level.addParticle(new ZoomParticleOptions(CommonColors.WHITE, state.getValue(FACING).getOpposite().toYRot() + 90, 0), x, y, z, velX, velY, velZ);
             }
         }
     }

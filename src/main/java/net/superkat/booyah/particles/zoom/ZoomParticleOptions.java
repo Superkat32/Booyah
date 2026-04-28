@@ -11,13 +11,12 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.superkat.booyah.particles.BooyahParticles;
 
-public record ZoomParticleOptions(int color, float yaw, float pitch, float stretch) implements ParticleOptions {
+public record ZoomParticleOptions(int color, float yaw, float pitch) implements ParticleOptions {
     public static final MapCodec<ZoomParticleOptions> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(
                     ExtraCodecs.RGB_COLOR_CODEC.fieldOf("color").forGetter(particle -> particle.color),
                     Codec.FLOAT.fieldOf("yaw").forGetter(particle -> particle.yaw),
-                    Codec.FLOAT.fieldOf("pitch").forGetter(particle -> particle.pitch),
-                    Codec.FLOAT.fieldOf("stretch").forGetter(particle -> particle.stretch)
+                    Codec.FLOAT.fieldOf("pitch").forGetter(particle -> particle.pitch)
             ).apply(instance, ZoomParticleOptions::new)
     );
 
@@ -25,7 +24,6 @@ public record ZoomParticleOptions(int color, float yaw, float pitch, float stret
             ByteBufCodecs.INT, ZoomParticleOptions::color,
             ByteBufCodecs.FLOAT, ZoomParticleOptions::yaw,
             ByteBufCodecs.FLOAT, ZoomParticleOptions::pitch,
-            ByteBufCodecs.FLOAT, ZoomParticleOptions::stretch,
             ZoomParticleOptions::new
     );
 

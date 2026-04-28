@@ -20,13 +20,12 @@ public class ZoomParticle extends SingleQuadParticle {
 
     public float yaw;
     public float pitch;
-    public float stretch;
     public ZoomParticle(ClientLevel level, double x, double y, double z, double xa, double ya, double za, ZoomParticleOptions options, SpriteSet sprite) {
         super(level, x, y, z, xa, ya, za, sprite.first());
 
         this.yaw = options.yaw();
         this.pitch = options.pitch();
-        this.stretch = options.stretch();
+//        this.quadSize = options.scale();
         this.xd = xa;
         this.yd = ya;
         this.zd = za;
