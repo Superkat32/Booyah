@@ -48,6 +48,11 @@ public class BooyahItems {
                 .register(tab -> {
                     tab.accept(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem());
                 });
+
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.REDSTONE_BLOCKS)
+                .register(tab -> {
+                    tab.accept(BooyahBlocks.BOOSTER_BLOCK.asItem());
+                });
     }
 
     public static boolean isSplatana(ItemStack item) {

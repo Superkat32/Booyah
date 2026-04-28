@@ -10,6 +10,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -43,8 +44,19 @@ public class BooyahBlocks {
             BALLOON_CHASE_BLOCK
     );
 
-    public static void init() {
+    public static final Block BOOSTER_BLOCK = registerBlock(
+            "booster_block",
+            BoosterBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.FIRE)
+                    .requiresCorrectToolForDrops()
+                    .strength(5f, 6f)
+                    .sound(SoundType.NETHERITE_BLOCK),
+            true
+    );
 
+    public static void init() {
+        // NO-OP
     }
 
     // Copy-pasted from docs

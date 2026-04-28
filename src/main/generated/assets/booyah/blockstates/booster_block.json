@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "booster_elevated=false,facing=down": {
+      "model": "booyah:block/booster_block",
+      "x": 90
+    },
+    "booster_elevated=false,facing=east": {
+      "model": "booyah:block/booster_block",
+      "y": 90
+    },
+    "booster_elevated=false,facing=north": {
+      "model": "booyah:block/booster_block"
+    },
+    "booster_elevated=false,facing=south": {
+      "model": "booyah:block/booster_block",
+      "y": 180
+    },
+    "booster_elevated=false,facing=up": {
+      "model": "booyah:block/booster_block",
+      "x": 270
+    },
+    "booster_elevated=false,facing=west": {
+      "model": "booyah:block/booster_block",
+      "y": 270
+    },
+    "booster_elevated=true,facing=down": {
+      "model": "booyah:block/booster_block_elevated",
+      "x": 90
+    },
+    "booster_elevated=true,facing=east": {
+      "model": "booyah:block/booster_block_elevated",
+      "y": 90
+    },
+    "booster_elevated=true,facing=north": {
+      "model": "booyah:block/booster_block_elevated"
+    },
+    "booster_elevated=true,facing=south": {
+      "model": "booyah:block/booster_block_elevated",
+      "y": 180
+    },
+    "booster_elevated=true,facing=up": {
+      "model": "booyah:block/booster_block_elevated",
+      "x": 270
+    },
+    "booster_elevated=true,facing=west": {
+      "model": "booyah:block/booster_block_elevated",
+      "y": 270
+    }
+  }
+}
