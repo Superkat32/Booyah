@@ -5,15 +5,20 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
 import net.superkat.booyah.network.packets.splatana.S2CSplatanaSwingPacket;
-import net.superkat.booyah.particles.smear.SmearEmitterParticleOptions;
+import net.superkat.booyah.particles.splatana.SmearEmitterParticleOptions;
+
+import java.util.List;
 
 public class SplatanaManager {
 
@@ -32,6 +37,8 @@ public class SplatanaManager {
         splatanaPlayer.booyah$setMaxSplatanaSlashTime(-1);
 
         if (player.level() instanceof ServerLevel serverLevel) {
+            splatanaPlayer.booyah$setMaxSplatanaHitboxTicks(6);
+            splatanaPlayer.booyah$setSplatanaHitboxTicks(8);
             SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, player.getMainHandItem(), player, 0, 1.25F, 0);
             swipe.setPos(swipe.position().add(0, -0.15, 0));
@@ -106,5 +113,31 @@ public class SplatanaManager {
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         boolean reversed = splatanaPlayer.booyah$queuedReverseUpdate();
         level.addParticle(new SmearEmitterParticleOptions(1, 2, 16, colorSet, reversed, 0, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
+    }
+
+    public static void aiStepSplatanaPlayer(LivingEntity player) {
+        if (player.level().isClientSide()) return;
+        if (!(player instanceof SplatanaPlayer splatanaPlayer)) return;
+        if (!(player instanceof Player player1)) return;
+
+        int maxSplatanaHitboxTicks = splatanaPlayer.booyah$maxSplatanaHitboxTicks();
+        int splatanaHitboxTicks = splatanaPlayer.booyah$splatanaHitboxTicks();
+        if (maxSplatanaHitboxTicks <= 0) return;
+
+        splatanaHitboxTicks--;
+        splatanaPlayer.booyah$setSplatanaHitboxTicks(splatanaHitboxTicks);
+        if (splatanaHitboxTicks <= 0) {
+            splatanaPlayer.booyah$setMaxSplatanaHitboxTicks(0);
+            splatanaPlayer.booyah$setSplatanaHitboxTicks(0);
+        } else if(splatanaHitboxTicks <= maxSplatanaHitboxTicks) {
+            AABB hitbox = player.getBoundingBox().inflate(0.15f).inflate(0, 0.25f, 0);
+            List<Entity> hitEntities = player.level().getEntities(player, hitbox);
+            if (hitEntities.isEmpty()) return;
+
+            for (Entity hitEntity : hitEntities) {
+                if (!(hitEntity instanceof LivingEntity entity)) continue;
+                player1.attack(entity);
+            }
+        }
     }
 }

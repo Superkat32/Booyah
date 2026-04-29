@@ -59,4 +59,11 @@ public interface SplatanaPlayer {
         return this.booyah$prevDashAnim() + diff * partialTicks;
     }
 
+    // Max is intended to be higher than actual tick count to act as delay
+    int booyah$maxSplatanaHitboxTicks();
+    void booyah$setMaxSplatanaHitboxTicks(int ticks);
+
+    int booyah$splatanaHitboxTicks();
+    void booyah$setSplatanaHitboxTicks(int ticks);
+
 }

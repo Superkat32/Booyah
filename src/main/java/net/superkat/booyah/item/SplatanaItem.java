@@ -20,7 +20,7 @@ import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
-import net.superkat.booyah.particles.smear.SmearEmitterParticleOptions;
+import net.superkat.booyah.particles.splatana.SmearEmitterParticleOptions;
 
 public class SplatanaItem extends Item {
     public static final float PLAYER_SPEED_SWING_REDUCER_AMOUNT = 0.6f;
@@ -75,6 +75,8 @@ public class SplatanaItem extends Item {
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
         if (level instanceof ServerLevel serverLevel) {
+            splatanaPlayer.booyah$setMaxSplatanaHitboxTicks(12);
+            splatanaPlayer.booyah$setSplatanaHitboxTicks(16);
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.15F, 0);
             int mainColor = colorSet.getRandomColor(entity.getRandom(), 0);
             swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, mainColor);
@@ -88,6 +90,7 @@ public class SplatanaItem extends Item {
             swipe.getEntityData().set(SplatanaSwipe.ROT_Z, 90);
 
             swipe.setOwner(player);
+            swipe.setMaxAge(28);
         }
         return true;
     }

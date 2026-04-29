@@ -1,4 +1,4 @@
-package net.superkat.booyah.particles.smear;
+package net.superkat.booyah.particles.splatana;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

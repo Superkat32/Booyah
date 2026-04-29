@@ -41,7 +41,11 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Unique
     public float booyah$dashAnim = 0f;
     @Unique
-    public float booyah$prevDashAnim =0f;
+    public float booyah$prevDashAnim = 0f;
+    @Unique
+    public int booyah$maxSplatanaHitboxTicks = 0;
+    @Unique
+    public int booyah$splatanaHitboxTicks = 0;
 
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("TAIL"))
     public void booyah$updateSplatanaSwinging(InteractionHand hand, boolean sendToSwingingEntity, CallbackInfo ci) {
@@ -52,6 +56,11 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     public void booyah$updateSplatanaSwingTime(CallbackInfo ci) {
         // Called on server and client - Can't be bothered to access widener lol
         SplatanaManager.updateSplatanaPlayer((LivingEntity) (Object) this, this.getCurrentSwingDuration());
+    }
+
+    @Inject(method = "aiStep", at = @At("TAIL"))
+    public void booyah$handleSplatanaHitboxNonsense(CallbackInfo ci) {
+        SplatanaManager.aiStepSplatanaPlayer((LivingEntity) (Object) this);
     }
 
     @Override
@@ -170,5 +179,25 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
     public void booyah$setDashAnim(float anim) {
         this.booyah$prevDashAnim = this.booyah$dashAnim;
         this.booyah$dashAnim = anim;
+    }
+
+    @Override
+    public int booyah$maxSplatanaHitboxTicks() {
+        return this.booyah$maxSplatanaHitboxTicks;
+    }
+
+    @Override
+    public void booyah$setMaxSplatanaHitboxTicks(int ticks) {
+        this.booyah$maxSplatanaHitboxTicks = ticks;
+    }
+
+    @Override
+    public int booyah$splatanaHitboxTicks() {
+        return this.booyah$splatanaHitboxTicks;
+    }
+
+    @Override
+    public void booyah$setSplatanaHitboxTicks(int ticks) {
+        this.booyah$splatanaHitboxTicks = ticks;
     }
 }

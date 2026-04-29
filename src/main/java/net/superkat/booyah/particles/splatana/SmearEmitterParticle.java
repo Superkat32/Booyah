@@ -1,4 +1,4 @@
-package net.superkat.booyah.particles.smear;
+package net.superkat.booyah.particles.splatana;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.NoRenderParticle;

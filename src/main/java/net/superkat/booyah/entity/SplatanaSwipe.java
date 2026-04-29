@@ -17,8 +17,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.superkat.booyah.particles.splatana.DropletParticleOptions;
 
 public class SplatanaSwipe extends Projectile {
+    public static final EntityDataAccessor<Integer> MAX_AGE_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> COLOR_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ALT_COLOR_A_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ALT_COLOR_B_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
@@ -27,7 +29,6 @@ public class SplatanaSwipe extends Projectile {
     public ExtraAnimInfo extraAnimA = new ExtraAnimInfo(0);
     public ExtraAnimInfo extraAnimB = new ExtraAnimInfo(1);
     public ExtraAnimInfo extraAnimC = new ExtraAnimInfo(2);
-    public int maxAge = 100;
     public SplatanaSwipe(EntityType<? extends Projectile> type, Level level) {
         super(type, level);
     }
@@ -43,6 +44,7 @@ public class SplatanaSwipe extends Projectile {
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
+        entityData.define(MAX_AGE_ID, 16);
         entityData.define(COLOR_ID, -1);
         entityData.define(ALT_COLOR_A_ID, -1);
         entityData.define(ALT_COLOR_B_ID, -1);
@@ -63,6 +65,18 @@ public class SplatanaSwipe extends Projectile {
         this.extraAnimA.update(this.tickCount);
         this.extraAnimB.update(this.tickCount);
         this.extraAnimC.update(this.tickCount);
+        if (this.tickCount % 2 == 0 && this.level().isClientSide()) {
+            int colorIndex = this.getRandom().nextInt(3);
+            int color = switch (colorIndex) {
+                case 1 -> this.getEntityData().get(ALT_COLOR_A_ID);
+                case 2 -> this.getEntityData().get(ALT_COLOR_B_ID);
+                case 3 -> this.getEntityData().get(ALT_COLOR_C_ID);
+                default -> this.getEntityData().get(COLOR_ID);
+            };
+            Vec3 delta = this.getDeltaMovement().scale(0.5f);
+            this.level().addParticle(new DropletParticleOptions(color), this.getX(), this.getY(), this.getZ(), delta.x, delta.y, delta.z);
+        }
+
         super.tick();
         if (this.tickCount >= this.getMaxAge()) {
             this.remove(RemovalReason.KILLED);
@@ -98,11 +112,11 @@ public class SplatanaSwipe extends Projectile {
     }
 
     public int getMaxAge() {
-        return maxAge;
+        return this.getEntityData().get(MAX_AGE_ID);
     }
 
     public void setMaxAge(int maxAge) {
-        this.maxAge = maxAge;
+        this.getEntityData().set(MAX_AGE_ID, maxAge);
     }
 
     public static final class ExtraAnimInfo {

@@ -1,4 +1,4 @@
-package net.superkat.booyah.particles.smear;
+package net.superkat.booyah.particles.splatana;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
