@@ -47,7 +47,8 @@ public class BalloonChaseBlockEntity extends BlockEntity {
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
-        if (!this.level.isClientSide()) {
+        if (!this.level.isClientSide() && this.balloonEntry != null) { // Try to let NBT copied blocks work
+            this.balloonEntry = this.balloonEntry.updatePos(this.getBlockPos());
             BalloonChainManager.get(this.level).addEntry(this.balloonChainId, this.balloonEntry);
         }
     }
@@ -65,6 +66,11 @@ public class BalloonChaseBlockEntity extends BlockEntity {
         this.balloonChainId = input.getStringOr("chain_id", "");
         this.balloonEntry = input.read("entry", BalloonEntry.CODEC).orElse(null);
         super.loadAdditional(input);
+
+        if (this.level != null && this.balloonEntry != null) { // Try to let NBT copied blocks work
+            this.updateBalloonEntry(this.balloonChainId, this.balloonEntry.updatePos(this.getBlockPos()));
+//            this.balloonEntry = this.balloonEntry.updatePos(this.getBlockPos());
+        }
     }
 
     @Override

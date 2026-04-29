@@ -46,4 +46,8 @@ public record BalloonEntry(
         return new BalloonEntry(this.pos, this.index, this.spawnDelayTicks, this.floatAwayTicks, this.balloonYaw, this.rewardItemOnPop, popReward);
     }
 
+    public BalloonEntry updatePos(BlockPos pos) {
+        return new BalloonEntry(pos, this.index, this.spawnDelayTicks, this.floatAwayTicks, this.balloonYaw, this.rewardItemOnPop, this.popReward);
+    }
+
 }
