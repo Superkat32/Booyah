@@ -22,7 +22,7 @@ public class BalloonRenderer extends LivingEntityRenderer<Balloon, BalloonRender
     @Override
     public void submit(BalloonRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState camera) {
         poseStack.pushPose();
-        poseStack.translate(0, -1.2f, 0);
+        poseStack.translate(0, -1.15f, 0);
         super.submit(state, poseStack, submitNodeCollector, camera);
         poseStack.popPose();
     }

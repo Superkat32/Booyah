@@ -131,6 +131,7 @@ public class SplatanaManager {
             splatanaPlayer.booyah$setSplatanaHitboxTicks(0);
         } else if(splatanaHitboxTicks <= maxSplatanaHitboxTicks) {
             AABB hitbox = player.getBoundingBox().inflate(0.15f).inflate(0, 0.25f, 0);
+            if (splatanaPlayer.booyah$isSplatanaSwinging()) hitbox.inflate(5f, 0f, 5f);
             List<Entity> hitEntities = player.level().getEntities(player, hitbox);
             if (hitEntities.isEmpty()) return;
 

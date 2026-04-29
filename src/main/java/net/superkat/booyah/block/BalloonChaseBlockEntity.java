@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,8 +20,6 @@ public class BalloonChaseBlockEntity extends BlockEntity {
     @Nullable
     public BalloonEntry balloonEntry = null;
 
-    public boolean isChainStart = false;
-    public boolean isChainEnd = false;
 
     public BalloonChaseBlockEntity(BlockPos worldPosition, BlockState blockState) {
         super(BooyahBlocks.BALLOON_CHASE_BLOCK_ENTITY, worldPosition, blockState);
@@ -31,13 +30,18 @@ public class BalloonChaseBlockEntity extends BlockEntity {
         if (this.level == null) return;
         BalloonChainManager chainManager = BalloonChainManager.get(this.level);
         BalloonChain chain = chainManager.getOrCreateChain(chainId);
-//        BalloonEntry entry = new BalloonEntry(this.getBlockPos(), entryIndex);
         chain.putEntry(entry);
 
         this.balloonEntry = entry;
         this.balloonChainId = chain.id();
         this.setChanged();
         this.level.sendBlockUpdated(this.getBlockPos(), this.getBlockState(), this.getBlockState(), 3);
+    }
+
+    // Also server only I think
+    public void updatePopReward(ItemStack popReward) {
+        if (this.balloonEntry == null) return;
+        this.updateBalloonEntry(this.balloonChainId, this.balloonEntry.updatePopReward(popReward));
     }
 
     @Override

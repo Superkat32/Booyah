@@ -1,6 +1,7 @@
 package net.superkat.booyah.entity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.balloon.BalloonChain;
@@ -30,12 +32,11 @@ public class Balloon extends LivingEntity {
     public boolean floatingAway = false;
     public int floatAwayTicks = 0;
     public int ticksUntilFloatAway = -1;
+    public ItemStack popReward = ItemStack.EMPTY;
 
     public Balloon(EntityType<? extends LivingEntity> type, Level level) {
         super(type, level);
     }
-
-
 
     @Override
     public void tick() {
@@ -85,8 +86,6 @@ public class Balloon extends LivingEntity {
     }
 
     public void playPopVisualsAndAudio() {
-//        this.level().playPlayerSound(SoundEvents.WIND_CHARGE_BURST.value(), SoundSource.NEUTRAL, 1f, 1f);
-//        this.level().playPlayerSound(SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.NEUTRAL, 0.5f, 1.5f);
         this.level().playLocalSound(this.blockPosition(), SoundEvents.WIND_CHARGE_BURST.value(), SoundSource.NEUTRAL, 1f, 1f, true);
         this.level().playLocalSound(this.blockPosition(), SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.NEUTRAL, 0.5f, 1.5f, true);
 
@@ -110,6 +109,12 @@ public class Balloon extends LivingEntity {
         } else {
             if (reason == RemovalReason.KILLED && this.chain != null) {
                 this.chain.onBalloonPop(this);
+                if (this.popReward != null && !this.popReward.isEmpty()) { // Server only
+                    this.drop(this.popReward, true, false);
+                    this.playSound(SoundEvents.ALLAY_THROW, 1f, 1f);
+                    if (this.level() instanceof ServerLevel serverLevel)
+                        serverLevel.sendParticles(ParticleTypes.WITCH, this.getX(), this.getY() + 0.5f, this.getZ(), 8, 0.2f, 0.2f, 0.2f, 0);
+                }
             } else if (this.chain != null) {
                 this.chain.onBalloonDespawn(this);
             }
@@ -131,6 +136,10 @@ public class Balloon extends LivingEntity {
 
     public void setTicksUntilFloatAway(int ticks) {
         this.ticksUntilFloatAway = ticks;
+    }
+
+    public void setPopReward(ItemStack popReward) {
+        this.popReward = popReward;
     }
 
     @Override

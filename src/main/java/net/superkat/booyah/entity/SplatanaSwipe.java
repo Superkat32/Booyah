@@ -8,7 +8,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
@@ -55,12 +54,16 @@ public class SplatanaSwipe extends Projectile {
     @Override
     public void tick() {
         HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
-        this.setPos(this.position().add(this.getDeltaMovement()));
+        Vec3 position;
         this.updateRotation();
 
         if (result.getType() != HitResult.Type.MISS && this.isAlive()) {
             this.onHit(result);
+            position = result.getLocation();
+        } else {
+            position = this.position().add(this.getDeltaMovement());
         }
+        this.setPos(position);
 
         this.extraAnimA.update(this.tickCount);
         this.extraAnimB.update(this.tickCount);
@@ -87,7 +90,7 @@ public class SplatanaSwipe extends Projectile {
     protected void onHitEntity(final EntityHitResult hitResult) {
         super.onHitEntity(hitResult);
         Entity entity = hitResult.getEntity();
-        int damage = entity instanceof Blaze ? 3 : 0;
+        int damage = this.getEntityData().get(ROT_Z) == 90 ? 18 : 8;
         entity.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
     }
 

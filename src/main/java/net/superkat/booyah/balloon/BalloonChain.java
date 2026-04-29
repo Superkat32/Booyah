@@ -123,6 +123,7 @@ public class BalloonChain {
             balloon.setChain(this);
             balloon.setChainPos(entry.pos());
             balloon.setTicksUntilFloatAway(ticksUntilFloatAway);
+            if (entry.rewardItemOnPop() && entry.popReward() != null) balloon.setPopReward(entry.popReward());
             this.balloonUuids.put(entry.pos(), balloon.getUUID());
         }
 

@@ -12,7 +12,6 @@ public record C2SBalloonChaseBlockUpdatePacket(String chainId, BalloonEntry entr
     public static final Identifier ID = Booyah.id("c2s_balloon_chase_block_update_packet");
     public static final Type<C2SBalloonChaseBlockUpdatePacket> TYPE = new Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, C2SBalloonChaseBlockUpdatePacket> CODEC = StreamCodec.composite(
-//            BlockPos.STREAM_CODEC, C2SBalloonChaseBlockUpdatePacket::pos,
             ByteBufCodecs.STRING_UTF8, C2SBalloonChaseBlockUpdatePacket::chainId,
             BalloonEntry.STREAM_CODEC, C2SBalloonChaseBlockUpdatePacket::entry,
             C2SBalloonChaseBlockUpdatePacket::new

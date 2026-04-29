@@ -6,8 +6,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
 
-public record BalloonEntry(BlockPos pos, int index, int spawnDelayTicks, int floatAwayTicks, float balloonYaw) {
+public record BalloonEntry(
+        BlockPos pos, int index,
+        int spawnDelayTicks, int floatAwayTicks,
+        float balloonYaw,
+        boolean rewardItemOnPop, ItemStack popReward
+) {
 
     public static final Codec<BalloonEntry> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
@@ -15,7 +21,9 @@ public record BalloonEntry(BlockPos pos, int index, int spawnDelayTicks, int flo
                     Codec.INT.fieldOf("index").forGetter(entry -> entry.index),
                     Codec.INT.fieldOf("spawn_delay_ticks").forGetter(entry -> entry.spawnDelayTicks),
                     Codec.INT.fieldOf("float_away_ticks").forGetter(entry -> entry.floatAwayTicks),
-                    Codec.FLOAT.fieldOf("balloon_yaw").forGetter(entry -> entry.balloonYaw)
+                    Codec.FLOAT.fieldOf("balloon_yaw").forGetter(entry -> entry.balloonYaw),
+                    Codec.BOOL.fieldOf("reward_item_on_pop").forGetter(entry -> entry.rewardItemOnPop),
+                    ItemStack.OPTIONAL_CODEC.fieldOf("pop_reward").forGetter(entry -> entry.popReward)
             ).apply(instance, BalloonEntry::new)
     );
 
@@ -25,11 +33,17 @@ public record BalloonEntry(BlockPos pos, int index, int spawnDelayTicks, int flo
             ByteBufCodecs.INT, BalloonEntry::spawnDelayTicks,
             ByteBufCodecs.INT, BalloonEntry::floatAwayTicks,
             ByteBufCodecs.FLOAT, BalloonEntry::balloonYaw,
+            ByteBufCodecs.BOOL, BalloonEntry::rewardItemOnPop,
+            ItemStack.OPTIONAL_STREAM_CODEC, BalloonEntry::popReward,
             BalloonEntry::new
     );
 
     public BalloonEntry createNext(BlockPos pos) {
-        return new BalloonEntry(pos, this.index + 1, this.spawnDelayTicks, this.floatAwayTicks, this.balloonYaw);
+        return new BalloonEntry(pos, this.index + 1, this.spawnDelayTicks, this.floatAwayTicks, this.balloonYaw, false, ItemStack.EMPTY);
+    }
+
+    public BalloonEntry updatePopReward(ItemStack popReward) {
+        return new BalloonEntry(this.pos, this.index, this.spawnDelayTicks, this.floatAwayTicks, this.balloonYaw, this.rewardItemOnPop, popReward);
     }
 
 }

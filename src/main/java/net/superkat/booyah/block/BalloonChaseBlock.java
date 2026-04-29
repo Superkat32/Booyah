@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.superkat.booyah.duck.balloon.BalloonBlockEditCapablePlayer;
@@ -28,28 +30,32 @@ public class BalloonChaseBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.canUseGameMasterBlocks()
-            && level.getBlockEntity(pos) instanceof BalloonChaseBlockEntity balloonChaseBlockEntity
+            && level.getBlockEntity(pos) instanceof BalloonChaseBlockEntity blockEntity
             && player instanceof BalloonBlockEditCapablePlayer balloonPlayer
         ) {
-
             if (itemStack.is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()) && !player.isShiftKeyDown()) {
+                // Handle block connection (or open screen if this chainId is blank)
                 if (balloonPlayer.booyah$isConnectingBalloonBlocks()) {
                     BlockPos initPos = balloonPlayer.booyah$getConnectingBalloonBlockPos();
                     if (!pos.equals(initPos) && level.getBlockEntity(initPos) instanceof BalloonChaseBlockEntity initBalloonBlock && initBalloonBlock.balloonEntry != null) {
-                        balloonChaseBlockEntity.updateBalloonEntry(
+                        blockEntity.updateBalloonEntry(
                                 initBalloonBlock.balloonChainId, initBalloonBlock.balloonEntry.createNext(pos)
                         );
                     }
                     balloonPlayer.booyah$setConnectingBalloonBlocks(null);
                 } else {
-                    if (balloonChaseBlockEntity.balloonChainId.isBlank()) {
-                        balloonPlayer.booyah$openBalloonBlockEditScreen(balloonChaseBlockEntity);
+                    if (blockEntity.balloonChainId.isBlank()) {
+                        balloonPlayer.booyah$openBalloonBlockEditScreen(blockEntity);
                     } else {
                         balloonPlayer.booyah$setConnectingBalloonBlocks(pos);
                     }
                 }
+            } else if (blockEntity.balloonEntry != null && blockEntity.balloonEntry.rewardItemOnPop() && !itemStack.isEmpty()) {
+                // Set entry pop reward item if possible
+                blockEntity.updatePopReward(itemStack);
             } else if (level.isClientSide()) {
-                balloonPlayer.booyah$openBalloonBlockEditScreen(balloonChaseBlockEntity);
+                // Last attempt to open up screen on client
+                balloonPlayer.booyah$openBalloonBlockEditScreen(blockEntity);
             }
 
             return InteractionResult.SUCCESS;
@@ -64,8 +70,15 @@ public class BalloonChaseBlock extends BaseEntityBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return (BooyahBlocks.BALLOON_CHASE_BLOCK != null && context.isHoldingItem(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()))
-                ? Shapes.block() : Shapes.empty();
+        boolean show = BooyahBlocks.BALLOON_CHASE_BLOCK != null && context.isHoldingItem(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem());
+        if (!show && context instanceof EntityCollisionContext entityContext && entityContext.getEntity() != null) {
+            Entity entity = entityContext.getEntity();
+            if (entity instanceof Player player) {
+                show = player.canUseGameMasterBlocks() && entityContext.getEntity().distanceToSqr(pos.getCenter()) <= 8;
+            }
+        }
+
+        return show ? Shapes.block() : Shapes.empty();
     }
 
     @Override

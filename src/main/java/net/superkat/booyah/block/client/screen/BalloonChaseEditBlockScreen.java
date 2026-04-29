@@ -6,16 +6,20 @@ import dev.chailotl.bento_gui.client.elements.Button;
 import dev.chailotl.bento_gui.client.elements.Label;
 import dev.chailotl.bento_gui.client.elements.Panel;
 import dev.chailotl.bento_gui.client.elements.TextField;
+import dev.chailotl.bento_gui.client.elements.ToggleButton;
+import dev.chailotl.bento_gui.client.elements.interfaces.ValueElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
 import net.superkat.booyah.balloon.BalloonEntry;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
 import net.superkat.booyah.network.packets.balloon.C2SBalloonChaseBlockUpdatePacket;
@@ -30,6 +34,8 @@ public class BalloonChaseEditBlockScreen extends Screen {
     public TextField<Integer> floatAwayField;
     public TextField<Float> yawField;
     public Button roundYawButton;
+    public ToggleButton dropRewardToggleButton;
+    public Label dropRewardInfoLabel;
 
     public BalloonChaseEditBlockScreen(BalloonChaseBlockEntity blockEntity) {
         super(Component.literal("Balloon Chase Block Edit Screen"));
@@ -138,7 +144,7 @@ public class BalloonChaseEditBlockScreen extends Screen {
                 .alignCenter()
                 .build();
         Label floatAwayLabel = Label.builder()
-                .text(Component.literal("Float Away Ticks (Int > 0)").withStyle(ChatFormatting.GRAY))
+                .text(Component.literal("Float Away Ticks (Int)").withStyle(ChatFormatting.GRAY))
                 .alignLeft()
                 .dimensions(true, 6)
                 .padding(0,0, 2, 0)
@@ -218,6 +224,7 @@ public class BalloonChaseEditBlockScreen extends Screen {
                 .build();
         this.roundYawButton = Button.builder()
                 .text(Component.literal("Round 45"))
+                .tooltip(Tooltip.create(Component.literal("Shift: 90, Ctrl: 22.5")))
                 .onPress(button -> {
                     float roundAmount = 45f;
                     if (this.minecraft.hasShiftDown()) {
@@ -245,11 +252,110 @@ public class BalloonChaseEditBlockScreen extends Screen {
 
 
 
+        Panel rewardsPanel = Panel.builder()
+                .dimensions(true, true)
+                .padding(0, 0, 0, 0)
+                .alignCenter()
+                .build();
+
+        Panel popRewardPanel = Panel.builder()
+                .dimensions(true, 20)
+                .padding(0, 0, 0, -2)
+                .alignCenter()
+                .flowAxis(FlowAxis.HORIZONTAL)
+                .build();
+
+        Panel rewardTogglePanel = Panel.builder()
+                .dimensions(20, true)
+                .alignLeft()
+                .build();
+        this.dropRewardToggleButton = ToggleButton.ofCheckbox()
+                .value(this.blockEntity.balloonEntry != null && this.blockEntity.balloonEntry.rewardItemOnPop())
+                .onPress(button -> {
+                    if (this.dropRewardInfoLabel != null) this.updateDynamicButtons();
+                })
+                .build();
+        rewardTogglePanel.addChild(dropRewardToggleButton);
+
+        Panel rewardInfoPanel = Panel.builder()
+                .dimensions(236, true)
+                .alignLeft()
+                .build();
+        Label dropRewardLabel = Label.builder()
+                .text(Component.literal("Reward Item on Pop").withStyle(ChatFormatting.GRAY))
+                .tooltip(Tooltip.create(Component.literal("Only applies to this balloon!")))
+                .dimensions(true, 6)
+                .padding(1,0, 2, 0)
+                .alignLeft()
+                .build();
+        this.dropRewardInfoLabel = Label.builder()
+                .text(Component.literal("Right-click block with item to set its reward.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+                .tooltip(Tooltip.create(Component.literal("Just like shelf blocks.")))
+                .dimensions(true, 6)
+                .padding(1,0, 2, 0)
+                .alignLeft()
+                .build();
+        rewardInfoPanel.addChild(dropRewardLabel);
+        rewardInfoPanel.addChild(dropRewardInfoLabel);
+
+        popRewardPanel.addChild(rewardTogglePanel);
+        popRewardPanel.addChild(rewardInfoPanel);
+
+//        Panel chainRewardsPanel = Panel.builder()
+//                .dimensions(true, 20)
+//                .padding(0, 0, 0, 0)
+//                .alignCenter()
+//                .flowAxis(FlowAxis.HORIZONTAL)
+//                .build();
+//
+//        Panel chainRewardTogglePanel = Panel.builder()
+//                .dimensions(20, true)
+//                .alignLeft()
+//                .build();
+//        ToggleButton chainRewardToggleButton = ToggleButton.ofCheckbox()
+//                .value(this.blockEntity.balloonEntry != null && this.blockEntity.balloonEntry.rewardItemOnPop())
+////                .onPress(button -> {
+////                    if (this.dropRewardInfoLabel != null) this.updateDynamicButtons();
+////                })
+//                .build();
+//        chainRewardTogglePanel.addChild(chainRewardToggleButton);
+//
+//        Panel chainRewardInfoPanel = Panel.builder()
+//                .dimensions(236, true)
+//                .alignLeft()
+//                .build();
+//        Label chainRewardLabel = Label.builder()
+//                .text(Component.literal("Reward Item on Chain Index Pop").withStyle(ChatFormatting.GRAY))
+//                .tooltip(Tooltip.create(Component.literal("Only applies when all balloons in this Chain Index are popped!")))
+//                .dimensions(true, 6)
+//                .padding(1,0, 2, 0)
+//                .alignLeft()
+//                .build();
+//        Label chainDropRewardInfoLabel = Label.builder()
+//                .text(Component.literal("Sneak right-click any block with item to set.").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC))
+//                .tooltip(Tooltip.create(Component.literal("Sets the item for all balloons with same Chain Index!")))
+//                .dimensions(true, 6)
+//                .padding(1,0, 2, 0)
+//                .alignLeft()
+//                .build();
+//        chainRewardInfoPanel.addChild(chainRewardLabel);
+//        chainRewardInfoPanel.addChild(chainDropRewardInfoLabel);
+//
+//        chainRewardsPanel.addChild(chainRewardTogglePanel);
+//        chainRewardsPanel.addChild(chainRewardInfoPanel);
+
+
+        rewardsPanel.addChild(popRewardPanel);
+//        rewardsPanel.addChild(chainRewardsPanel);
+        inputsPanel.addChild(rewardsPanel);
+
+
+
         Panel buttonsPanel = Panel.builder()
                 .dimensions(true, 44)
                 .alignBottom()
                 .alignCenter()
-                .padding(0, 0, 0, 24)
+                .padding(0, 0, 0, 16)
                 .flowAxis(FlowAxis.HORIZONTAL)
                 .build();
         Button saveButton = Button.builder()
@@ -272,6 +378,8 @@ public class BalloonChaseEditBlockScreen extends Screen {
         root.addChild(inputsPanel);
         root.addChild(buttonsPanel);
         addRenderableWidget(root);
+
+        this.updateDynamicButtons();
     }
 
     @Override
@@ -280,20 +388,34 @@ public class BalloonChaseEditBlockScreen extends Screen {
             this.save();
         }
 
-        if (event.hasShiftDown()) {
-            this.roundYawButton.setText(Component.literal("Round 90"));
-        } else if (event.hasControlDown()) {
-            this.roundYawButton.setText(Component.literal("Round 22.5"));
-        }
+        this.updateDynamicButtons();
         return super.keyPressed(event);
     }
 
     @Override
     public boolean keyReleased(KeyEvent event) {
-        if (!this.minecraft.hasShiftDown() && !this.minecraft.hasControlDown()) {
+        this.updateDynamicButtons();
+        return super.keyReleased(event);
+    }
+
+    public void updateDynamicButtons() {
+        if (this.minecraft.hasShiftDown() || this.minecraft.hasControlDown()) {
+            if (this.minecraft.hasShiftDown()) {
+                this.roundYawButton.setText(Component.literal("Round 90"));
+            } else if (this.minecraft.hasControlDown()) {
+                this.roundYawButton.setText(Component.literal("Round 22.5"));
+            }
+        } else {
             this.roundYawButton.setText(Component.literal("Round 45"));
         }
-        return super.keyReleased(event);
+
+//        MutableComponent rewardInfoText = Component.literal("Right-Click block with item in hand to set reward.");
+//        if (this.dropRewardToggleButton.getValue()) {
+//            rewardInfoText.withStyle(ChatFormatting.GRAY);
+//        } else {
+//            rewardInfoText.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.STRIKETHROUGH);
+//        }
+//        this.dropRewardInfoLabel.setText(rewardInfoText);
     }
 
     public void save() {
@@ -302,10 +424,16 @@ public class BalloonChaseEditBlockScreen extends Screen {
         int spawnDelayTicks = this.getFieldValue(this.spawnDelayField, 0);
         int floatAwayTicks = this.getFieldValue(this.floatAwayField, 300);
         float balloonYaw = this.getFieldValue(this.yawField, 0f);
+        boolean rewardItemOnPop = this.getFieldValue(this.dropRewardToggleButton, false);
+        ItemStack popReward = (this.blockEntity.balloonEntry == null || !rewardItemOnPop)
+                ? ItemStack.EMPTY : this.blockEntity.balloonEntry.popReward();
 
         ClientPlayNetworking.send(
                 new C2SBalloonChaseBlockUpdatePacket(chainId, new BalloonEntry(
-                        this.blockEntity.getBlockPos(), entryIndex, spawnDelayTicks, floatAwayTicks, balloonYaw
+                        this.blockEntity.getBlockPos(), entryIndex,
+                        spawnDelayTicks, floatAwayTicks,
+                        balloonYaw,
+                        rewardItemOnPop, popReward
                 ))
         );
 
@@ -320,7 +448,7 @@ public class BalloonChaseEditBlockScreen extends Screen {
         this.onClose();
     }
 
-    private <T> T getFieldValue(TextField<T> field, T defaultValue) {
+    private <T> T getFieldValue(ValueElement<T> field, T defaultValue) {
         return field.getValue() == null ? defaultValue : field.getValue();
     }
 }

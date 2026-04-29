@@ -104,9 +104,4 @@ public class SplatanaItem extends Item {
     public int getUseDuration(ItemStack itemStack, LivingEntity user) {
         return 72000;
     }
-
-//    @Override
-//    public Projectile asProjectile(Level level, Position position, ItemStack itemStack, Direction direction) {
-//        return new SplatanaSwipe(level, position.x(), position.y(), position.z());
-//    }
 }

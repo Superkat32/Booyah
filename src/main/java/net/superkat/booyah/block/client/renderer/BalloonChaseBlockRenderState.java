@@ -3,7 +3,9 @@ package net.superkat.booyah.block.client.renderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.util.CommonColors;
+import org.jspecify.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class BalloonChaseBlockRenderState extends BlockEntityRenderState {
@@ -12,4 +14,7 @@ public class BalloonChaseBlockRenderState extends BlockEntityRenderState {
     public String chainId = "";
     public String entryIndex = "";
     public float balloonSpawnYaw = 0;
+    public boolean rewardForPop = false;
+    @Nullable
+    public ItemStackRenderState popRewardItemRenderState = null;
 }

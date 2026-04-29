@@ -7,16 +7,20 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.Booyah;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
@@ -30,9 +34,12 @@ import java.util.Random;
 public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonChaseBlockEntity, BalloonChaseBlockRenderState> {
     public static final Identifier ICON_TEXTURE = Booyah.id("textures/entity/balloon/icon.png");
     public static final Identifier ARROW_TEXTURE = Booyah.id("textures/entity/balloon/arrow.png");
+
     public final Font font;
+    public final ItemModelResolver itemModelResolver;
     public BalloonChaseBlockRenderer(BlockEntityRendererProvider.Context context) {
         this.font = context.font();
+        this.itemModelResolver = context.itemModelResolver();
     }
 
     @Override
@@ -47,6 +54,14 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
                 (pose, buffer) ->
                         renderQuad(pose, buffer, state.color, 0, 1, 0, 0, 1, 0, 0f, 1f, 0f, 1f)
         );
+        // Pop Reward Rendering
+        if (state.rewardForPop && state.popRewardItemRenderState != null) {
+            poseStack.pushPose();
+            poseStack.translate(0.5f, 0.65f, 0.1f);
+            poseStack.scale(0.25f, 0.25f, 0.25f);
+            state.popRewardItemRenderState.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+            poseStack.popPose();
+        }
         poseStack.popPose();
 
         // Info Rendering
@@ -100,9 +115,11 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
     @Override
     public void extractRenderState(BalloonChaseBlockEntity blockEntity, BalloonChaseBlockRenderState state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        if (Minecraft.getInstance().player != null && (
-                Minecraft.getInstance().player.getMainHandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
-                || Minecraft.getInstance().player.getOffhandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem()))
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null && (
+                player.getMainHandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
+                || player.getOffhandItem().is(BooyahBlocks.BALLOON_CHASE_BLOCK.asItem())
+                || (player.canUseGameMasterBlocks() && player.distanceToSqr(blockEntity.getBlockPos().getCenter()) <= 8))
         ) {
             state.render = true;
             state.chainId = blockEntity.balloonChainId.isBlank() ? "Empty!" : blockEntity.balloonChainId;
@@ -115,6 +132,13 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
                 float saturation = 0.7f + random.nextFloat() * 0.3f;
                 float value = 0.8f + random.nextFloat() * 0.2f;
                 state.color = new HSVColor(hue, saturation, value).getARGB();
+
+                state.rewardForPop = blockEntity.balloonEntry.rewardItemOnPop();
+                if (state.rewardForPop) {
+                    ItemStackRenderState itemStackRenderState = new ItemStackRenderState();
+                    this.itemModelResolver.updateForTopItem(itemStackRenderState, blockEntity.balloonEntry.popReward(), ItemDisplayContext.ON_SHELF, blockEntity.getLevel(), null, 0);
+                    state.popRewardItemRenderState = itemStackRenderState;
+                }
             }
         }
     }
