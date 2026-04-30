@@ -3,6 +3,7 @@ package net.superkat.booyah.block;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.CommonColors;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -37,6 +39,7 @@ import java.util.Map;
 public class BoosterBlock extends Block {
     public static final MapCodec<BoosterBlock> CODEC = simpleCodec(BoosterBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+
     public static final BooleanProperty ELEVATED = BooleanProperty.create("booster_elevated");
     public static final VoxelShape SHAPE = Block.column(14, 0, 1);
     public static final VoxelShape ELEVATED_SHAPE = Shapes.or(Block.column(15, 0.0, 4), Block.box(1, 4, 8, 15, 8, 15));
@@ -44,18 +47,38 @@ public class BoosterBlock extends Block {
     public static final VoxelShape BOOST_CHECK_SHAPE = Block.column(14, 0, 3);
     public static final VoxelShape ELEVATED_BOOST_CHECK_SHAPE = Block.column(15, 0, 12);
 
+    public static final IntegerProperty HORIZONTAL_POWER = IntegerProperty.create("horizontal_power", 0, 4);
+    public static final IntegerProperty VERTICAL_POWER = IntegerProperty.create("verticial_power", 0, 4);
+
     public BoosterBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(ELEVATED, false)
+                .setValue(HORIZONTAL_POWER, 2)
+                .setValue(VERTICAL_POWER, 1)
         );
     }
 
     @Override
     protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (player.getAbilities().mayBuild) {
-            level.setBlockAndUpdate(pos, state.setValue(ELEVATED, !state.getValue(ELEVATED)));
+            if (itemStack.is(BooyahBlocks.BOOSTER_BLOCK.asItem())) {
+                level.setBlockAndUpdate(pos, state.setValue(ELEVATED, !state.getValue(ELEVATED)));
+            } else {
+                if (player.isCrouching()) {
+                    int power = state.getValue(VERTICAL_POWER) + 1;
+                    if (power > 4) power = 0;
+                    level.setBlockAndUpdate(pos, state.setValue(VERTICAL_POWER, power));
+                    player.sendOverlayMessage(Component.literal("Vertical power: " + power));
+                } else {
+                    int power = state.getValue(HORIZONTAL_POWER) + 1;
+                    if (power > 4) power = 0;
+                    level.setBlockAndUpdate(pos, state.setValue(HORIZONTAL_POWER, power));
+                    player.sendOverlayMessage(Component.literal("Horizontal power: " + power));
+                }
+                player.playSound(SoundEvents.COMPARATOR_CLICK, 0.5f, 1f);
+            }
             return InteractionResult.SUCCESS;
         }
         return super.useItemOn(itemStack, state, level, pos, player, hand, hitResult);
@@ -83,8 +106,12 @@ public class BoosterBlock extends Block {
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         entity.setDeltaMovement(entity.getDeltaMovement().scale(0.5f));
-        Vec3 baseVelocity = state.getValue(FACING).getOpposite().getUnitVec3().scale(1f);
-        entity.push(baseVelocity.add(0, 0.25f, 0));
+        float horizontalPower = state.getValue(HORIZONTAL_POWER) / 2f + (state.getValue(ELEVATED) ? 0.25f : 0);
+        float verticalPower = state.getValue(VERTICAL_POWER) / 4f + (state.getValue(ELEVATED) ? 0.25f : 0);
+        Vec3 baseVelocity = state.getValue(FACING).getOpposite().getUnitVec3()
+                .multiply(horizontalPower, 1, horizontalPower)
+                .add(0, verticalPower, 0);
+        entity.push(baseVelocity);
         level.playSound(null, pos, SoundEvents.BREEZE_CHARGE, SoundSource.BLOCKS, 0.75f, 1.25f);
         if (level.isClientSide()) {
             for (int i = 0; i < 8; i++) {
@@ -112,7 +139,7 @@ public class BoosterBlock extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, ELEVATED);
+        builder.add(FACING, ELEVATED, HORIZONTAL_POWER, VERTICAL_POWER);
     }
 
     @Override
