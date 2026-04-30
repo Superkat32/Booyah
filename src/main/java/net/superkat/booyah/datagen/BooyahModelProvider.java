@@ -36,9 +36,9 @@ public class BooyahModelProvider extends FabricModelProvider {
             Optional.of(Booyah.id("item/template/splatana_stamper_animated_template")), Optional.empty(), TextureSlot.LAYER0
     );
 
-    private static final PropertyDispatch<VariantMutator> ROTATION_FACING = PropertyDispatch.modify(BlockStateProperties.FACING)
-            .select(Direction.DOWN, BlockModelGenerators.X_ROT_90)
-            .select(Direction.UP, BlockModelGenerators.X_ROT_270)
+    private static final PropertyDispatch<VariantMutator> ROTATION_FACING = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
+//            .select(Direction.DOWN, BlockModelGenerators.X_ROT_90)
+//            .select(Direction.UP, BlockModelGenerators.X_ROT_270)
             .select(Direction.NORTH, BlockModelGenerators.NOP)
             .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
             .select(Direction.WEST, BlockModelGenerators.Y_ROT_270)
