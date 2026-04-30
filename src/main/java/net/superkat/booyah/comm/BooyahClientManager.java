@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -51,9 +50,9 @@ public class BooyahClientManager {
         booyahablePlayer.booyah$setBooyahTicks(60);
 
         Level level = player.level();
-        if (player.isLocalPlayer()) {
-            player.sendOverlayMessage(Component.literal("Booyah!"));
-        }
+//        if (player.isLocalPlayer()) {
+//            player.sendOverlayMessage(Component.literal("Booyah!"));
+//        }
         level.playPlayerSound(SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f);
         level.playPlayerSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f);
         level.playPlayerSound(SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f);
