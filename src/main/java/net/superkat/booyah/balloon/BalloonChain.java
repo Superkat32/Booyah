@@ -3,18 +3,23 @@ package net.superkat.booyah.balloon;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.TrailParticleOption;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.CommonColors;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.entity.Balloon;
 import net.superkat.booyah.entity.BooyahEntities;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,12 +44,14 @@ public class BalloonChain {
     public final Map<BlockPos, BalloonEntry> entries;
 
     public int ticks = 0;
-    public int balloonSpawnDelayTicks = 0;
     public int balloonWaveTicks = 0;
 
     public boolean chasing = false;
     public boolean balloonSpawned = false;
     public Map<BlockPos, UUID> balloonUuids = new HashMap<>();
+    public Map<BlockPos, QueuedBalloon> queuedBalloonSpawns = new HashMap<>();
+    @Nullable
+    public BlockPos prevPopPos = null;
     public boolean waveFailed = false;
 
     public int startingIndex = 0;
@@ -71,6 +78,12 @@ public class BalloonChain {
         this.ticks++;
         if (this.chasing) {
             this.balloonWaveTicks++;
+        }
+
+        for (Iterator<QueuedBalloon> iterator = queuedBalloonSpawns.values().iterator(); iterator.hasNext(); ) {
+            QueuedBalloon queuedBalloon = iterator.next();
+            queuedBalloon.tick(level);
+            if (queuedBalloon.spawnedBalloon()) iterator.remove();
         }
 
         if (!this.balloonSpawned && !this.chasing && this.currentIndex == this.startingIndex) {
@@ -106,8 +119,8 @@ public class BalloonChain {
         for (BalloonEntry entry : entriesForIndex) {
             BlockPos pos = entry.pos();
             Balloon balloon = BooyahEntities.BALLOON_CHASE.create(level, EntitySpawnReason.MOB_SUMMONED);
-            int ticksUntilFloatAway = index == this.startingIndex ? -1 : 300;
-//            int ticksUntilFloatAway = index == this.startingIndex ? -1 : 100;
+            int ticksUntilFloatAway = index == this.startingIndex ? -1 : entry.floatAwayTicks();
+            int spawnDelayTicks = entry.spawnDelayTicks();
             if (balloon == null) continue;
 
             // Move pos up if either of the 2 blocks beneath aren't air
@@ -119,11 +132,32 @@ public class BalloonChain {
             balloon.setOnGround(false);
             balloon.snapTo(pos.getBottomCenter(), entry.balloonYaw(), 0);
             balloon.setYBodyRot(entry.balloonYaw());
-            level.addFreshEntity(balloon);
             balloon.setChain(this);
             balloon.setChainPos(entry.pos());
             balloon.setTicksUntilFloatAway(ticksUntilFloatAway);
             if (entry.rewardItemOnPop() && entry.popReward() != null) balloon.setPopReward(entry.popReward());
+
+            if (spawnDelayTicks <= 0) {
+                level.addFreshEntity(balloon);
+            } else {
+                this.queuedBalloonSpawns.put(entry.pos(), new QueuedBalloon(balloon, spawnDelayTicks));
+            }
+            if (this.prevPopPos != null) {
+                RandomSource random = level.getRandom();
+                for (int i = 0; i < 24; i++) {
+                    TrailParticleOption trailParticles = new TrailParticleOption(
+                            pos.getCenter().add(random.nextFloat() * 0.25f, random.nextFloat() * 0.15f, random.nextFloat() * 0.25f),
+                            CommonColors.GREEN, spawnDelayTicks + random.nextInt(20)
+                    );
+                    level.sendParticles(trailParticles,
+                            this.prevPopPos.getX() + random.nextFloat() * 0.25f,
+                            this.prevPopPos.getY() + random.nextFloat() * 0.15f,
+                            this.prevPopPos.getZ() + random.nextFloat() * 0.25f,
+                            1, 0, 0, 0, 0
+                    );
+                }
+            }
+
             this.balloonUuids.put(entry.pos(), balloon.getUUID());
         }
 
@@ -132,6 +166,7 @@ public class BalloonChain {
 
     // Server only - used when a player pops a balloon, not when it despawns
     public void onBalloonPop(Balloon balloon) {
+        this.prevPopPos = balloon.blockPosition();
         this.balloonUuids.remove(balloon.getChainPos());
         if (this.balloonUuids.isEmpty()) {
             this.spawnNextWave((ServerLevel) balloon.level());
@@ -154,6 +189,8 @@ public class BalloonChain {
         this.chasing = false;
         this.currentIndex = this.startingIndex;
         this.balloonSpawned = false;
+        this.queuedBalloonSpawns.clear();
+        this.prevPopPos = null;
     }
 
     public void putEntry(BalloonEntry entry) {
@@ -171,6 +208,7 @@ public class BalloonChain {
         }
         this.entries.remove(entry.pos());
         this.knownEntryIndexes.remove(Integer.valueOf(entry.index()));
+        this.queuedBalloonSpawns.remove(entry.pos());
 
         if (!this.knownEntryIndexes.isEmpty()) {
             this.startingIndex = knownEntryIndexes.getFirst();
@@ -209,6 +247,28 @@ public class BalloonChain {
         return "BalloonChain[" +
                 "id=" + id + ", " +
                 "entries=" + entries + ']';
+    }
+
+    public static class QueuedBalloon {
+        public final Balloon balloon;
+        public int ticksUntilSpawn;
+
+        public QueuedBalloon(Balloon balloon, int ticksUntilSpawn) {
+            this.balloon = balloon;
+            this.ticksUntilSpawn = ticksUntilSpawn;
+        }
+
+        public void tick(ServerLevel level) {
+            this.ticksUntilSpawn--;
+            if (this.ticksUntilSpawn <= 0) {
+                level.addFreshEntity(balloon);
+            }
+        }
+
+        public boolean spawnedBalloon() {
+            return this.ticksUntilSpawn <= 0;
+        }
+
     }
 
 

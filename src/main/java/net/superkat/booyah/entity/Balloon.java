@@ -40,6 +40,17 @@ public class Balloon extends LivingEntity {
 
     @Override
     public void tick() {
+        if (this.tickCount == 1 && this.level().isClientSide()) {
+            for (int i = 0; i < 24; i++) {
+                this.level().addParticle(ParticleTypes.WITCH,
+                        this.getRandomX(0.65f),
+                        this.getRandomY(0.35f) + 0.25f,
+                        this.getRandomZ(0.65f),
+                        0, 0, 0
+                );
+            }
+        }
+
         super.tick();
         this.idleAnimationState.startIfStopped(this.tickCount);
 
@@ -112,6 +123,8 @@ public class Balloon extends LivingEntity {
                 if (this.popReward != null && !this.popReward.isEmpty()) { // Server only
                     this.drop(this.popReward, true, false);
                     this.playSound(SoundEvents.ALLAY_THROW, 1f, 1f);
+                    this.playSound(SoundEvents.ALLAY_AMBIENT_WITH_ITEM, 1.5f, 1f);
+                    this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.05f, 1f);
                     if (this.level() instanceof ServerLevel serverLevel)
                         serverLevel.sendParticles(ParticleTypes.WITCH, this.getX(), this.getY() + 0.5f, this.getZ(), 8, 0.2f, 0.2f, 0.2f, 0);
                 }

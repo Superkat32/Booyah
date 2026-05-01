@@ -336,6 +336,7 @@ public class SplatanaAnimations {
 //        poseStack.rotateAround(Axis.XP.rotationDegrees(splatanaRotX), pivotX, pivotY, pivotZ);
         poseStack.rotateAround(Axis.ZP.rotationDegrees(splatanaRotZ), pivotX, pivotY, 0);
         poseStack.rotateAround(Axis.YP.rotationDegrees(splatanaRotY), pivotZ, 0, 0);
+//        poseStack.rotateAround(Axis.ZP.rotationDegrees(splatanaRotX), 0, -0.4f, 0);
     }
 
     // Item model animations for charging (holding down right click) the Splatana - Only affects item model!
