@@ -52,9 +52,18 @@ public class SplatanaItem extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int ticksRemaining) {
-        if (!level.isClientSide() && this.getUseDuration(itemStack, livingEntity) - ticksRemaining == 7) {
-            level.playSound(null, livingEntity.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 2f, 1f);
+        if (!level.isClientSide()) {
+            if (ticksRemaining % 2 == 0 && this.getUseDuration(itemStack, livingEntity) - ticksRemaining > 7) {
+                level.playSound(null, livingEntity.blockPosition(), SoundEvents.COMPARATOR_CLICK, SoundSource.PLAYERS, level.getRandom().nextFloat() * 0.75f + 0.1f, level.getRandom().nextFloat() * 0.2f + 0.9f);
+            } else if (ticksRemaining % 2 == 1) {
+                level.playSound(null, livingEntity.blockPosition(), SoundEvents.CHAIN_STEP, SoundSource.PLAYERS, level.getRandom().nextFloat() * 0.4f + 0.1f, level.getRandom().nextFloat() * 0.2f + 0.9f);
+            }
+
+            if (this.getUseDuration(itemStack, livingEntity) - ticksRemaining == 7) {
+                level.playSound(null, livingEntity.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 2f, 1f);
+            }
         }
+
         super.onUseTick(level, livingEntity, itemStack, ticksRemaining);
     }
 
@@ -80,7 +89,7 @@ public class SplatanaItem extends Item {
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.75f, 0.85f);
+            serverLevel.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.75f, 1f);
 
             splatanaPlayer.booyah$setMaxSplatanaHitboxTicks(12);
             splatanaPlayer.booyah$setSplatanaHitboxTicks(16);

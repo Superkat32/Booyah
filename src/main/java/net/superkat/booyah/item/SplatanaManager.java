@@ -62,7 +62,7 @@ public class SplatanaManager {
                 ServerPlayNetworking.send(serverPlayer, swingPacket);
             }
 
-            serverLevel.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.5f, 1f);
+            serverLevel.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.35f, 0.85f);
         } else {
             spawnSplatanaSwingParticles(player.level(), player);
         }
