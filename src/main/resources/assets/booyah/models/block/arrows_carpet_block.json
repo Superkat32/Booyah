@@ -1,0 +1,82 @@
+{
+	"format_version": "1.21.11",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"layer0": "minecraft:block/blue_carpet",
+		"layer1": "booyah:block/circle_arrows",
+		"particle": "#layer0"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 1, 16],
+			"faces": {
+				"north": {"uv": [0, 15, 16, 16], "texture": "#layer0"},
+				"east": {"uv": [1, 16, 0, 0], "rotation": 90, "texture": "#layer0"},
+				"south": {"uv": [16, 0, 0, 1], "texture": "#layer0"},
+				"west": {"uv": [15, 16, 16, 0], "rotation": 270, "texture": "#layer0"},
+				"up": {"uv": [16, 16, 0, 0], "texture": "#layer0"},
+				"down": {"uv": [16, 0, 0, 16], "texture": "#layer0"}
+			}
+		},
+		{
+			"from": [0, 1.1, 0],
+			"to": [16, 1.1, 16],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0.1, 0]},
+			"faces": {
+				"north": {"uv": [0, 0, 16, 0], "texture": "#layer1"},
+				"east": {"uv": [0, 0, 16, 0], "texture": "#layer1"},
+				"south": {"uv": [0, 0, 16, 0], "texture": "#layer1"},
+				"west": {"uv": [0, 0, 16, 0], "texture": "#layer1"},
+				"up": {"uv": [16, 16, 0, 0], "texture": "#layer1"},
+				"down": {"uv": [16, 0, 0, 16], "texture": "#layer1"}
+			}
+		}
+	],
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 2.25],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [75, 45, 0],
+			"translation": [0, 2.5, 2.25],
+			"scale": [0.375, 0.375, 0.375]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 4.5, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 45, 0],
+			"translation": [0, 4.5, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
+		"ground": {
+			"translation": [0, 3, 0],
+			"scale": [0.25, 0.25, 0.25]
+		},
+		"gui": {
+			"rotation": [30, -135, 0],
+			"translation": [0, 3.5, 0],
+			"scale": [0.625, 0.625, 0.625]
+		},
+		"head": {
+			"translation": [0, 13.5, 0]
+		},
+		"fixed": {
+			"scale": [0.5, 0.5, 0.5]
+		}
+	},
+	"groups": [
+		{
+			"name": "main",
+			"origin": [8, 8, 8],
+			"scope": 0,
+			"color": 0,
+			"children": [0, 1]
+		}
+	]
+}

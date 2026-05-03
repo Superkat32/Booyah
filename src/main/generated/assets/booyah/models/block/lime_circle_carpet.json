@@ -1,0 +1,6 @@
+{
+  "parent": "booyah:block/arrows_carpet_block",
+  "textures": {
+    "layer0": "minecraft:block/lime_wool"
+  }
+}

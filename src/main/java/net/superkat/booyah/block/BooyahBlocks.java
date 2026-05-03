@@ -7,9 +7,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -20,6 +22,8 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.superkat.booyah.Booyah;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class BooyahBlocks {
@@ -71,8 +75,33 @@ public class BooyahBlocks {
             MAGICAL_BOX_BLOCK
     );
 
+    public static final Map<DyeColor, Block> CIRCLE_CARPET_BLOCKS = generateDyedItemSet(BooyahBlocks::registerCircleArrowCarpet);
+//    public static final Block RED_CIRCLE_CARPET = registerCircleArrowCarpet("red", DyeColor.RED);
+
     public static void init() {
         // NO-OP
+    }
+
+    private static Map<DyeColor, Block> generateDyedItemSet(Function<DyeColor, Block> generator) {
+        Map<DyeColor, Block> set = new HashMap<>();
+        for (DyeColor dyeColor : DyeColor.values()) {
+            Block block = generator.apply(dyeColor);
+            set.put(dyeColor, block);
+        }
+        return set;
+    }
+
+    private static Block registerCircleArrowCarpet(DyeColor dyeColor) {
+        return registerBlock(
+                dyeColor.getName() + "_circle_carpet",
+                CarpetBlock::new,
+                BlockBehaviour.Properties.of()
+                        .mapColor(dyeColor)
+                        .strength(0.1f)
+                        .sound(SoundType.WOOL)
+                        .ignitedByLava(),
+                true
+        );
     }
 
     // Copy-pasted from docs

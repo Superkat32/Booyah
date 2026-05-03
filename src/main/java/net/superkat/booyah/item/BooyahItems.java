@@ -15,6 +15,7 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.component.UseEffects;
 import net.minecraft.world.item.component.Weapon;
+import net.minecraft.world.level.block.Block;
 import net.superkat.booyah.Booyah;
 import net.superkat.booyah.block.BooyahBlocks;
 import net.superkat.booyah.item.color.SplatanaColorSet;
@@ -57,6 +58,13 @@ public class BooyahItems {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS)
                 .register(tab -> {
                     tab.accept(BooyahBlocks.MAGICAL_BOX_BLOCK.asItem());
+                });
+
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COLORED_BLOCKS)
+                .register(tab -> {
+                    for (Block carpet : BooyahBlocks.CIRCLE_CARPET_BLOCKS.values()) {
+                        tab.accept(carpet.asItem());
+                    }
                 });
     }
 
