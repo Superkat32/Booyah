@@ -1,6 +1,8 @@
 package net.superkat.booyah.item;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,6 +52,9 @@ public class SplatanaItem extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack itemStack, int ticksRemaining) {
+        if (!level.isClientSide() && this.getUseDuration(itemStack, livingEntity) - ticksRemaining == 7) {
+            level.playSound(null, livingEntity.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 2f, 1f);
+        }
         super.onUseTick(level, livingEntity, itemStack, ticksRemaining);
     }
 
@@ -75,6 +80,8 @@ public class SplatanaItem extends Item {
         SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
         level.addParticle(new SmearEmitterParticleOptions(2, 2, 16, colorSet, false, -90, player.getYRot()), player.getX() + dx, player.getY(0.5), player.getZ() + dz, dx, 0, dz);
         if (level instanceof ServerLevel serverLevel) {
+            serverLevel.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.75f, 0.85f);
+
             splatanaPlayer.booyah$setMaxSplatanaHitboxTicks(12);
             splatanaPlayer.booyah$setSplatanaHitboxTicks(16);
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.15F, 0);
