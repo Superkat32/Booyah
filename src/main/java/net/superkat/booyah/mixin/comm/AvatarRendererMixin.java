@@ -23,6 +23,9 @@ public class AvatarRendererMixin<AvatarlikeEntity extends Avatar & ClientAvatarE
         BooyahablePlayer booyahablePlayer = (BooyahablePlayer) player;
 
         Vec3 attachmentPoint = player.isLocalPlayer() ? new Vec3(0, entity.getBbHeight(), 0) : state.nameTagAttachment;
+        if (attachmentPoint == null) {
+            attachmentPoint = new Vec3(0, entity.getBbHeight(), 0);
+        }
         state.setData(BooyahRenderer.BOOYAH_RENDER_DATA, new BooyahRenderData(
                 attachmentPoint, player.isLocalPlayer() ? 0 : -10, booyahablePlayer.booyah$tickCountOfBooyah(), booyahablePlayer.booyah$booyahTicks())
         );
