@@ -16,7 +16,7 @@ Both attacks spawn projectiles where you're looking to help shorten the gap from
 As of 0.0.1, Splatana Stampers are available in white and purple, with the remaining dye colors coming soon. There is also no crafting recipe.
 
 ## Balloon Chases
-Balloon Chases are set up via the Balloon Chase Block. Each block provides data about Balloon spawning, and which Balloon Chain the block belongs to.
+Balloon Chases are set up via the Balloon Chase Block in Creative mode. Each block provides data about Balloon spawning, and which Balloon Chain the block belongs to.
 
 Once a Balloon is popped, following Balloons will be spawned from the next set of blocks in the Balloon Chain, restarting at the initial block in the Chain once all have been popped or if one despawns!
 
