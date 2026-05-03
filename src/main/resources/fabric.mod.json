@@ -3,13 +3,13 @@
 	"id": "booyah",
 	"version": "${version}",
 	"name": "Booyah!",
-	"description": "An amalgamation of things to pop balloons with an overly cool sword.",
+	"description": "An amalgamation of things about popping balloons with an overly cool sword.",
 	"authors": [
 		"Superkat32"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/project/booyah",
+		"sources": "https://github.com/Superkat32/Booyah"
 	},
 	"license": "MIT",
 	"icon": "assets/booyah/icon.png",
