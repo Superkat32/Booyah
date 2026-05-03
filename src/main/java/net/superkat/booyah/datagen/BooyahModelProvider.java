@@ -64,6 +64,12 @@ public class BooyahModelProvider extends FabricModelProvider {
                         .with(BlockModelGenerators.createBooleanModelDispatch(BoosterBlock.ELEVATED, elevatedBoosterModel, normalBoosterModel))
                         .with(ROTATION_FACING)
         );
+
+        // Magical Box block
+        blockModelGenerators.registerSimpleItemModel(BooyahBlocks.MAGICAL_BOX_BLOCK, ModelLocationUtils.getModelLocation(BooyahBlocks.MAGICAL_BOX_BLOCK.asItem()));
+        MultiVariant magicalBoxModel = BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(BooyahBlocks.MAGICAL_BOX_BLOCK));
+        blockModelGenerators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BooyahBlocks.MAGICAL_BOX_BLOCK, magicalBoxModel));
+
     }
 
     @Override

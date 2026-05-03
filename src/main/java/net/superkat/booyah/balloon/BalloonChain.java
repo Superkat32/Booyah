@@ -112,6 +112,7 @@ public class BalloonChain {
         this.chasing = false;
         this.currentIndex = this.startingIndex;
         this.balloonSpawned = false;
+        this.prevPopPos = null;
     }
 
     public void spawnBalloons(ServerLevel level, int index) {
@@ -178,13 +179,17 @@ public class BalloonChain {
         // FIXME - Breaking a balloon block while the next index has multiple positions causes a reset loop
         //  of failures and sadness and heart break and total destruction and a lot of particles
         this.waveFailed = true;
+        this.prevPopPos = null;
     }
 
+    // FIXME - Game crashes when breaking a block during non-first index
     public void reset(ServerLevel level) {
-        for (UUID balloonUuid : balloonUuids.values()) {
+        for (Iterator<UUID> iterator = balloonUuids.values().iterator(); iterator.hasNext(); ) {
+            UUID balloonUuid = iterator.next();
             Entity balloon = level.getEntity(balloonUuid);
             if (balloon == null || balloon.isRemoved()) continue;
             balloon.remove(Entity.RemovalReason.DISCARDED);
+            iterator.remove();
         }
         this.chasing = false;
         this.currentIndex = this.startingIndex;

@@ -55,6 +55,22 @@ public class BooyahBlocks {
             true
     );
 
+    public static final Block MAGICAL_BOX_BLOCK = registerBlock(
+            "magical_box_block",
+            MagicalBoxBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.5f)
+                    .sound(SoundType.WOOD),
+            true
+    );
+
+    public static final BlockEntityType<MagicBoxBlockEntity> MAGICAL_BOX_BLOCK_ENTITY = registerBlockEntity(
+            "magical_box_block_entity",
+            MagicBoxBlockEntity::new,
+            MAGICAL_BOX_BLOCK
+    );
+
     public static void init() {
         // NO-OP
     }

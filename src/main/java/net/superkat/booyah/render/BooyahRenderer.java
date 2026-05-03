@@ -49,7 +49,7 @@ public class BooyahRenderer {
 
             Component text = Component.literal("Booyah!");
             int width = Minecraft.getInstance().font.width(text);
-            graphics.textWithBackdrop(Minecraft.getInstance().font, text, -width / 2, 8, width, color);
+            graphics.textWithBackdrop(Minecraft.getInstance().font, text, -width / 2, -8, width, color);
             graphics.pose().popMatrix();
 //            Vec3 attachmentPoint = player.isLocalPlayer() ? new Vec3(0, entity.getBbHeight(), 0) : state.nameTagAttachment;
 //            state.setData(BooyahRenderer.BOOYAH_RENDER_DATA, new BooyahRenderData(

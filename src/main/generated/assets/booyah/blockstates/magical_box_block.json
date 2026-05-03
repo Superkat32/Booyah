@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "booyah:block/magical_box_block"
+    }
+  }
+}
