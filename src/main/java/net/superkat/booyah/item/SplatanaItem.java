@@ -1,6 +1,9 @@
 package net.superkat.booyah.item;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -22,6 +25,7 @@ import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
+import net.superkat.booyah.network.packets.splatana.S2CSplatanaSlashPacket;
 import net.superkat.booyah.particles.splatana.SmearEmitterParticleOptions;
 
 public class SplatanaItem extends Item {
@@ -107,6 +111,12 @@ public class SplatanaItem extends Item {
 
             swipe.setOwner(player);
             swipe.setMaxAge(28);
+
+            S2CSplatanaSlashPacket slashPacket = new S2CSplatanaSlashPacket(player.getId(), colorSet);
+            for (ServerPlayer serverPlayer : PlayerLookup.tracking(player)) {
+                if (serverPlayer == player) continue;
+                ServerPlayNetworking.send(serverPlayer, slashPacket);
+            }
         }
         return true;
     }

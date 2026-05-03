@@ -5,9 +5,7 @@
   "mixins": [
     "balloon.PlayerMixin",
     "comm.PlayerMixin",
-    "splatana.LivingEntityMixin",
-    "splatana.LocalPlayerMixin",
-    "splatana.RenderLayerMixin"
+    "splatana.LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -22,7 +20,9 @@
     "splatana.ArmedEntityRenderStateMixin",
     "splatana.HumanoidModelMixin",
     "splatana.ItemInHandLayerMixin",
+    "splatana.LocalPlayerMixin",
     "splatana.MinecraftMixin",
-    "splatana.PlayerModelMixin"
+    "splatana.PlayerModelMixin",
+    "splatana.RenderLayerMixin"
   ]
 }

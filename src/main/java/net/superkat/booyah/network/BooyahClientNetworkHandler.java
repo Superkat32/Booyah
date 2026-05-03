@@ -7,6 +7,7 @@ import net.minecraft.world.level.Level;
 import net.superkat.booyah.comm.BooyahClientManager;
 import net.superkat.booyah.item.client.SplatanaClientManager;
 import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
+import net.superkat.booyah.network.packets.splatana.S2CSplatanaSlashPacket;
 import net.superkat.booyah.network.packets.splatana.S2CSplatanaSwingPacket;
 
 public class BooyahClientNetworkHandler {
@@ -15,6 +16,7 @@ public class BooyahClientNetworkHandler {
         ClientPlayNetworking.registerGlobalReceiver(CommonBooyahPacket.TYPE, BooyahClientNetworkHandler::onPlayerBooyah);
 
         ClientPlayNetworking.registerGlobalReceiver(S2CSplatanaSwingPacket.TYPE, BooyahClientNetworkHandler::onPlayerSplatanaSwing);
+        ClientPlayNetworking.registerGlobalReceiver(S2CSplatanaSlashPacket.TYPE, BooyahClientNetworkHandler::onPlayerSplatanaSlash);
     }
 
     public static void onPlayerBooyah(CommonBooyahPacket payload, ClientPlayNetworking.Context context) {
@@ -35,6 +37,16 @@ public class BooyahClientNetworkHandler {
         if (!(entity instanceof Player player)) return;
 
         SplatanaClientManager.onPlayerSplatanaSwing(level, player, payload.splatanaColor(), payload.reversedSwing());
+    }
+
+    public static void onPlayerSplatanaSlash(S2CSplatanaSlashPacket payload, ClientPlayNetworking.Context context) {
+        Level level = context.player().level();
+        int playerId = payload.playerId();
+
+        Entity entity = level.getEntity(playerId);
+        if (!(entity instanceof Player player)) return;
+
+        SplatanaClientManager.onPlayerSplatanaSlash(level, player, payload.colorSet());
     }
 
 }
