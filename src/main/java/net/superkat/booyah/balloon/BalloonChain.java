@@ -183,6 +183,7 @@ public class BalloonChain {
     }
 
     // FIXME - Game crashes when breaking a block during non-first index
+    // FIXME - Game crashes when same index balloons have different float away times
     public void reset(ServerLevel level) {
         for (Iterator<UUID> iterator = balloonUuids.values().iterator(); iterator.hasNext(); ) {
             UUID balloonUuid = iterator.next();
