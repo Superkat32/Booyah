@@ -1,6 +1,24 @@
 {
   "entity.booyah.balloon_chase": "Balloon",
   "block.booyah.balloon_chase_block": "Balloon Chase Setup Block",
+  "block.booyah.magical_box_block": "Magical Box Block",
+
+  "block.booyah.white_circle_carpet": "White Circle Carpet",
+  "block.booyah.light_gray_circle_carpet": "Light Gray Circle Carpet",
+  "block.booyah.gray_circle_carpet": "Gray Circle Carpet",
+  "block.booyah.brown_circle_carpet": "Brown Circle Carpet",
+  "block.booyah.black_circle_carpet": "Black Circle Carpet",
+  "block.booyah.red_circle_carpet": "Red Circle Carpet",
+  "block.booyah.orange_circle_carpet": "Orange Circle Carpet",
+  "block.booyah.yellow_circle_carpet": "Yellow Circle Carpet",
+  "block.booyah.lime_circle_carpet": "Lime Circle Carpet",
+  "block.booyah.green_circle_carpet": "Green Circle Carpet",
+  "block.booyah.cyan_circle_carpet": "Cyan Circle Carpet",
+  "block.booyah.light_blue_circle_carpet": "Light Blue Circle Carpet",
+  "block.booyah.blue_circle_carpet": "Blue Circle Carpet",
+  "block.booyah.magenta_circle_carpet": "Magenta Circle Carpet",
+  "block.booyah.purple_circle_carpet": "Purple Circle Carpet",
+  "block.booyah.pink_circle_carpet": "Pink Circle Carpet",
 
   "item.booyah.splatana_stamper_white": "White Splatana Stamper",
   "item.booyah.splatana_stamper_purple": "Purple Splatana Stamper"

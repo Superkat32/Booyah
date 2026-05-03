@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "booyah:block/light_blue_circle_carpet",
+      "y": 90
+    },
+    "facing=north": {
       "model": "booyah:block/light_blue_circle_carpet"
+    },
+    "facing=south": {
+      "model": "booyah:block/light_blue_circle_carpet",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "booyah:block/light_blue_circle_carpet",
+      "y": 270
     }
   }
 }

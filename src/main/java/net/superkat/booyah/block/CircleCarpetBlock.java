@@ -1,47 +1,27 @@
 package net.superkat.booyah.block;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.phys.BlockHitResult;
 import org.jspecify.annotations.Nullable;
 
-public class MagicalBoxBlock extends BaseEntityBlock {
-    public static final MapCodec<MagicalBoxBlock> CODEC = simpleCodec(MagicalBoxBlock::new);
+public class CircleCarpetBlock extends CarpetBlock {
+    public static final MapCodec<CircleCarpetBlock> CODEC = simpleCodec(CircleCarpetBlock::new);
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public MagicalBoxBlock(Properties properties) {
+    public CircleCarpetBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.getStateDefinition().any()
                 .setValue(FACING, Direction.NORTH)
         );
-    }
-
-    @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
-        return new MagicBoxBlockEntity(worldPosition, blockState);
-    }
-
-    @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (level instanceof ServerLevel && level.getBlockEntity(pos) instanceof MagicBoxBlockEntity magicBoxEntity) {
-            player.openMenu(magicBoxEntity);
-        }
-        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -65,7 +45,7 @@ public class MagicalBoxBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    public MapCodec<? extends CarpetBlock> codec() {
         return CODEC;
     }
 }

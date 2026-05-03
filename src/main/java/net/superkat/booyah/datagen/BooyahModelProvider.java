@@ -78,14 +78,19 @@ public class BooyahModelProvider extends FabricModelProvider {
 
         // Magical Box block
         MultiVariant magicalBoxModel = BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(BooyahBlocks.MAGICAL_BOX_BLOCK));
-        blockModelGenerators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BooyahBlocks.MAGICAL_BOX_BLOCK, magicalBoxModel));
+        blockModelGenerators.blockStateOutput.accept(
+                BlockModelGenerators.createSimpleBlock(BooyahBlocks.MAGICAL_BOX_BLOCK, magicalBoxModel).with(ROTATION_FACING)
+//                BlockModelGenerators.createSimpleBlock(BooyahBlocks.MAGICAL_BOX_BLOCK, magicalBoxModel)
+        );
 
         // Circle Arrow carpets
         for (Map.Entry<DyeColor, Block> entry : BooyahBlocks.CIRCLE_CARPET_BLOCKS.entrySet()) {
             MultiVariant carpetModel = BlockModelGenerators.plainVariant(
                     CIRCLE_CARPET.get(getWoolForDye(entry.getKey())).create(entry.getValue(), blockModelGenerators.modelOutput)
             );
-            blockModelGenerators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(entry.getValue(), carpetModel));
+            blockModelGenerators.blockStateOutput.accept(
+                    BlockModelGenerators.createSimpleBlock(entry.getValue(), carpetModel).with(ROTATION_FACING)
+            );
         }
     }
 

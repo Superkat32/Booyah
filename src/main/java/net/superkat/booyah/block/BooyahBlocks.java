@@ -11,7 +11,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CarpetBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -94,7 +93,7 @@ public class BooyahBlocks {
     private static Block registerCircleArrowCarpet(DyeColor dyeColor) {
         return registerBlock(
                 dyeColor.getName() + "_circle_carpet",
-                CarpetBlock::new,
+                CircleCarpetBlock::new,
                 BlockBehaviour.Properties.of()
                         .mapColor(dyeColor)
                         .strength(0.1f)

@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "booyah:block/magical_box_block",
+      "y": 90
+    },
+    "facing=north": {
       "model": "booyah:block/magical_box_block"
+    },
+    "facing=south": {
+      "model": "booyah:block/magical_box_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "booyah:block/magical_box_block",
+      "y": 270
     }
   }
 }
