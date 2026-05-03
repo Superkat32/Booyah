@@ -56,7 +56,6 @@ public class BooyahModelProvider extends FabricModelProvider {
         blockModelGenerators.registerSimpleTintedItemModel(BooyahBlocks.BALLOON_CHASE_BLOCK, balloonBlockItemModel, new BalloonConnectionTintSource(CommonColors.WHITE));
 
         // Booster block
-        blockModelGenerators.registerSimpleFlatItemModel(BooyahBlocks.BOOSTER_BLOCK.asItem());
         MultiVariant normalBoosterModel =  BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(BooyahBlocks.BOOSTER_BLOCK));
         MultiVariant elevatedBoosterModel =  BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(BooyahBlocks.BOOSTER_BLOCK, "_elevated"));
         blockModelGenerators.blockStateOutput.accept(
@@ -66,7 +65,6 @@ public class BooyahModelProvider extends FabricModelProvider {
         );
 
         // Magical Box block
-        blockModelGenerators.registerSimpleItemModel(BooyahBlocks.MAGICAL_BOX_BLOCK, ModelLocationUtils.getModelLocation(BooyahBlocks.MAGICAL_BOX_BLOCK.asItem()));
         MultiVariant magicalBoxModel = BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(BooyahBlocks.MAGICAL_BOX_BLOCK));
         blockModelGenerators.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BooyahBlocks.MAGICAL_BOX_BLOCK, magicalBoxModel));
 

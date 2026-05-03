@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "booyah:item/booster_block"
+    "model": "booyah:block/booster_block"
   }
 }
