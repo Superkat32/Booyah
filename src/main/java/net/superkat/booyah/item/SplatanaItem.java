@@ -98,6 +98,8 @@ public class SplatanaItem extends Item {
             splatanaPlayer.booyah$setMaxSplatanaHitboxTicks(12);
             splatanaPlayer.booyah$setSplatanaHitboxTicks(16);
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.15F, 0);
+            swipe.setOwner(player);
+
             int mainColor = colorSet.getRandomColor(entity.getRandom(), 0);
             swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, mainColor);
             int altColorA = colorSet.getRandomColor(entity.getRandom(), 1);

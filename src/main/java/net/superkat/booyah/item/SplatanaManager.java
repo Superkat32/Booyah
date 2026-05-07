@@ -43,6 +43,7 @@ public class SplatanaManager {
             splatanaPlayer.booyah$setSplatanaHitboxTicks(8);
             SplatanaColorSet colorSet = SplatanaColors.getSplatanaColorSet(player.getMainHandItem());
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, player.getMainHandItem(), player, 0, 1.25F, 0);
+            swipe.setOwner(player);
             swipe.setPos(swipe.position().add(0, -0.15, 0));
 
             int mainColor = colorSet.getRandomColor(player.getRandom(), 0);
@@ -68,8 +69,9 @@ public class SplatanaManager {
         }
     }
 
-    public static void updateSplatanaPlayer(LivingEntity player, int currentSwingDuration) {
+    public static void updateSplatanaPlayer(LivingEntity player) {
         if (!(player instanceof SplatanaPlayer splatanaPlayer)) return;
+        int currentSwingDuration = player.getCurrentSwingDuration();
 
         // Extend splatana swing beyond normal swing animation
         int swingTime = splatanaPlayer.booyah$getSplatanaSwingTime();

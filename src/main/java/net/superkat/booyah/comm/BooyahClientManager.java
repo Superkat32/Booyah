@@ -50,12 +50,13 @@ public class BooyahClientManager {
         booyahablePlayer.booyah$setBooyahTicks(60);
 
         Level level = player.level();
-//        if (player.isLocalPlayer()) {
-//            player.sendOverlayMessage(Component.literal("Booyah!"));
-//        }
-        level.playPlayerSound(SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f);
-        level.playPlayerSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f);
-        level.playPlayerSound(SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f);
+
+        level.playLocalSound(player.blockPosition(), SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f, false);
+        level.playLocalSound(player.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f, false);
+        level.playLocalSound(player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f, false);
+//        level.playPlayerSound(SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f);
+//        level.playPlayerSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f);
+//        level.playPlayerSound(SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f);
     }
 
 }

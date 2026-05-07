@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -17,6 +18,9 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.particles.splatana.DropletParticleOptions;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Optional;
 
 public class SplatanaSwipe extends Projectile {
     public static final EntityDataAccessor<Integer> MAX_AGE_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
@@ -25,6 +29,9 @@ public class SplatanaSwipe extends Projectile {
     public static final EntityDataAccessor<Integer> ALT_COLOR_B_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ALT_COLOR_C_ID = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ROT_Z = SynchedEntityData.defineId(SplatanaSwipe.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> OWNER_ENTITY = SynchedEntityData.defineId(
+            SplatanaSwipe.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE
+    );
     public ExtraAnimInfo extraAnimA = new ExtraAnimInfo(0);
     public ExtraAnimInfo extraAnimB = new ExtraAnimInfo(1);
     public ExtraAnimInfo extraAnimC = new ExtraAnimInfo(2);
@@ -49,6 +56,7 @@ public class SplatanaSwipe extends Projectile {
         entityData.define(ALT_COLOR_B_ID, -1);
         entityData.define(ALT_COLOR_C_ID, -1);
         entityData.define(ROT_Z, 0);
+        entityData.define(OWNER_ENTITY, Optional.empty());
     }
 
     @Override
@@ -87,6 +95,12 @@ public class SplatanaSwipe extends Projectile {
     }
 
     @Override
+    protected boolean canHitEntity(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity && this.getOwnerReference() != null && this.getOwnerReference().matches(livingEntity)) return false;
+        return super.canHitEntity(entity);
+    }
+
+    @Override
     protected void onHitEntity(final EntityHitResult hitResult) {
         super.onHitEntity(hitResult);
         Entity entity = hitResult.getEntity();
@@ -121,6 +135,16 @@ public class SplatanaSwipe extends Projectile {
     public void setMaxAge(int maxAge) {
         this.getEntityData().set(MAX_AGE_ID, maxAge);
     }
+
+    public void setOwner(@Nullable LivingEntity owner) {
+        this.getEntityData().set(OWNER_ENTITY, Optional.ofNullable(owner).map(EntityReference::of));
+    }
+
+    @Nullable
+    public EntityReference<LivingEntity> getOwnerReference() {
+        return this.entityData.get(OWNER_ENTITY).orElse(null);
+    }
+
 
     public static final class ExtraAnimInfo {
         private final int index;

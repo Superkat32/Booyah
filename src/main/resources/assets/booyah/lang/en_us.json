@@ -1,7 +1,10 @@
 {
   "entity.booyah.balloon_chase": "Balloon",
+  "entity.booyah.splatana_swipe": "Splatana Swipe",
+
   "block.booyah.balloon_chase_block": "Balloon Chase Setup Block",
   "block.booyah.magical_box_block": "Magical Box Block",
+  "block.booyah.booster_block": "Booster Block",
 
   "block.booyah.white_circle_carpet": "White Circle Carpet",
   "block.booyah.light_gray_circle_carpet": "Light Gray Circle Carpet",

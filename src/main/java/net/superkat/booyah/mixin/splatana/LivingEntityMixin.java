@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin implements SplatanaPlayer {
     @Shadow
-    protected abstract int getCurrentSwingDuration();
+    public abstract int getCurrentSwingDuration();
 
     @Unique
     public boolean booyah$isSplatanaSwinging = false;
@@ -52,11 +52,11 @@ public abstract class LivingEntityMixin implements SplatanaPlayer {
         SplatanaManager.onSplatanaPlayerSwing((LivingEntity) (Object) this);
     }
 
-    @Inject(method = "updateSwingTime", at = @At("TAIL"))
-    public void booyah$updateSplatanaSwingTime(CallbackInfo ci) {
-        // Called on server and client - Can't be bothered to access widener lol
-        SplatanaManager.updateSplatanaPlayer((LivingEntity) (Object) this, this.getCurrentSwingDuration());
-    }
+//    @Inject(method = "updateSwingTime", at = @At("TAIL"))
+//    public void booyah$updateSplatanaSwingTime(CallbackInfo ci) {
+//        // Called on server and client - Can't be bothered to access widener lol
+//        SplatanaManager.updateSplatanaPlayer((LivingEntity) (Object) this);
+//    }
 
     @Inject(method = "aiStep", at = @At("TAIL"))
     public void booyah$handleSplatanaHitboxNonsense(CallbackInfo ci) {

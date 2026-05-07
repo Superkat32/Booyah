@@ -5,7 +5,8 @@
   "mixins": [
     "balloon.PlayerMixin",
     "comm.PlayerMixin",
-    "splatana.LivingEntityMixin"
+    "splatana.LivingEntityMixin",
+    "splatana.PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
@@ -23,6 +24,7 @@
     "splatana.LocalPlayerMixin",
     "splatana.MinecraftMixin",
     "splatana.PlayerModelMixin",
+    "splatana.RemotePlayerMixin",
     "splatana.RenderLayerMixin"
   ]
 }

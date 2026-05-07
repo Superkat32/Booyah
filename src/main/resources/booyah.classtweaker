@@ -1,3 +1,4 @@
 classTweaker v2 official
 
 accessible field net/minecraft/client/model/Model root Lnet/minecraft/client/model/geom/ModelPart;
+accessible method net/minecraft/world/entity/LivingEntity getCurrentSwingDuration ()I
