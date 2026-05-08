@@ -176,19 +176,16 @@ public class BalloonChain {
 
     public void onBalloonDespawn(Balloon balloon) {
         this.balloonUuids.remove(balloon.getChainPos());
-        // FIXME - Breaking a balloon block while the next index has multiple positions causes a reset loop
-        //  of failures and sadness and heart break and total destruction and a lot of particles
         this.waveFailed = true;
         this.prevPopPos = null;
     }
 
-    // FIXME - Game crashes when breaking a block during non-first index
-    // FIXME - Game crashes when same index balloons have different float away times
     public void reset(ServerLevel level) {
         for (Iterator<UUID> iterator = balloonUuids.values().iterator(); iterator.hasNext(); ) {
             UUID balloonUuid = iterator.next();
-            Entity balloon = level.getEntity(balloonUuid);
-            if (balloon == null || balloon.isRemoved()) continue;
+            Entity entity = level.getEntity(balloonUuid);
+            if (entity == null || entity.isRemoved() || !(entity instanceof Balloon balloon)) continue;
+            balloon.setRemovedByChain();
             balloon.remove(Entity.RemovalReason.DISCARDED);
             iterator.remove();
         }
@@ -197,6 +194,7 @@ public class BalloonChain {
         this.balloonSpawned = false;
         this.queuedBalloonSpawns.clear();
         this.prevPopPos = null;
+        this.waveFailed = false;
     }
 
     public void putEntry(BalloonEntry entry) {
@@ -210,7 +208,12 @@ public class BalloonChain {
 
     public void removeEntry(Level level, BalloonEntry entry) {
         if (this.balloonUuids.containsKey(entry.pos()) && level.getEntity(this.balloonUuids.get(entry.pos())) != null) {
-            level.getEntity(this.balloonUuids.get(entry.pos())).remove(Entity.RemovalReason.DISCARDED);
+            Entity entity = level.getEntity(this.balloonUuids.get(entry.pos()));
+            if (entity instanceof Balloon balloon) {
+                balloon.setRemovedByChain();
+                balloon.remove(Entity.RemovalReason.DISCARDED);
+            }
+            this.balloonUuids.remove(entry.pos());
         }
         this.entries.remove(entry.pos());
         this.knownEntryIndexes.remove(Integer.valueOf(entry.index()));
@@ -224,6 +227,10 @@ public class BalloonChain {
             this.endingIndex = 0;
         }
         if (!this.chasing) this.currentIndex = this.startingIndex;
+
+        if (this.balloonUuids.isEmpty() && !this.knownEntryIndexes.isEmpty() && level instanceof ServerLevel serverLevel) {
+            this.reset(serverLevel);
+        }
     }
 
     public String id() {

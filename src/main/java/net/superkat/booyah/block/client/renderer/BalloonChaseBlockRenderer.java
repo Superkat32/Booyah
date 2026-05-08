@@ -23,12 +23,10 @@ import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 import net.superkat.booyah.Booyah;
+import net.superkat.booyah.block.BalloonChaseBlock;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
 import net.superkat.booyah.block.BooyahBlocks;
-import net.superkat.booyah.color.HSVColor;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonChaseBlockEntity, BalloonChaseBlockRenderState> {
@@ -127,11 +125,13 @@ public class BalloonChaseBlockRenderer implements BlockEntityRenderer<BalloonCha
             state.balloonSpawnYaw = blockEntity.balloonEntry == null ? 0 : blockEntity.balloonEntry.balloonYaw();
 
             if (blockEntity.balloonEntry != null) {
-                Random random = new Random(blockEntity.balloonEntry.index() * 2048L + 1000);
-                float hue = random.nextFloat();
-                float saturation = 0.7f + random.nextFloat() * 0.3f;
-                float value = 0.8f + random.nextFloat() * 0.2f;
-                state.color = new HSVColor(hue, saturation, value).getARGB();
+//                Random random = new Random(blockEntity.balloonEntry.index() * 2048L + 1000);
+//                float hue = random.nextFloat();
+//                float saturation = 0.7f + random.nextFloat() * 0.3f;
+//                float value = 0.8f + random.nextFloat() * 0.2f;
+//                state.color = new HSVColor(hue, saturation, value).getARGB();
+
+                state.color = BalloonChaseBlock.getRandomColorForIndex(blockEntity.balloonEntry.index()).getARGB();
 
                 state.rewardForPop = blockEntity.balloonEntry.rewardItemOnPop();
                 if (state.rewardForPop) {

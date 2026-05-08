@@ -17,7 +17,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.superkat.booyah.balloon.BalloonEntry;
@@ -437,13 +436,13 @@ public class BalloonChaseEditBlockScreen extends Screen {
                 ))
         );
 
-        Component chainIdName = Component.literal(chainId).withStyle(ChatFormatting.AQUA);
-        MutableComponent message = Component.literal("Saved Balloon Chase Block");
-        if (!chainId.isBlank()) {
-            message.append(" ").append(chainIdName);
-        }
-        message.append("!");
-        this.minecraft.player.sendSystemMessage(message);
+//        Component chainIdName = Component.literal(chainId).withStyle(ChatFormatting.AQUA);
+//        MutableComponent message = Component.literal("Saved Balloon Chase Block");
+//        if (!chainId.isBlank()) {
+//            message.append(" ").append(chainIdName);
+//        }
+//        message.append("!");
+//        this.minecraft.player.sendSystemMessage(message);
 
         this.onClose();
     }

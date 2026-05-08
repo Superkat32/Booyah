@@ -18,8 +18,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.superkat.booyah.color.HSVColor;
 import net.superkat.booyah.duck.balloon.BalloonBlockEditCapablePlayer;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Random;
 
 public class BalloonChaseBlock extends BaseEntityBlock {
     public static final MapCodec<BalloonChaseBlock> CODEC = simpleCodec(BalloonChaseBlock::new);
@@ -104,5 +107,13 @@ public class BalloonChaseBlock extends BaseEntityBlock {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
+    }
+
+    public static HSVColor getRandomColorForIndex(int index) {
+        Random random = new Random(index * 2048L + 1000);
+        float hue = random.nextFloat();
+        float saturation = 0.7f + random.nextFloat() * 0.3f;
+        float value = 0.8f + random.nextFloat() * 0.2f;
+        return new HSVColor(hue, saturation, value);
     }
 }

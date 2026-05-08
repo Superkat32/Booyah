@@ -27,10 +27,16 @@ public class BalloonChaseBlockEntity extends BlockEntity {
 
     // Intended for server only
     public void updateBalloonEntry(String chainId, BalloonEntry entry) {
-        if (this.level == null) return;
+        if (this.level == null || chainId.isBlank()) return;
         BalloonChainManager chainManager = BalloonChainManager.get(this.level);
         BalloonChain chain = chainManager.getOrCreateChain(chainId);
         chain.putEntry(entry);
+
+        // Remove from old chain if chainId was updated
+        if (!this.balloonChainId.isBlank() && !this.balloonChainId.equals(chainId)
+                && chainManager.getChain(chainId) != null && this.balloonEntry != null) {
+            chainManager.removeEntry(this.level, this.balloonChainId, this.balloonEntry);
+        }
 
         this.balloonEntry = entry;
         this.balloonChainId = chain.id();

@@ -33,6 +33,7 @@ public class Balloon extends LivingEntity {
     public int floatAwayTicks = 0;
     public int ticksUntilFloatAway = -1;
     public ItemStack popReward = ItemStack.EMPTY;
+    public boolean removedByChain = false;
 
     public Balloon(EntityType<? extends LivingEntity> type, Level level) {
         super(type, level);
@@ -128,7 +129,7 @@ public class Balloon extends LivingEntity {
                     if (this.level() instanceof ServerLevel serverLevel)
                         serverLevel.sendParticles(ParticleTypes.WITCH, this.getX(), this.getY() + 0.5f, this.getZ(), 8, 0.2f, 0.2f, 0.2f, 0);
                 }
-            } else if (this.chain != null) {
+            } else if (this.chain != null && !this.removedByChain) {
                 this.chain.onBalloonDespawn(this);
             }
         }
@@ -177,5 +178,9 @@ public class Balloon extends LivingEntity {
 
     public static AttributeSupplier.Builder createAttributes() {
         return createLivingAttributes().add(Attributes.STEP_HEIGHT, 0.0);
+    }
+
+    public void setRemovedByChain() {
+        this.removedByChain = true;
     }
 }

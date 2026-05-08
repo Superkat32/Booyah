@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.superkat.booyah.Booyah;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +71,12 @@ public class BalloonChainManager {
         BalloonChain chain = new BalloonChain(id, new HashMap<>());
         this.chains.put(id, chain);
         return chain;
+    }
+
+    @Nullable
+    public BalloonChain getChain(String id) {
+        if (this.hasChain(id)) return this.chains.get(id);
+        return null;
     }
 
     public void addEntry(String chainId, BalloonEntry entry) {

@@ -8,12 +8,10 @@ import net.minecraft.util.CommonColors;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.superkat.booyah.block.BalloonChaseBlock;
 import net.superkat.booyah.block.BalloonChaseBlockEntity;
-import net.superkat.booyah.color.HSVColor;
 import net.superkat.booyah.duck.balloon.BalloonBlockEditCapablePlayer;
 import org.jspecify.annotations.Nullable;
-
-import java.util.Random;
 
 public record BalloonConnectionTintSource(int color) implements ItemTintSource {
     public static final MapCodec<BalloonConnectionTintSource> CODEC = RecordCodecBuilder.mapCodec(
@@ -27,11 +25,12 @@ public record BalloonConnectionTintSource(int color) implements ItemTintSource {
         if (level != null) {
             if (owner instanceof BalloonBlockEditCapablePlayer player && player.booyah$isConnectingBalloonBlocks()) {
                 if (level.getBlockEntity(player.booyah$getConnectingBalloonBlockPos()) instanceof BalloonChaseBlockEntity balloonChaseBlockEntity) {
-                    Random random = new Random(balloonChaseBlockEntity.balloonEntry == null ? 0 : balloonChaseBlockEntity.balloonEntry.index() * 2048L + 1000);
-                    float hue = random.nextFloat();
-                    float saturation = 0.7f + random.nextFloat() * 0.3f;
-                    float value = 0.8f + random.nextFloat() * 0.2f;
-                    return new HSVColor(hue, saturation, value).getARGB();
+//                    Random random = new Random(balloonChaseBlockEntity.balloonEntry == null ? 0 : balloonChaseBlockEntity.balloonEntry.index() * 2048L + 1000);
+//                    float hue = random.nextFloat();
+//                    float saturation = 0.7f + random.nextFloat() * 0.3f;
+//                    float value = 0.8f + random.nextFloat() * 0.2f;
+//                    return new HSVColor(hue, saturation, value).getARGB();
+                    return BalloonChaseBlock.getRandomColorForIndex(balloonChaseBlockEntity.balloonEntry == null ? 0 : balloonChaseBlockEntity.balloonEntry.index()).getARGB();
                 } else {
                     return CommonColors.BLACK;
                 }
