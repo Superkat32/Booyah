@@ -36,13 +36,43 @@ public class BooyahItems {
     );
 
     public static final Item STAMPER_WHITE = registerStamper("white", SplatanaColors.WHITE);
+    public static final Item STAMPER_LIGHT_GRAY = registerStamper("light_gray", SplatanaColors.LIGHT_GRAY);
+    public static final Item STAMPER_GRAY = registerStamper("gray", SplatanaColors.GRAY);
+    public static final Item STAMPER_BLACK = registerStamper("black", SplatanaColors.BLACK);
+    public static final Item STAMPER_BROWN = registerStamper("brown", SplatanaColors.BROWN);
+    public static final Item STAMPER_RED = registerStamper("red", SplatanaColors.RED);
+    public static final Item STAMPER_ORANGE = registerStamper("orange", SplatanaColors.ORANGE);
+    public static final Item STAMPER_YELLOW = registerStamper("yellow", SplatanaColors.YELLOW);
+    public static final Item STAMPER_LIME = registerStamper("lime", SplatanaColors.LIME);
+    public static final Item STAMPER_GREEN = registerStamper("green", SplatanaColors.GREEN);
+    public static final Item STAMPER_CYAN = registerStamper("cyan", SplatanaColors.CYAN);
+    public static final Item STAMPER_LIGHT_BLUE = registerStamper("light_blue", SplatanaColors.LIGHT_BLUE);
+    public static final Item STAMPER_BLUE = registerStamper("blue", SplatanaColors.BLUE);
     public static final Item STAMPER_PURPLE = registerStamper("purple", SplatanaColors.PURPLE);
+    public static final Item STAMPER_MAGENTA = registerStamper("magenta", SplatanaColors.MAGENTA);
+    public static final Item STAMPER_PINK = registerStamper("pink", SplatanaColors.PINK);
+    public static final Item STAMPER_TRANS = registerStamper("trans", SplatanaColors.TRANS);
 
     public static void init() {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.COMBAT)
                 .register((tab) -> {
                     tab.accept(STAMPER_WHITE);
+                    tab.accept(STAMPER_LIGHT_GRAY);
+                    tab.accept(STAMPER_GRAY);
+                    tab.accept(STAMPER_BLACK);
+                    tab.accept(STAMPER_BROWN);
+                    tab.accept(STAMPER_RED);
+                    tab.accept(STAMPER_ORANGE);
+                    tab.accept(STAMPER_YELLOW);
+                    tab.accept(STAMPER_LIME);
+                    tab.accept(STAMPER_GREEN);
+                    tab.accept(STAMPER_CYAN);
+                    tab.accept(STAMPER_LIGHT_BLUE);
+                    tab.accept(STAMPER_BLUE);
                     tab.accept(STAMPER_PURPLE);
+                    tab.accept(STAMPER_MAGENTA);
+                    tab.accept(STAMPER_PINK);
+                    tab.accept(STAMPER_TRANS);
                 });
 
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS)

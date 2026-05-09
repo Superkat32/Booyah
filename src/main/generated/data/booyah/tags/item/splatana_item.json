@@ -1,6 +1,21 @@
 {
   "values": [
     "booyah:splatana_stamper_white",
-    "booyah:splatana_stamper_purple"
+    "booyah:splatana_stamper_light_gray",
+    "booyah:splatana_stamper_gray",
+    "booyah:splatana_stamper_black",
+    "booyah:splatana_stamper_brown",
+    "booyah:splatana_stamper_red",
+    "booyah:splatana_stamper_orange",
+    "booyah:splatana_stamper_yellow",
+    "booyah:splatana_stamper_lime",
+    "booyah:splatana_stamper_green",
+    "booyah:splatana_stamper_cyan",
+    "booyah:splatana_stamper_light_blue",
+    "booyah:splatana_stamper_blue",
+    "booyah:splatana_stamper_purple",
+    "booyah:splatana_stamper_magenta",
+    "booyah:splatana_stamper_pink",
+    "booyah:splatana_stamper_trans"
   ]
 }

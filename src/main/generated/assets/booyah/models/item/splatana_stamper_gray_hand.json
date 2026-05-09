@@ -1,0 +1,6 @@
+{
+  "parent": "booyah:item/template/splatana_stamper_template",
+  "textures": {
+    "layer0": "booyah:item/splatana_stamper_gray_hand"
+  }
+}

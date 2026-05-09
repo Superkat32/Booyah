@@ -1,0 +1,32 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "cases": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "booyah:item/splatana_stamper_black"
+        },
+        "when": [
+          "gui",
+          "ground",
+          "fixed",
+          "on_shelf"
+        ]
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:condition",
+      "on_false": {
+        "type": "minecraft:model",
+        "model": "booyah:item/splatana_stamper_black_hand"
+      },
+      "on_true": {
+        "type": "minecraft:model",
+        "model": "booyah:item/splatana_stamper_black_hand_animated"
+      },
+      "property": "booyah:stamper"
+    },
+    "property": "minecraft:display_context"
+  }
+}

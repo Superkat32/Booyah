@@ -118,7 +118,22 @@ public class BooyahModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerators) {
         this.generateModelWithFlatTexture(BooyahItems.STAMPER_WHITE, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_LIGHT_GRAY, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_GRAY, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_BLACK, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_BROWN, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_RED, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_ORANGE, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_YELLOW, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_LIME, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_GREEN, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_CYAN, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_LIGHT_BLUE, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_BLUE, itemModelGenerators);
         this.generateModelWithFlatTexture(BooyahItems.STAMPER_PURPLE, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_MAGENTA, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_PINK, itemModelGenerators);
+        this.generateModelWithFlatTexture(BooyahItems.STAMPER_TRANS, itemModelGenerators);
     }
 
     public void generateModelWithFlatTexture(Item item, ItemModelGenerators itemModelGenerators) {
