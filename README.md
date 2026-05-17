@@ -58,7 +58,7 @@ They are available in all dye colors, but do not have a crafting recipe.
 ## Booyah!
 You can Booyah! by quickly sneaking multiple times in a row. It can be seen by other players, and yourself in third person!
 
-Soon, I will also add a simple hotkey to activate it (probably bound to nothing by default), and config options to determine how many sneaks, and the ticks between sneaks, it'll take for a Booyah! to register.
+A simple config is also available for activating Booyah!'s, including the amount sneaks it takes and the ticks between sneaks.
 
 ## Street Art Compat
 As of Booyah! 1.0.1, compatibility with [Street Art](https://modrinth.com/mod/street-art) is possible!
