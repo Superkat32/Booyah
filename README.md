@@ -59,3 +59,16 @@ They are available in all dye colors, but do not have a crafting recipe.
 You can Booyah! by quickly sneaking multiple times in a row. It can be seen by other players, and yourself in third person!
 
 Soon, I will also add a simple hotkey to activate it (probably bound to nothing by default), and config options to determine how many sneaks, and the ticks between sneaks, it'll take for a Booyah! to register.
+
+## Street Art Compat
+As of Booyah! 1.0.1, compatibility with [Street Art](https://modrinth.com/mod/street-art) is possible!
+
+You can make your Splatana Stamper paint by simply adding the `street_art:content` Item Component!
+
+Examples
+- `/give @s booyah:splatana_stamper_purple[street_art:content="purple"]`
+- `/give @s booyah:splatana_stamper_yellow[street_art:content="yellow"]`
+- `/give @s booyah:splatana_stamper_pink[street_art:content="pink"]`
+- `/give @s booyah:splatana_stamper_lime[street_art:content="lime"]`
+- `/give @s booyah:splatana_stamper_orange[street_art:content="orange"]`
+- `/give @s booyah:splatana_stamper_blue[street_art:content="blue"]`

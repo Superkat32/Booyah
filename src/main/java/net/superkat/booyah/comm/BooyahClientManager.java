@@ -8,15 +8,16 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.superkat.booyah.Booyah;
 import net.superkat.booyah.duck.comm.BooyahablePlayer;
 import net.superkat.booyah.duck.comm.LocalBooyahablePlayer;
 import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
 
 @Environment(EnvType.CLIENT)
 public class BooyahClientManager {
-    public static final int SNEAKS_UNTIL_BOOYAH = 2;
-    public static final int FURTHER_SNEAKS_UNTIL_BOOYAH = 4;
-    public static final int TICKS_BETWEEN_SNEAKS = 15;
+    public static final int SNEAKS_UNTIL_BOOYAH = Booyah.CONFIG.sneaksUntilBooyah;
+    public static final int FURTHER_SNEAKS_UNTIL_BOOYAH = Booyah.CONFIG.furtherSneaksUntilBooyah;
+    public static final int TICKS_BETWEEN_SNEAKS = Booyah.CONFIG.ticksBetweenSneaks;
 
     public static void aiStepLocalPlayer(LocalPlayer player) {
         LocalBooyahablePlayer booyahablePlayer = (LocalBooyahablePlayer) player;
@@ -29,8 +30,10 @@ public class BooyahClientManager {
             if (booyahablePlayer.booyah$sneakTicks() >= 0) {
                 booyahablePlayer.booyah$setSneaksUntilBooyah(booyahablePlayer.booyah$getSneaksUntilBooyah() - 1);
                 if (booyahablePlayer.booyah$getSneaksUntilBooyah() <= 0) {
-                    sendBooyah(player);
-                    booyahablePlayer.booyah$resetSneaksUntilBooyah(true);
+                    if (!player.getAbilities().flying || Booyah.CONFIG.booyahWhileFlying) {
+                        sendBooyah(player);
+                        booyahablePlayer.booyah$resetSneaksUntilBooyah(true);
+                    }
                 }
             }
             booyahablePlayer.booyah$resetSneakTicks();
@@ -54,9 +57,6 @@ public class BooyahClientManager {
         level.playLocalSound(player.blockPosition(), SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f, false);
         level.playLocalSound(player.blockPosition(), SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f, false);
         level.playLocalSound(player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f, false);
-//        level.playPlayerSound(SoundEvents.ALLAY_THROW, SoundSource.PLAYERS, 1f, 2f);
-//        level.playPlayerSound(SoundEvents.ALLAY_AMBIENT_WITHOUT_ITEM, SoundSource.PLAYERS, 0.15f, 2f);
-//        level.playPlayerSound(SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 0.75f, 1.25f);
     }
 
 }

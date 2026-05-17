@@ -14,6 +14,12 @@ repositories {
 	}
 
 	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
+
+
+	maven {
 		name "Chai's Maven"
 		url "https://codeberg.org/api/packages/chai/maven"
 	}
@@ -43,6 +49,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
+	// Mod Menu
+	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
 	// Freecam for looking at models
 	implementation "maven.modrinth:XeEZ3fK2:AT0Z8Fuv"
 
@@ -52,6 +61,8 @@ dependencies {
 
 	// Bento GUI
 	implementation include("dev.chailotl:bento-gui:${project.bento_gui_version}")
+	// Bento Config
+	implementation include("dev.chailotl:bento-config:${project.bento_config_version}")
 }
 
 processResources {

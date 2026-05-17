@@ -5,6 +5,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import net.superkat.booyah.balloon.BalloonChainManager;
 import net.superkat.booyah.block.BooyahBlocks;
+import net.superkat.booyah.config.BooyahConfig;
 import net.superkat.booyah.entity.BooyahEntities;
 import net.superkat.booyah.item.BooyahItems;
 import net.superkat.booyah.network.BooyahPackets;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 public class Booyah implements ModInitializer {
 	public static final String MOD_ID = "booyah";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final BooyahConfig CONFIG = new BooyahConfig().register(MOD_ID);
 
 	@Override
 	public void onInitialize() {

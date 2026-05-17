@@ -40,5 +40,15 @@
   "item.booyah.splatana_stamper_magenta": "Magenta Splatana Stamper",
   "item.booyah.splatana_stamper_pink": "Pink Splatana Stamper",
   "item.booyah.splatana_stamper_trans": "Trans Splatana Stamper",
-  "item.booyah.splatana_stamper_pride": "Pride Splatana Stamper"
+  "item.booyah.splatana_stamper_pride": "Pride Splatana Stamper",
+
+  "config.booyah.title": "Booyah! Config",
+  "config.booyah.option.sneaksUntilBooyah": "Sneaks Until Booyah!",
+  "config.booyah.description.sneaksUntilBooyah": "Amount of initial sneaks needed to Booyah!",
+  "config.booyah.option.furtherSneaksUntilBooyah": "Further Sneaks Until Booyah!",
+  "config.booyah.description.furtherSneaksUntilBooyah": "Amount of sneaks needed to Booyah! while a Booyah! is already active.",
+  "config.booyah.option.ticksBetweenSneaks": "Ticks Between Sneaks",
+  "config.booyah.description.ticksBetweenSneaks": "The ticks between sneaks for detecting Booyah! activation.",
+  "config.booyah.option.booyahWhileFlying": "Booyah! While Flying",
+  "config.booyah.description.booyahWhileFlying": "Allow a Booyah! to register while flying."
 }
