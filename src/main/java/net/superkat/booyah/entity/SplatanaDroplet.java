@@ -2,6 +2,8 @@ package net.superkat.booyah.entity;
 
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -46,6 +48,14 @@ public class SplatanaDroplet extends ThrowableProjectile {
             this.level().broadcastEntityEvent(this, (byte)3);
             this.discard();
         }
+    }
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == 3) {
+            this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), SoundEvents.GENERIC_SPLASH, SoundSource.NEUTRAL, 0.3f, 1, false);
+        }
+        super.handleEntityEvent(id);
     }
 
     public void setStreetArtColorComponentId(byte streetArtColorComponentId) {

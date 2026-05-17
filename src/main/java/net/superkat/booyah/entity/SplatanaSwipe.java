@@ -134,7 +134,7 @@ public class SplatanaSwipe extends Projectile {
 
             Player owner = this.getOwner() instanceof Player player ? player : null;
 
-            StreetArtCompat.createSplatanaSwipeSplash(owner, serverLevel, splashOrigin, this.getEntityData().get(ROT_Z) == 90 ? 2.5 : 2, this.streetArtColorComponentId);
+            StreetArtCompat.createSplatanaSwipeSplash(owner, serverLevel, splashOrigin, this.getEntityData().get(ROT_Z) == 90 ? 3 : 2.5, this.streetArtColorComponentId);
         }
         super.onHitBlock(hitResult);
     }
