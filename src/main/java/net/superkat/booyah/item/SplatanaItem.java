@@ -9,6 +9,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -21,7 +22,11 @@ import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.superkat.booyah.Booyah;
+import net.superkat.booyah.compat.StreetArtCompat;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.entity.BooyahEntities;
+import net.superkat.booyah.entity.SplatanaDroplet;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
@@ -99,6 +104,19 @@ public class SplatanaItem extends Item {
             splatanaPlayer.booyah$setSplatanaHitboxTicks(16);
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, itemStack, player, 1.0F, 1.15F, 0);
             swipe.setOwner(player);
+
+            if (Booyah.streetArtLoaded()) {
+                byte colorId = StreetArtCompat.setPaintColor(swipe, player.getActiveItem());
+                SplatanaDroplet droplet = BooyahEntities.SPLATANA_DROPLET.create(serverLevel, EntitySpawnReason.TRIGGERED);
+                if (droplet != null) {
+                    droplet.setPos(player.getX(), player.getY() + 0.1f, player.getZ());
+                    droplet.setDeltaMovement(player.getDeltaMovement().scale(0.5f));
+                    droplet.setStreetArtColorComponentId(colorId);
+                    droplet.setRange(3);
+                    droplet.setOwner(player);
+                    serverLevel.addFreshEntity(droplet);
+                }
+            }
 
             int mainColor = colorSet.getRandomColor(entity.getRandom(), 0);
             swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, mainColor);

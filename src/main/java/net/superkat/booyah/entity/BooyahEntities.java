@@ -20,6 +20,14 @@ public class BooyahEntities {
                     .updateInterval(20)
     );
 
+    public static final EntityType<SplatanaDroplet> SPLATANA_DROPLET = register("splatana_droplet",
+            EntityType.Builder.of(SplatanaDroplet::new, MobCategory.MISC)
+                    .noLootTable()
+                    .sized(0.25f, 0.25f)
+                    .clientTrackingRange(4)
+                    .updateInterval(10)
+    );
+
     public static final EntityType<Balloon> BALLOON_CHASE = register("balloon_chase",
             EntityType.Builder.of(Balloon::new, MobCategory.MISC)
                     .noLootTable()

@@ -13,7 +13,7 @@ The Splatana Stamper is a powerful weapon with two attack modes. You can either 
 
 Both attacks spawn projectiles where you're looking to help shorten the gap from your target. They don't travel far, though, so positioning is important!
 
-As of 0.0.1, Splatana Stampers are available in white and purple, with the remaining dye colors coming soon. There is also no crafting recipe.
+As of 1.0.0, Splatana Stampers are available in all dye colors!
 
 ## Balloon Chases
 Balloon Chases are set up via the Balloon Chase Block in Creative mode. Each block provides data about Balloon spawning, and which Balloon Chain the block belongs to.
@@ -27,8 +27,6 @@ Once a Balloon is popped, following Balloons will be spawned from the next set o
 - Float Away Ticks (Int) - The amount of ticks it'll take for this Balloon to begin floating away to despawn.
 - Yaw (Float) - The yaw/yRot rotation of the Balloon upon spawning. You can reference the F3 screen for inputs, or use the handy "Face Me!" and "Round 22.5/45/90" buttons.
 - Reward Item on Pop (Boolean) - If true, the block can be right-clicked with an item to set its reward to drop upon Balloon pop. The item will only be dropped upon that block's Balloon being popped, not the entire chain/all entries in the index!
-
-**Note: As of 0.0.1, there are some known crashes with breaking blocks during active chases. These will be fixed soon!**
 
 ### Balloon Chains
 Each Balloon Chase is split up into "Balloon Chains," which manage the actual Balloon entity spawning.

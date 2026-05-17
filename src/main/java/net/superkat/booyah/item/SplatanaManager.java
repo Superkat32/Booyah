@@ -8,12 +8,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.superkat.booyah.Booyah;
+import net.superkat.booyah.compat.StreetArtCompat;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
+import net.superkat.booyah.entity.BooyahEntities;
+import net.superkat.booyah.entity.SplatanaDroplet;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
 import net.superkat.booyah.item.color.SplatanaColors;
@@ -45,6 +50,19 @@ public class SplatanaManager {
             SplatanaSwipe swipe = Projectile.spawnProjectileFromRotation(SplatanaSwipe::new, serverLevel, player.getMainHandItem(), player, 0, 1.25F, 0);
             swipe.setOwner(player);
             swipe.setPos(swipe.position().add(0, -0.15, 0));
+
+            if (Booyah.streetArtLoaded()) {
+                byte colorId = StreetArtCompat.setPaintColor(swipe, player.getActiveItem());
+                SplatanaDroplet droplet = BooyahEntities.SPLATANA_DROPLET.create(serverLevel, EntitySpawnReason.TRIGGERED);
+                if (droplet != null) {
+                    droplet.setPos(player.getX(), player.getY() + 0.1f, player.getZ());
+                    droplet.setDeltaMovement(player.getDeltaMovement().scale(0.5f));
+                    droplet.setStreetArtColorComponentId(colorId);
+                    droplet.setRange(2);
+                    droplet.setOwner(player);
+                    serverLevel.addFreshEntity(droplet);
+                }
+            }
 
             int mainColor = colorSet.getRandomColor(player.getRandom(), 0);
             swipe.getEntityData().set(SplatanaSwipe.COLOR_ID, mainColor);

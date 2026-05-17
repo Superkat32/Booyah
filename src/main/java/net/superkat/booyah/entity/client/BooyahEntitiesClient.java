@@ -6,6 +6,7 @@ import net.superkat.booyah.entity.BooyahEntities;
 import net.superkat.booyah.entity.client.model.BalloonModel;
 import net.superkat.booyah.entity.client.model.SplatanaSwipeModel;
 import net.superkat.booyah.entity.client.renderer.BalloonRenderer;
+import net.superkat.booyah.entity.client.renderer.SplatanaDropletRenderer;
 import net.superkat.booyah.entity.client.renderer.SplatanaSwipeRenderer;
 
 public class BooyahEntitiesClient {
@@ -13,6 +14,7 @@ public class BooyahEntitiesClient {
     public static void init() {
         ModelLayerRegistry.registerModelLayer(SplatanaSwipeModel.LAYER_LOCATION, SplatanaSwipeModel::createBodyLayer);
         EntityRenderers.register(BooyahEntities.SPLATANA_SWIPE, SplatanaSwipeRenderer::new);
+        EntityRenderers.register(BooyahEntities.SPLATANA_DROPLET, SplatanaDropletRenderer::new);
 
         ModelLayerRegistry.registerModelLayer(BalloonModel.LAYER_LOCATION, BalloonModel::createBodyLayer);
         EntityRenderers.register(BooyahEntities.BALLOON_CHASE, BalloonRenderer::new);

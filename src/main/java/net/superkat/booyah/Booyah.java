@@ -1,6 +1,7 @@
 package net.superkat.booyah;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import net.superkat.booyah.balloon.BalloonChainManager;
 import net.superkat.booyah.block.BooyahBlocks;
@@ -29,5 +30,9 @@ public class Booyah implements ModInitializer {
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
+	}
+
+	public static boolean streetArtLoaded() {
+		return FabricLoader.getInstance().isModLoaded("street_art");
 	}
 }

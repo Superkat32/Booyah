@@ -7,16 +7,20 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.superkat.booyah.compat.StreetArtCompat;
 import net.superkat.booyah.particles.splatana.DropletParticleOptions;
 import org.jspecify.annotations.Nullable;
 
@@ -35,6 +39,9 @@ public class SplatanaSwipe extends Projectile {
     public ExtraAnimInfo extraAnimA = new ExtraAnimInfo(0);
     public ExtraAnimInfo extraAnimB = new ExtraAnimInfo(1);
     public ExtraAnimInfo extraAnimC = new ExtraAnimInfo(2);
+
+    public byte streetArtColorComponentId = 0;
+    public boolean hasStreetArtPaint = false;
     public SplatanaSwipe(EntityType<? extends Projectile> type, Level level) {
         super(type, level);
     }
@@ -86,6 +93,16 @@ public class SplatanaSwipe extends Projectile {
             };
             Vec3 delta = this.getDeltaMovement().scale(0.5f);
             this.level().addParticle(new DropletParticleOptions(color), this.getX(), this.getY(), this.getZ(), delta.x, delta.y, delta.z);
+        } else if (this.hasStreetArtPaint && this.tickCount % 2 == 0 && this.level() instanceof ServerLevel serverLevel) {
+            SplatanaDroplet droplet = BooyahEntities.SPLATANA_DROPLET.create(this.level(), EntitySpawnReason.TRIGGERED);
+            if (droplet != null) {
+                droplet.setPos(this.getX(), this.getY() - 0.5f, this.getZ());
+                droplet.setDeltaMovement(this.getDeltaMovement().scale(0.5f));
+                droplet.setStreetArtColorComponentId(this.streetArtColorComponentId);
+                droplet.setRange(this.getEntityData().get(ROT_Z) == 90 ? 1.5 : 1.25);
+                droplet.setOwner(this.getOwner());
+                serverLevel.addFreshEntity(droplet);
+            }
         }
 
         super.tick();
@@ -106,6 +123,20 @@ public class SplatanaSwipe extends Projectile {
         Entity entity = hitResult.getEntity();
         int damage = this.getEntityData().get(ROT_Z) == 90 ? 18 : 8;
         entity.hurt(this.damageSources().thrown(this, this.getOwner()), damage);
+    }
+
+    @Override
+    protected void onHitBlock(BlockHitResult hitResult) {
+        if (this.hasStreetArtPaint && this.level() instanceof ServerLevel serverLevel) {
+            Vec3 splashOrigin = hitResult.getLocation()
+                    .add(hitResult.getDirection().getUnitVec3().scale(0.3f))
+                    .subtract(this.getDeltaMovement().scale(0.3f));
+
+            Player owner = this.getOwner() instanceof Player player ? player : null;
+
+            StreetArtCompat.createSplatanaSwipeSplash(owner, serverLevel, splashOrigin, this.getEntityData().get(ROT_Z) == 90 ? 2.5 : 2, this.streetArtColorComponentId);
+        }
+        super.onHitBlock(hitResult);
     }
 
     @Override
@@ -145,6 +176,18 @@ public class SplatanaSwipe extends Projectile {
         return this.entityData.get(OWNER_ENTITY).orElse(null);
     }
 
+    @Override
+    public @Nullable Entity getOwner() {
+        if (this.getOwnerReference() != null) {
+            return this.level().getEntity(this.getOwnerReference().getUUID());
+        }
+        return null;
+    }
+
+    public void setStreetArtColorComponentId(byte streetArtColorComponentId) {
+        this.streetArtColorComponentId = streetArtColorComponentId;
+        this.hasStreetArtPaint = true;
+    }
 
     public static final class ExtraAnimInfo {
         private final int index;

@@ -17,6 +17,11 @@ repositories {
 		name "Chai's Maven"
 		url "https://codeberg.org/api/packages/chai/maven"
 	}
+
+	maven {
+		name 'Xander Maven'
+		url 'https://maven.isxander.dev/releases'
+	}
 }
 
 loom {
@@ -41,6 +46,11 @@ dependencies {
 	// Freecam for looking at models
 	implementation "maven.modrinth:XeEZ3fK2:AT0Z8Fuv"
 
+	// Street Art
+	implementation "maven.modrinth:n0uMUjJI:${project.street_art_version}"
+	implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
+
+	// Bento GUI
 	implementation include("dev.chailotl:bento-gui:${project.bento_gui_version}")
 }
 
