@@ -14,6 +14,7 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -134,6 +135,15 @@ public class Balloon extends LivingEntity {
             }
         }
         super.onRemoval(reason);
+    }
+
+    @Override
+    public @Nullable ItemEntity drop(ItemStack itemStack, boolean randomly, boolean thrownFromHand) {
+        ItemEntity item = super.drop(itemStack, randomly, thrownFromHand);
+        if (item != null) {
+            item.setGlowingTag(true);
+        }
+        return item;
     }
 
     public void setChain(BalloonChain chain) {
