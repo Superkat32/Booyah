@@ -68,9 +68,25 @@ public class SplatanaSwipe extends Projectile {
 
     @Override
     public void tick() {
-        HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         Vec3 position;
-        this.updateRotation();
+        HitResult result = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+
+        // I can't tell you why getHitResultOnMoveVector is so messed up, but it is
+        // This brute-forces the swipes to be more consistent with their hitboxes
+        if (this.level() instanceof ServerLevel serverLevel
+                && result.getType() == HitResult.Type.MISS
+                && this.getOwner() != null
+                && this.getOwner() instanceof Player ownerPlayer
+                && !ownerPlayer.isDeadOrDying()
+        ) {
+            for (Entity entity : serverLevel.getEntities(this, this.getBoundingBox())) {
+                if (entity.is(ownerPlayer)) continue;
+                if (!(entity instanceof LivingEntity livingEntity)) continue;
+                if (livingEntity instanceof Player player && !ownerPlayer.canHarmPlayer(player)) continue;
+                result = new EntityHitResult(entity);
+                break;
+            }
+        }
 
         if (result.getType() != HitResult.Type.MISS && this.isAlive()) {
             this.onHit(result);
@@ -78,7 +94,9 @@ public class SplatanaSwipe extends Projectile {
         } else {
             position = this.position().add(this.getDeltaMovement());
         }
+
         this.setPos(position);
+        this.updateRotation();
 
         this.extraAnimA.update(this.tickCount);
         this.extraAnimB.update(this.tickCount);
@@ -91,7 +109,7 @@ public class SplatanaSwipe extends Projectile {
                 case 3 -> this.getEntityData().get(ALT_COLOR_C_ID);
                 default -> this.getEntityData().get(COLOR_ID);
             };
-            Vec3 delta = this.getDeltaMovement().scale(0.5f);
+            Vec3 delta = new Vec3(this.getDeltaMovement().x, this.getDeltaMovement().y, this.getDeltaMovement().z).scale(0.5f);
             this.level().addParticle(new DropletParticleOptions(color), this.getX(), this.getY(), this.getZ(), delta.x, delta.y, delta.z);
         } else if (this.hasStreetArtPaint && this.tickCount % 2 == 0 && this.level() instanceof ServerLevel serverLevel) {
             SplatanaDroplet droplet = BooyahEntities.SPLATANA_DROPLET.create(this.level(), EntitySpawnReason.TRIGGERED);
@@ -114,12 +132,17 @@ public class SplatanaSwipe extends Projectile {
     @Override
     protected boolean canHitEntity(Entity entity) {
         if (entity instanceof LivingEntity livingEntity && this.getOwnerReference() != null && this.getOwnerReference().matches(livingEntity)) return false;
+        else if (entity instanceof Player player
+                && this.getOwnerReference() != null
+                && EntityReference.getLivingEntity(this.getOwnerReference(), this.level()) instanceof Player ownerPlayer
+                && !ownerPlayer.canHarmPlayer(player)
+        ) return false;
+
         return super.canHitEntity(entity);
     }
 
     @Override
     protected void onHitEntity(final EntityHitResult hitResult) {
-        super.onHitEntity(hitResult);
         Entity entity = hitResult.getEntity();
         int damage = this.getEntityData().get(ROT_Z) == 90 ? 18 : 8;
         entity.hurt(this.damageSources().thrown(this, this.getOwner()), damage);

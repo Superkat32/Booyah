@@ -26,6 +26,7 @@ import net.superkat.booyah.Booyah;
 import net.superkat.booyah.compat.StreetArtCompat;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.entity.BooyahEntities;
+import net.superkat.booyah.entity.SplatanaBladeHit;
 import net.superkat.booyah.entity.SplatanaDroplet;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
@@ -131,6 +132,16 @@ public class SplatanaItem extends Item {
 
             swipe.setOwner(player);
             swipe.setMaxAge(28);
+
+            SplatanaBladeHit blade = BooyahEntities.SPLATANA_BLADE_HIT.create(serverLevel, EntitySpawnReason.TRIGGERED);
+            if (blade != null) {
+                blade.setOwner(player);
+                blade.setAttackingStack(itemStack);
+                blade.setPos(player.getEyePosition().subtract(0, 0.5f, 0));
+                blade.setLifetime(16);
+                blade.getEntityData().set(SplatanaBladeHit.VERTICAL, true);
+                serverLevel.addFreshEntity(blade);
+            }
 
             S2CSplatanaSlashPacket slashPacket = new S2CSplatanaSlashPacket(player.getId(), colorSet);
             for (ServerPlayer serverPlayer : PlayerLookup.tracking(player)) {

@@ -127,8 +127,10 @@ public class Balloon extends LivingEntity {
                     this.playSound(SoundEvents.ALLAY_THROW, 1f, 1f);
                     this.playSound(SoundEvents.ALLAY_AMBIENT_WITH_ITEM, 1.5f, 1f);
                     this.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.05f, 1f);
-                    if (this.level() instanceof ServerLevel serverLevel)
+                    if (this.level() instanceof ServerLevel serverLevel){
                         serverLevel.sendParticles(ParticleTypes.WITCH, this.getX(), this.getY() + 0.5f, this.getZ(), 8, 0.2f, 0.2f, 0.2f, 0);
+                        serverLevel.sendParticles(ParticleTypes.WAX_OFF, this.getX(), this.getY() + 0.5f, this.getZ(), 8, 0.2f, 0.2f, 0.2f, 0);
+                    }
                 }
             } else if (this.chain != null && !this.removedByChain) {
                 this.chain.onBalloonDespawn(this);

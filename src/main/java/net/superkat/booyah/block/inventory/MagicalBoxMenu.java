@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import net.superkat.booyah.block.MagicBoxBlockEntity;
 import org.jspecify.annotations.Nullable;
 
@@ -32,6 +33,10 @@ public class MagicalBoxMenu extends ChestMenu {
                 || (slotIndex < 26 && containerInput == ContainerInput.QUICK_MOVE) // Quick move into inventory
                 || (slotIndex < 26 && getCarried().isEmpty()) // Pick up item
         ) { // Normal actions in creative or on normal inventory
+            if (!player.isCreative() && containerInput == ContainerInput.SWAP) { // Preventing swapping items into chest
+                ItemStack source = player.getInventory().getItem(buttonNum);
+                if (!source.isEmpty() && slotIndex < 26) return;
+            }
             super.clicked(slotIndex, buttonNum, containerInput, player);
         } else { // Prevent dropping items in the magic box
             // are these even needed? I don't think so, but it works and I'm so tired of working on this stupid box

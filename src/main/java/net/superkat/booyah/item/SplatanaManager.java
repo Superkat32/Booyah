@@ -18,6 +18,7 @@ import net.superkat.booyah.Booyah;
 import net.superkat.booyah.compat.StreetArtCompat;
 import net.superkat.booyah.duck.splatana.SplatanaPlayer;
 import net.superkat.booyah.entity.BooyahEntities;
+import net.superkat.booyah.entity.SplatanaBladeHit;
 import net.superkat.booyah.entity.SplatanaDroplet;
 import net.superkat.booyah.entity.SplatanaSwipe;
 import net.superkat.booyah.item.color.SplatanaColorSet;
@@ -74,6 +75,15 @@ public class SplatanaManager {
             swipe.getEntityData().set(SplatanaSwipe.ALT_COLOR_C_ID, altColorC);
 
             swipe.setOwner(player);
+
+            SplatanaBladeHit blade = BooyahEntities.SPLATANA_BLADE_HIT.create(serverLevel, EntitySpawnReason.TRIGGERED);
+            if (blade != null) {
+                blade.setOwner(player);
+                blade.setAttackingStack(player.getMainHandItem());
+                blade.setPos(player.getEyePosition().subtract(0, 0.5f, 0));
+                blade.setLifetime(8);
+                serverLevel.addFreshEntity(blade);
+            }
 
             S2CSplatanaSwingPacket swingPacket = new S2CSplatanaSwingPacket(player.getId(), -1, splatanaPlayer.booyah$queuedReverseUpdate());
             for (ServerPlayer serverPlayer : PlayerLookup.tracking(player)) {
