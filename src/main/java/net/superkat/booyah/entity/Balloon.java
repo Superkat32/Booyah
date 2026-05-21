@@ -141,9 +141,10 @@ public class Balloon extends LivingEntity {
 
     @Override
     public @Nullable ItemEntity drop(ItemStack itemStack, boolean randomly, boolean thrownFromHand) {
-        ItemEntity item = super.drop(itemStack, randomly, thrownFromHand);
+        ItemEntity item = super.drop(itemStack.copy(), randomly, thrownFromHand);
         if (item != null) {
             item.setGlowingTag(true);
+            item.setDeltaMovement(item.getDeltaMovement().scale(0.25f));
         }
         return item;
     }
