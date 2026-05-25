@@ -79,10 +79,10 @@ public class BalloonChainManager {
         return null;
     }
 
-    public void addEntry(String chainId, BalloonEntry entry) {
-        if (entry == null) return;
+    public void addEntry(Level level, String chainId, BalloonEntry entry) {
+        if (entry == null || !(level instanceof ServerLevel serverLevel)) return;
         BalloonChain chain = this.getOrCreateChain(chainId);
-        chain.putEntry(entry);
+        chain.putEntry(serverLevel, entry);
     }
 
     public void removeEntry(Level level, String chainId, BalloonEntry entry) {

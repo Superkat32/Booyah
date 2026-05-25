@@ -184,7 +184,10 @@ public class BalloonChain {
         for (Iterator<UUID> iterator = balloonUuids.values().iterator(); iterator.hasNext(); ) {
             UUID balloonUuid = iterator.next();
             Entity entity = level.getEntity(balloonUuid);
-            if (entity == null || entity.isRemoved() || !(entity instanceof Balloon balloon)) continue;
+            if (entity == null || entity.isRemoved() || !(entity instanceof Balloon balloon)) {
+                iterator.remove();
+                continue;
+            };
             balloon.setRemovedByChain();
             balloon.remove(Entity.RemovalReason.DISCARDED);
             iterator.remove();
@@ -197,13 +200,19 @@ public class BalloonChain {
         this.waveFailed = false;
     }
 
-    public void putEntry(BalloonEntry entry) {
+    public void putEntry(ServerLevel level, BalloonEntry entry) {
         this.entries.put(entry.pos(), entry);
         this.knownEntryIndexes = new ArrayList<>(this.entries.values().stream().map(BalloonEntry::index).sorted().toList());
 
+        boolean shouldReset = this.startingIndex != knownEntryIndexes.getFirst();
         this.startingIndex = knownEntryIndexes.getFirst();
         this.endingIndex = knownEntryIndexes.getLast();
-        if (!this.chasing) this.currentIndex = this.startingIndex;
+        if (!this.chasing) {
+            this.currentIndex = this.startingIndex;
+            if (shouldReset) {
+                this.reset(level);
+            }
+        }
     }
 
     public void removeEntry(Level level, BalloonEntry entry) {

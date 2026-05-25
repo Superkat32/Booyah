@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,10 +28,10 @@ public class BalloonChaseBlockEntity extends BlockEntity {
 
     // Intended for server only
     public void updateBalloonEntry(String chainId, BalloonEntry entry) {
-        if (this.level == null || chainId.isBlank()) return;
+        if (this.level == null || !(this.level instanceof ServerLevel serverLevel) || chainId.isBlank()) return;
         BalloonChainManager chainManager = BalloonChainManager.get(this.level);
         BalloonChain chain = chainManager.getOrCreateChain(chainId);
-        chain.putEntry(entry);
+        chain.putEntry(serverLevel, entry);
 
         // Remove from old chain if chainId was updated
         if (!this.balloonChainId.isBlank() && !this.balloonChainId.equals(chainId)
@@ -55,7 +56,7 @@ public class BalloonChaseBlockEntity extends BlockEntity {
         super.setLevel(level);
         if (!this.level.isClientSide() && this.balloonEntry != null) { // Try to let NBT copied blocks work
             this.balloonEntry = this.balloonEntry.updatePos(this.getBlockPos());
-            BalloonChainManager.get(this.level).addEntry(this.balloonChainId, this.balloonEntry);
+            BalloonChainManager.get(this.level).addEntry(this.level, this.balloonChainId, this.balloonEntry);
         }
     }
 
