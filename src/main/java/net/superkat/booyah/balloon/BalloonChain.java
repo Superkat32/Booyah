@@ -45,6 +45,7 @@ public class BalloonChain {
 
     public int ticks = 0;
     public int balloonWaveTicks = 0;
+    public int singleWaveResetTicks = 0;
 
     public boolean chasing = false;
     public boolean balloonSpawned = false;
@@ -78,6 +79,11 @@ public class BalloonChain {
         this.ticks++;
         if (this.chasing) {
             this.balloonWaveTicks++;
+        } else if (this.singleWaveResetTicks > 0) {
+            this.singleWaveResetTicks--;
+            if (this.singleWaveResetTicks <= 0) {
+                this.reset(level);
+            }
         }
 
         for (Iterator<QueuedBalloon> iterator = queuedBalloonSpawns.values().iterator(); iterator.hasNext(); ) {
@@ -171,6 +177,11 @@ public class BalloonChain {
         this.balloonUuids.remove(balloon.getChainPos());
         if (this.balloonUuids.isEmpty()) {
             this.spawnNextWave((ServerLevel) balloon.level());
+        } else if (this.currentIndex == this.startingIndex && this.currentIndex == this.endingIndex) {
+            int floatAwayTicks = this.entries.get(balloon.getChainPos()).floatAwayTicks();
+            if (floatAwayTicks > 0) {
+                this.singleWaveResetTicks = this.entries.get(balloon.getChainPos()).floatAwayTicks();
+            }
         }
     }
 
@@ -198,6 +209,7 @@ public class BalloonChain {
         this.queuedBalloonSpawns.clear();
         this.prevPopPos = null;
         this.waveFailed = false;
+        this.singleWaveResetTicks = 0;
     }
 
     public void putEntry(ServerLevel level, BalloonEntry entry) {
