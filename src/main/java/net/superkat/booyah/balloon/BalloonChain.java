@@ -13,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.MapColor;
 import net.superkat.booyah.entity.Balloon;
 import net.superkat.booyah.entity.BooyahEntities;
 import org.jspecify.annotations.Nullable;
@@ -151,10 +152,12 @@ public class BalloonChain {
             }
             if (this.prevPopPos != null) {
                 RandomSource random = level.getRandom();
-                for (int i = 0; i < 24; i++) {
+                for (int i = 0; i < 48; i++) {
+                    int color = random.nextBoolean() ? CommonColors.GREEN :
+                            random.nextBoolean() ? MapColor.EMERALD.col : MapColor.PLANT.col;
                     TrailParticleOption trailParticles = new TrailParticleOption(
                             pos.getCenter().add(random.nextFloat() * 0.25f, random.nextFloat() * 0.15f, random.nextFloat() * 0.25f),
-                            CommonColors.GREEN, spawnDelayTicks + random.nextInt(20)
+                            color, spawnDelayTicks + random.nextInt(40)
                     );
                     level.sendParticles(trailParticles,
                             this.prevPopPos.getX() + random.nextFloat() * 0.25f,

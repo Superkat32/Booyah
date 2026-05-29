@@ -31,7 +31,7 @@ public class MagicBoxBlockEntity extends RandomizableContainerBlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         if (!this.trySaveLootTable(output)){
-            ContainerHelper.saveAllItems(output, this.inventoryItems);
+            ContainerHelper.saveAllItems(output, this.stockItems);
         }
     }
 
@@ -39,8 +39,10 @@ public class MagicBoxBlockEntity extends RandomizableContainerBlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         this.inventoryItems = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
+        this.stockItems = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
         if (!this.tryLoadLootTable(input)){
             ContainerHelper.loadAllItems(input, this.inventoryItems);
+            ContainerHelper.loadAllItems(input, this.stockItems);
         }
     }
 
