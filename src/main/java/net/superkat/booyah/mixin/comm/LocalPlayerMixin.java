@@ -1,6 +1,7 @@
 package net.superkat.booyah.mixin.comm;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.superkat.booyah.Booyah;
 import net.superkat.booyah.comm.BooyahClientManager;
 import net.superkat.booyah.duck.comm.LocalBooyahablePlayer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +15,7 @@ public class LocalPlayerMixin implements LocalBooyahablePlayer {
     @Unique
     public int booyah$ticksSinceSneak = 0;
     @Unique
-    public int booyah$sneaksUntilBooyah = BooyahClientManager.SNEAKS_UNTIL_BOOYAH;
+    public int booyah$sneaksUntilBooyah = Booyah.CONFIG.sneaksUntilBooyah;
     @Unique
     public boolean booyah$wasSneaking = false;
 

@@ -15,10 +15,6 @@ import net.superkat.booyah.network.packets.booyah.CommonBooyahPacket;
 
 @Environment(EnvType.CLIENT)
 public class BooyahClientManager {
-    public static final int SNEAKS_UNTIL_BOOYAH = Booyah.CONFIG.sneaksUntilBooyah;
-    public static final int FURTHER_SNEAKS_UNTIL_BOOYAH = Booyah.CONFIG.furtherSneaksUntilBooyah;
-    public static final int TICKS_BETWEEN_SNEAKS = Booyah.CONFIG.ticksBetweenSneaks;
-
     public static void aiStepLocalPlayer(LocalPlayer player) {
         LocalBooyahablePlayer booyahablePlayer = (LocalBooyahablePlayer) player;
         booyahablePlayer.booyah$subtractSneakTicks();

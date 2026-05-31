@@ -1,6 +1,6 @@
 package net.superkat.booyah.duck.comm;
 
-import net.superkat.booyah.comm.BooyahClientManager;
+import net.superkat.booyah.Booyah;
 
 public interface LocalBooyahablePlayer {
 
@@ -16,7 +16,7 @@ public interface LocalBooyahablePlayer {
         }
     }
     default void booyah$resetSneakTicks() {
-        this.booyah$setSneakTicks(BooyahClientManager.TICKS_BETWEEN_SNEAKS);
+        this.booyah$setSneakTicks(Booyah.CONFIG.ticksBetweenSneaks);
     }
 
     int booyah$getSneaksUntilBooyah();
@@ -25,7 +25,7 @@ public interface LocalBooyahablePlayer {
         this.booyah$resetSneaksUntilBooyah(false);
     }
     default void booyah$resetSneaksUntilBooyah(boolean further) {
-        this.booyah$setSneaksUntilBooyah(further ? BooyahClientManager.FURTHER_SNEAKS_UNTIL_BOOYAH : BooyahClientManager.SNEAKS_UNTIL_BOOYAH);
+        this.booyah$setSneaksUntilBooyah(further ? Booyah.CONFIG.furtherSneaksUntilBooyah : Booyah.CONFIG.sneaksUntilBooyah);
     }
 
     boolean booyah$getWasSneaking();
